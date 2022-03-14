@@ -7,11 +7,16 @@ class Enterprise (models.Model):
     company = models.CharField(
         max_length=30,
         verbose_name='название предприятия',
+        help_text="Название предприятия",
         unique=True,
     )
     bigboss = models.ForeignKey(
-        CustomUser, verbose_name="Ген. директор", help_text="Ген. директор",
-        null=True, on_delete=models.SET_NULL, related_name="bigboss",
+        CustomUser,
+        verbose_name="Ген. директор",
+        help_text="Ген. директор",
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="bigboss",
     )
 
     class Meta:
