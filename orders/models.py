@@ -1,9 +1,13 @@
+from pyexpat import model
 from telnetlib import NEW_ENVIRON
 from django.db import models
 
 from users.models import CustomUser
 from enterprises.models import Enterprise
 
+class FileOrder(models.Model):
+    id = models.AutoField(primary_key=True)
+    file = models.FileField()
 
 class Order(models.Model):
     NEW = 'новый'
@@ -71,14 +75,40 @@ class Order(models.Model):
     )
     contractor = models.ManyToManyField(
         CustomUser,
-        help_text="Исполнители",
-        related_name="contractor",
+        through='ContractorsOrder',
+        related_name='contractors_order',
     )
-    order = models.FileField()
+    order = models.FileField() #models.ManyToManyField(FileOrder, through='FilesOrder')
 
     class Meta:
         verbose_name = "Приказ"
         verbose_name_plural = 'Приказы'
 
     def __str__(self):
-        return self.firm
+        return f'{self.status} {self.action} {self.firm}'
+
+class ContractorsOrder(models.Model):
+    order = models.ForeignKey(
+        Order,
+        verbose_name='Приказ',
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    contractor = models.ForeignKey(
+        CustomUser,
+        verbose_name='Исполнители',
+        on_delete=models.CASCADE
+    )
+
+class FilesOrder(models.Model):
+    order=models.ForeignKey(
+        Order,
+        verbose_name='Приказ',
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    docum=models.ForeignKey(
+        FileOrder,
+        on_delete=models.CASCADE,
+    )
+
