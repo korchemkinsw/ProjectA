@@ -37,10 +37,13 @@ class CustomUser(AbstractUser):
         max_length=150,
         blank=True
     )
+    '''
     username = models.CharField(
         verbose_name='имя пользователя',
-        max_length=150, unique=True
+        max_length=150,
+        #unique=True
     )
+    '''
     role = models.CharField(
         max_length=10,
         choices=ROLE_CHOICES,

@@ -6,6 +6,7 @@ from django.db import models
 from users.models import CustomUser
 from enterprises.models import Enterprise
 
+
 class FileOrder(models.Model):
     id = models.AutoField(primary_key=True)
     file = models.FileField()
@@ -79,7 +80,12 @@ class Order(models.Model):
         through='ContractorsOrder',
         related_name='contractors_order',
     )
-    order = models.FileField() #models.ManyToManyField(FileOrder, through='FilesOrder')
+    order = models.ManyToManyField(
+        FileOrder,
+        through='FilesOrder',
+        related_name='files_order',
+        verbose_name='Файлы приказа'
+    )
 
     class Meta:
         verbose_name = "Приказ"
@@ -108,7 +114,8 @@ class FilesOrder(models.Model):
         null=True,
         on_delete=models.SET_NULL,
     )
-    docum=models.ForeignKey(
+    file = models.ForeignKey(
         FileOrder,
-        on_delete=models.CASCADE,
+        on_delete=CASCADE,
+        verbose_name='Файлы приказа'
     )

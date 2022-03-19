@@ -92,4 +92,4 @@ class Enterprise (models.Model):
         verbose_name_plural = 'Предприятия'
 
     def __str__(self):
-        return self.company
+        return self.abbreviatedname
