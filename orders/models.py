@@ -9,7 +9,14 @@ from enterprises.models import Enterprise
 
 class FileOrder(models.Model):
     id = models.AutoField(primary_key=True)
-    file = models.FileField()
+    file = models.FileField(verbose_name='Файл приказа')  
+    
+    class Meta:
+        verbose_name='Файл приказа'
+        verbose_name_plural = 'Файл приказа'
+
+    #def __str__(self):
+    #    return self.file
 
 class Order(models.Model):
     NEW = 'новый'
@@ -119,3 +126,4 @@ class FilesOrder(models.Model):
         on_delete=CASCADE,
         verbose_name='Файлы приказа'
     )
+

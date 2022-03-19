@@ -119,6 +119,8 @@ venva.bak/
 
 # mkdocs documentation
 /site
+/media
+/static
 
 # mypy
 .mypy_cache/
