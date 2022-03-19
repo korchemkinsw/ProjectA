@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import FilesOrder, Order, ContractorsOrder
+from .models import FilesOrder, Order, ContractorsOrder, FileOrder
 
 class ContractorsOrderInline(admin.TabularInline):
     model = ContractorsOrder

@@ -1,5 +1,6 @@
 from pyexpat import model
 from telnetlib import NEW_ENVIRON
+from tkinter import CASCADE
 from django.db import models
 
 from users.models import CustomUser
@@ -111,4 +112,3 @@ class FilesOrder(models.Model):
         FileOrder,
         on_delete=models.CASCADE,
     )
-
