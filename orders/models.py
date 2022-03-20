@@ -1,6 +1,3 @@
-from pyexpat import model
-from telnetlib import NEW_ENVIRON
-from tkinter import CASCADE
 from django.db import models
 
 from users.models import CustomUser
@@ -14,9 +11,6 @@ class FileOrder(models.Model):
     class Meta:
         verbose_name='Файл приказа'
         verbose_name_plural = 'Файл приказа'
-
-    #def __str__(self):
-    #    return self.file
 
 class Order(models.Model):
     NEW = 'новый'
@@ -123,7 +117,7 @@ class FilesOrder(models.Model):
     )
     file = models.ForeignKey(
         FileOrder,
-        on_delete=CASCADE,
+        on_delete=models.CASCADE,
         verbose_name='Файлы приказа'
     )
 

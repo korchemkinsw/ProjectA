@@ -1,7 +1,52 @@
+from tkinter import CASCADE
 from django.db import models
 
-from users.models import CustomUser
 
+class Position(models.Model):
+    post = models.CharField(
+        max_length=70,
+        verbose_name='Наименование должности',
+        help_text="Наименование должности",
+        unique=True,
+        default='None'
+    )
+
+    class Meta:
+        verbose_name = "Наименование должности"
+        verbose_name_plural = 'Наименования должностей'
+
+    def __str__(self):
+        return self.post
+
+class Staffer(models.Model):
+    last_name = models.CharField(
+        verbose_name='фамилия',
+        max_length=150,
+        blank=True
+    )
+    first_name = models.CharField(
+        verbose_name='имя',
+        max_length=150,
+        blank=True
+    )
+    fathers_name = models.CharField(
+        verbose_name='отчество',
+        max_length=150,
+        blank=True
+    )
+    post = models.ForeignKey(
+        Position,
+        verbose_name="Должность",
+        help_text="Должность",
+        on_delete=CASCADE
+    )
+
+    class Meta:
+        verbose_name = "Сотрудник"
+        verbose_name_plural = 'Сотрудники'
+    
+    def __str__(self):
+        return f'{self.last_name} {self.first_name} {self.fathers_name}'
 
 class Enterprise (models.Model):
     fullname = models.CharField(
@@ -79,7 +124,7 @@ class Enterprise (models.Model):
         default='None'
     )
     bigboss = models.ForeignKey(
-        CustomUser,
+        Staffer,
         verbose_name="Ген. директор",
         help_text="Ген. директор",
         null=True,
