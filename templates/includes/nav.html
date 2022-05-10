@@ -1,0 +1,20 @@
+{% load static %}
+<nav class="navbar navbar-light" style="background-color: #c4671c;">
+  <a class="navbar-brand" href="{% url 'index' %}">
+    <img src="{% static 'img/logo.png' %}" alt="" width="30" height="30" class="d-inline-block align-text-top">
+    <span >
+      {{ my_company }}
+    </span>
+  </a>
+  <nav class="my-2 my-md-0 mr-md-3">
+    {% if url == 'index' %}
+      <a class="p-2 text-dark" href="{% url 'enterprises' %}">Предприятия</a>
+    {% endif %}
+    {% if url == 'enterprises' %}
+      <a class="p-2 text-dark" href="{% url 'index' %}">Главная</a> 
+    {% endif %}
+    {% if url == 'card_enterpise' %}
+      <a class="p-2 text-dark" href="{% url 'enterprises' %}">Предприятия</a>
+    {% endif %}
+  </nav>
+</nav>

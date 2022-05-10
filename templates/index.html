@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
-{% block title %}{{ my_company }}{% endblock %}
-{% block header %}{{ my_company }}{% endblock %}
+<!--{% block title %}{{ my_company }}{% endblock %}
+{% block header %}{{ my_company }}{% endblock %}-->
+{% load static %}
+<body>
+
 {% block content %}
 
-    <p> 
-        <a href="enterprises\">
-            Список предприятий
-        </a>
-    </p> 
-
+<!--<nav class="navbar navbar-light" style="background-color: #c4671c;">
+    <a class="navbar-brand" href="{% url 'index' %}">
+        <img src="{% static 'img/logo.png' %}" alt="" width="30" height="30" class="d-inline-block align-text-top">
+        {{ my_company }}
+    </a>
+    <nav class="my-2 my-md-0 mr-md-3">
+    <a class="p-2 text-dark" href="{% url 'enterprises' %}">Список предприятий</a> -->
 {% endblock %}
+</body>
