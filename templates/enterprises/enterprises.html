@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block title %}{{ my_company }}{% endblock %}
+{% block header %}Список предприятий{% endblock %}
+{% block content %}
+    {% for enterprise in enterprises %}
+        <p>
+            <a href=""> 
+                {{ enterprise }}
+            </a>
+        </p>
+    {% endfor %}
+    <p> 
+        <a href="\">
+            Главная
+        </a>
+    </p>
+{% endblock %}
