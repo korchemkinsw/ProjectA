@@ -37,10 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
+    'Project_A',
     'users',
-    #'users.apps.UsersConfig',
     'enterprises',
     'orders',
+    #'users.apps.UsersConfig',
+    
 ]
 
 MIDDLEWARE = [
@@ -62,6 +64,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'Project_A.year_today.year',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -107,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOGIN_URL = 'users:login'
-LOGIN_REDIRECT_URL = 'Project_A:index'
+LOGIN_REDIRECT_URL = 'index'
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 

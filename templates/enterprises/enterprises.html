@@ -3,14 +3,23 @@
 {% load static %}
 {% block title %}Предприятия{% endblock %}
 {% block content %}
-  <div class="container">
-    <h3>Предприятия</h3>
-    {% for enterprise in enterprises %}
-      <li>
-        <a href="{% url 'enterprise' enterprise.abbreviatedname %}"> 
-          {{ enterprise }}
-        </a>
-      </li>
-    {% endfor %}
+<div class="row justify-content-center">
+  <div class="col-md-11 p-5">
+    <div class="card">
+      <div class="card-header">
+        <h3>Предприятия</h3>
+      </div>
+    
+      <div class="card-body">
+        {% for enterprise in enterprises %}
+          <li>
+            <a href="{% url 'enterprise' enterprise.abbreviatedname %}"> 
+              {{ enterprise }}
+            </a>
+          </li>
+        {% endfor %}
+      </div>
+    </div>
   </div>
+</div>
 {% endblock %}
