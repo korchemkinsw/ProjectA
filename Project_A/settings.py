@@ -36,7 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'core',
     'users',
+    #'users.apps.UsersConfig',
     'enterprises',
     'orders',
 ]
@@ -104,7 +106,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = 'Project_A:index'
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
