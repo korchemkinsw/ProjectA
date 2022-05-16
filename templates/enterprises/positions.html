@@ -1,22 +1,18 @@
-<!DOCTYPE html>
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Предприятия{% endblock %}
+{% block title %}Должности{% endblock %}
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-11 p-5">
     <div class="card">
       <div class="card-header">
-        <h3>Предприятия</h3>
+        <h3>Должности</h3>
       </div>
-    
       <div class="card-body">
-        {% for enterprise in enterprises %}
-          <li>
-            <a href="{% url 'enterprise' enterprise.abbreviatedname %}"> 
-              {{ enterprise }}
-            </a>
-          </li>
+        {% for position in positions %}
+          <p>
+              {{ position.post }}
+          </p>
         {% endfor %}
         <br>
         <a class="btn btn-primary" href="{% url 'guide' %}" role="button">Назад</a>

@@ -1,10 +1,10 @@
 from django.shortcuts import get_object_or_404, render
 from Project_A import settings
 
-from .models import Enterprise
+from .models import Enterprise, Position, Staffer
 
 def enterprises(request):
-    latest = Enterprise.objects.all()[:11]
+    latest = Enterprise.objects.all()
     context={
         'my_company': settings.MYCOMPANY,
         'enterprises': latest,
@@ -20,3 +20,21 @@ def enterprise(request, abbreviatedname):
         'url': 'card_enterpise',
     }
     return render(request, "enterprises/enterprise.html", context)
+
+def positions(request):
+    latest = Position.objects.all()
+    context={
+        'my_company': settings.MYCOMPANY,
+        'positions': latest,
+        'url': 'positions',
+        }
+    return render(request, "enterprises/positions.html", context)
+
+def staffers(request):
+    latest = Staffer.objects.all()
+    context={
+        'my_company': settings.MYCOMPANY,
+        'staffers': latest,
+        'url': 'staffers',
+        }
+    return render(request, "enterprises/staffers.html", context)

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Предприятия{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-11 p-5">
+    <div class="card">
+      <div class="card-header">
+        <h3>Справочники</h3>
+      </div>
+      <div class="card-body">
+        <li>
+          <a href="{% url 'enterprises' %}">Предприятия</a>
+        </li>
+        <li>
+          <a href="{% url 'positions' %}">Должности</a>
+        </li>
+        <li>
+          <a href="{% url 'staffers' %}">Сотрудники</a>
+        </li>
+        <li>
+          <a href="#">Клиенты</a>
+        </li>
+        <li>
+          <a href="#">Ответственные лица</a>
+        </li>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
