@@ -10,58 +10,62 @@
         <h3>{{ company }}</h3>
       </div>
       <div class="card-body">
-        <div class="row">
-          <div class="col-3">Полное наименование</div>
-          <div class="col-9">{{ company.fullname }}</div>
-        </div>
-        <div class="row">
-          <div class="col-3">Сокращенное наименование</div>
-          <div class="col-9">{{ company.abbreviatedname }}</div>
-        </div>
-        <div class="row">
-          <div class="col-3">Юридический адрес</div>
-          <div class="col-9">{{ company.legaladdress }}</div>
-        </div>
-        <div class="row">
-          <div class="col-3">Почтовый адрес</div>
-          <div class="col-9">{{ company.postaladdress }}</div>
-        </div>
-        <div class="row">
-          <div class="col-3">Телефон/факс</div>
-          <div class="col-9">{{ company.telephone }}</div>
-        </div>
-        <div class="row">
-          <div class="col-3">ИНН</div>
-          <div class="col-9">{{ company.inn }}</div>
-        </div>
-        <div class="row">
-          <div class="col-3">КПП</div>
-          <div class="col-9">{{ company.kpp }}</div>
-        </div>
-        <div class="row">
-          <div class="col-3">ОГРН</div>
-          <div class="col-9">{{ company.ogrn }}</div>
-        </div>
-        <div class="row">
-          <div class="col-3">Рассчётный счёт</div>
-          <div class="col-9">{{ company.payment }}</div>
-        </div>
-        <div class="row">
-          <div class="col-3">Корреспондентский счёт</div>
-          <div class="col-9">{{ company.correspondent }}</div>
-        </div>
-        <div class="row">
-          <div class="col-3">БИК банка</div>
-          <div class="col-9">{{ company.bic }}</div>
-        </div>
-        <div class="row">
-          <div class="col-3">Банк</div>
-          <div class="col-9">{{ company.bank }}</div>
-        </div>
-        <div class="row">
-          <div class="col-3">Ген. директор</div>
-          <div class="col-9">{{ company.bigboss }}</div>
-        </div>
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <td>Полное наименование</td>
+              <td>{{ company.fullname }}</td>
+            </tr>
+            <tr>
+              <td>Сокращенное наименование</td>
+              <td>{{ company.abbreviatedname }}</td>
+            </tr>
+            <tr>
+              <td>Юридический адрес</td>
+              <td>{{ company.legaladdress }}</td>
+            </tr>
+            <tr>
+              <td>Почтовый адрес</td>
+              <td>{{ company.postaladdress }}</td>
+            </tr>
+            <tr>
+              <td>Телефон/факс</td>
+              <td>{{ company.telephone }}</td>
+            </tr>
+            <tr>
+              <td>ИНН</td>
+              <td>{{ company.inn }}</td>
+            </tr>
+            <tr>
+              <td>КПП</td>
+              <td>{{ company.kpp }}</td>
+            </tr>
+            <tr>
+              <td>ОГРН</td>
+              <td>{{ company.ogrn }}</td>
+            </tr>
+            <tr>
+              <td>Рассчётный счёт</td>
+              <td>{{ company.payment }}</td>
+            </tr>
+            <tr>
+              <td>Корреспондентский счёт</td>
+              <td>{{ company.correspondent }}</td>
+            </tr>
+            <tr>
+              <td>БИК банка</td>
+              <td>{{ company.bic }}</td>
+            </tr>
+            <tr>
+              <td>Банк</td>
+              <td>{{ company.bank }}</td>
+            </tr>
+            <tr>
+              <td>Ген. директор</td>
+              <td>{{ company.bigboss }}</td>
+            </tr>
+          </tbody>
+        </table> 
         <br>
         <a class="btn btn-primary" href="{% url 'enterprises' %}" role="button">Назад</a>
       </div>

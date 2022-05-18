@@ -12,15 +12,19 @@
         <table class="table table-bordered">
           <thead>
             <tr>
-              <th scope="col">Должность</th>
-              <th scope="col">Сотрудник</th>
+              <th scope="col-4">Должность</th>
+              <th scope="col-8">Сотрудник</th>
             </tr>
           </thead>
           <tbody>
             {% for staffer in staffers %}
               <tr>
                 <td>{{ staffer.post }}</td>
-                <td>{{ staffer }}</td>
+                <td>
+                  {{ staffer.last_name }}
+                  {{ staffer.first_name|first }}.
+                  {{ staffer.fathers_name|first }}.
+                </td>
               </tr>
             {% endfor %}
           </tbody>
