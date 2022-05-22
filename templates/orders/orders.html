@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+{% extends "nosidebarbase.html" %}
+{% load static %}
+{% block title %}Приказы{% endblock %}
+{% block content %}
+  <div class="card">
+    <div class="card-header">
+      <h3>Приказы</h3>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">Статус</th>
+              <th scope="col">Автор</th>
+              <th scope="col">Создан/Изменеи</th>
+              <th scope="col">Действие</th>
+              <th scope="col">Выполнить до:</th>
+              <th scope="col">Предприятие</th>
+              <th scope="col">Исполнитель</th>
+              <th scope="col">Файлы</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+              <tr>
+                <td> 
+                  {{ order.status }}
+                </td>
+                <td> 
+                  {{ order.lastuser.last_name }}
+                  {{ order.lastuser.first_name|first }}.{{ order.lastuser.fathers_name|first }}.
+                </td>
+                <td> 
+                  {{ order.generated }}
+                </td>
+                <td> 
+                  {{ order.action }}
+                </td>
+                <td> 
+                  {{ order.perday }}
+                </td>
+                <td> 
+                  {{ order.firm }}
+                </td>
+                <td>
+                  {% for contractor in order.contractor.all %}
+                    <p>
+                      {{ contractor.last_name }}
+                      {{ contractor.first_name|first }}.{{ contractor.fathers_name|first }}.
+                    </p>
+                  {% endfor %}
+                </td>
+                <td>
+                  {% for file in order.order.all %}
+                    <p>
+                      <a href="{{ file.file.url }}">{{ file.file }}</a>
+                    </p>
+                  {% endfor %}
+                </td>
+              <tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <br>
+      <a class="btn btn-primary" href="{% url 'index' %}" role="button">Главная</a>
+    </div>
+  </div>
+{% endblock %}

@@ -101,11 +101,13 @@ class ContractorsOrder(models.Model):
         verbose_name='Приказ',
         null=True,
         on_delete=models.SET_NULL,
+        related_name="contractors",
     )
     contractor = models.ForeignKey(
         CustomUser,
         verbose_name='Исполнители',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="contractors",
     )
 
 class FilesOrder(models.Model):
@@ -114,10 +116,12 @@ class FilesOrder(models.Model):
         verbose_name='Приказ',
         null=True,
         on_delete=models.SET_NULL,
+        related_name="files",
     )
     file = models.ForeignKey(
         FileOrder,
         on_delete=models.CASCADE,
-        verbose_name='Файлы приказа'
+        verbose_name='Файлы приказа',
+        related_name="files",
     )
 
