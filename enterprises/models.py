@@ -54,74 +54,72 @@ class Enterprise (models.Model):
         verbose_name='Полное наименование',
         help_text="Полное наименование",
         unique=True,
-        default='None'
     )
     abbreviatedname = models.CharField(
         max_length=300,
         verbose_name='Сокращенное наименование',
         help_text="Сокращенное наименование",
         unique=True,
-        default='None'
     )
     legaladdress = models.CharField(
         max_length=300,
         verbose_name='Юридический адрес',
         help_text="Юридический адрес",
-        default='None'
+        blank=True
     )
     postaladdress = models.CharField(
         max_length=300,
         verbose_name='Почтовый адрес',
         help_text="Почтовый адрес",
-        default='None'
+        blank=True
     )
     telephone = models.CharField(
         max_length=30,
         verbose_name='Телефон/факс',
         help_text="Телефон/факс",
-        default='None'
+        blank=True
     )
     inn = models.CharField(
         max_length=10,
         verbose_name='ИНН',
         help_text="ИНН",
-        default='None'
+        blank=True
     )
     kpp = models.CharField(
         max_length=10,
         verbose_name='КПП',
         help_text="КПП",
-        default='None'
+        blank=True
     )
     ogrn = models.CharField(
         max_length=13,
         verbose_name='ОГРН',
         help_text="ОГРН",
-        default='None'
+        blank=True
     )
     payment = models.CharField(
         max_length=22,
         verbose_name='Рассчётный счёт',
         help_text="Рассчётный счёт",
-        default='None'
+        blank=True
     )
     correspondent = models.CharField(
         max_length=22,
         verbose_name='Корреспондентский счёт',
         help_text="Корреспондентский счёт",
-        default='None'
+        blank=True
     )
     bic = models.CharField(
         max_length=9,
         verbose_name='БИК банка',
         help_text="БИК банка",
-        default='None'
+        blank=True
     )
     bank = models.CharField(
         max_length=300,
         verbose_name='Банк',
         help_text="Банк",
-        default='None'
+        blank=True
     )
     bigboss = models.ForeignKey(
         Staffer,
@@ -130,6 +128,7 @@ class Enterprise (models.Model):
         null=True,
         on_delete=models.SET_NULL,
         related_name="bigboss",
+        blank=True
     )
 
     class Meta:

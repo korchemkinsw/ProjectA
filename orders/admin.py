@@ -1,7 +1,9 @@
 from dataclasses import field
+
 from django.contrib import admin
 
-from .models import Order, ContractorsOrder, FilesOrder, FileOrder
+from .models import ContractorsOrder, FileOrder, FilesOrder, Order
+
 
 class ContractorsOrderInline(admin.TabularInline):
     model = ContractorsOrder

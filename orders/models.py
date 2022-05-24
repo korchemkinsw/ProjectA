@@ -1,12 +1,15 @@
+import datetime
+
+from django.contrib.auth import get_user_model
 from django.db import models
-
-from users.models import CustomUser
 from enterprises.models import Enterprise
+from users.models import CustomUser
 
+User = get_user_model()
 
 class FileOrder(models.Model):
     id = models.AutoField(primary_key=True)
-    file = models.FileField(verbose_name='Файл приказа')  
+    file = models.FileField(verbose_name='Файл приказа', upload_to='orders/%Y-%m-%d/')
     
     class Meta:
         verbose_name='Файл приказа'
@@ -72,20 +75,23 @@ class Order(models.Model):
         "Дата создания",
         auto_now_add=True
     )
-    perday = models.DateTimeField(
+    perday = models.DateField(
         "Выполнить в",
-        auto_now_add=True
+        default=datetime.date.today()
+        #auto_now_add=True
     )
     contractor = models.ManyToManyField(
-        CustomUser,
+        User,
         through='ContractorsOrder',
         related_name='contractors_order',
+        blank=True
     )
     order = models.ManyToManyField(
         FileOrder,
         through='FilesOrder',
         related_name='files_order',
-        verbose_name='Файлы приказа'
+        verbose_name='Файлы приказа',
+        blank=True
     )
 
     class Meta:

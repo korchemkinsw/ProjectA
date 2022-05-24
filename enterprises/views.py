@@ -1,7 +1,11 @@
 from django.shortcuts import get_object_or_404, render
+from django.views.generic import CreateView
+from django.urls import reverse_lazy
+
 from Project_A import settings
 
 from .models import Enterprise, Position, Staffer
+from .forms import AddEnterpriseForm
 
 def enterprises(request):
     latest = Enterprise.objects.all()
@@ -38,3 +42,8 @@ def staffers(request):
         'url': 'staffers',
         }
     return render(request, "enterprises/staffers.html", context)
+
+class NewEnterprise(CreateView):
+    form_class = AddEnterpriseForm
+    template_name = 'enterprises/new_enterprise.html'
+    success_url = reverse_lazy('enterprises:enterprises')
