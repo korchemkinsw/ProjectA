@@ -5,6 +5,6 @@ urlpatterns = [
     path('', views.enterprises, name='enterprises'),
     path('positions/', views.positions, name='positions'),
     path('staffers/', views.staffers, name='staffers'),
-    path('new_enterprise/', views.NewEnterprise.as_view(), name='new_enterprise'),
+    path('new_enterprise/', views.new_enterprise, name='new_enterprise'),
     path('<str:abbreviatedname>', views.enterprise, name='enterprise'),
 ]

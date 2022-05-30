@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
 
@@ -25,6 +25,22 @@ def enterprise(request, abbreviatedname):
     }
     return render(request, "enterprises/enterprise.html", context)
 
+def new_enterprise(request):
+    form = AddEnterpriseForm(request.POST or None, files=request.FILES or None)
+    if not form.is_valid():
+        return render(
+            request,
+            'enterprises/new_enterprise.html',
+            {
+                'form': form,
+                'exp_action': 'new_enterprise'
+            }
+        )
+    new_enterprise = form.save(commit=False)
+    new_enterprise.save()
+    return redirect('enterprises')
+
+
 def positions(request):
     latest = Position.objects.all()
     context={
@@ -42,8 +58,9 @@ def staffers(request):
         'url': 'staffers',
         }
     return render(request, "enterprises/staffers.html", context)
-
+'''
 class NewEnterprise(CreateView):
     form_class = AddEnterpriseForm
     template_name = 'enterprises/new_enterprise.html'
     success_url = reverse_lazy('enterprises:enterprises')
+'''
