@@ -40,6 +40,29 @@ def new_enterprise(request):
     new_enterprise.save()
     return redirect('enterprises')
 
+def edit_enterprise(request, abbreviatedname):
+    enterprise = get_object_or_404(
+        Enterprise,
+        abbreviatedname=abbreviatedname,
+    )
+    id = enterprise.id
+    form = AddEnterpriseForm(
+        request.POST or None,
+        files=request.FILES or None,
+        instance=enterprise
+    )
+    if not form.is_valid():
+        return render(
+            request,
+            'enterprises/new_enterprise.html',
+            {
+                'form': form,
+                'exp_action': 'edit_enterprise',
+                'enterprise': enterprise
+            }
+        )
+    form.save()
+    return redirect('enterprise', abbreviatedname)
 
 def positions(request):
     latest = Position.objects.all()
