@@ -45,11 +45,11 @@ def edit_enterprise(request, abbreviatedname):
         Enterprise,
         abbreviatedname=abbreviatedname,
     )
-    id = enterprise.id
+    #id = enterprise.id
     form = AddEnterpriseForm(
         request.POST or None,
         files=request.FILES or None,
-        instance=enterprise
+        instance=enterprise,
     )
     if not form.is_valid():
         return render(

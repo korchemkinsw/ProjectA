@@ -35,7 +35,7 @@
             {% endfor %}
           {% endif %}
 
-          <form method="post" action="{% url 'new_enterprise' %}">
+          <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {% for field in form %}
               <div class="form-group row my-2 p-1">
