@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from Project_A import settings
 
 from .models import Enterprise, Position, Staffer
-from .forms import AddEnterpriseForm
+from .forms import AddEnterpriseForm, AddPositionForm, AddStafferForm
 
 def enterprises(request):
     latest = Enterprise.objects.all()
@@ -33,7 +33,12 @@ def new_enterprise(request):
             'enterprises/new_enterprise.html',
             {
                 'form': form,
-                'exp_action': 'new_enterprise'
+                'exp_action': 'new',
+                'title_text': 'Новое предприятие',
+                'accept': 'Добавить',
+                'reject': 'Отменить',
+                'to_return': 'enterprises',
+                'param': '',
             }
         )
     new_enterprise = form.save(commit=False)
@@ -45,7 +50,6 @@ def edit_enterprise(request, abbreviatedname):
         Enterprise,
         abbreviatedname=abbreviatedname,
     )
-    #id = enterprise.id
     form = AddEnterpriseForm(
         request.POST or None,
         files=request.FILES or None,
@@ -57,12 +61,22 @@ def edit_enterprise(request, abbreviatedname):
             'enterprises/new_enterprise.html',
             {
                 'form': form,
-                'exp_action': 'edit_enterprise',
-                'enterprise': enterprise
+                'exp_action': 'edit',
+                'enterprise': enterprise,
+                'title_text': 'Редактировать предприятие',
+                'accept': 'Изменить',
+                'reject': 'Отменить',
+                'to_return': 'enterprises',
+                'param': abbreviatedname,
             }
         )
     form.save()
     return redirect('enterprise', abbreviatedname)
+
+def del_enterprise(request, abbreviatedname):
+    enterprise = get_object_or_404(Enterprise, abbreviatedname=abbreviatedname)
+    enterprise.delete()
+    return redirect('positions')
 
 def positions(request):
     latest = Position.objects.all()
@@ -73,6 +87,56 @@ def positions(request):
         }
     return render(request, "enterprises/positions.html", context)
 
+def new_position(request):
+    form = AddPositionForm(request.POST or None, files=request.FILES or None)
+    if not form.is_valid():
+        return render(
+            request,
+            'enterprises/new_enterprise.html',
+            {
+                'form': form,
+                'exp_action': 'new',
+                'title_text': 'Новая должность',
+                'accept': 'Добавить',
+                'reject': 'Отменить',
+                'to_return': 'positions',
+                'param': '',
+            }
+        )
+    new_enterprise = form.save(commit=False)
+    new_enterprise.save()
+    return redirect('positions')
+
+def edit_position(request, id):
+    position = get_object_or_404(Position, id=id)
+    form = AddPositionForm(
+        request.POST or None,
+        files=request.FILES or None,
+        instance=position,
+    )
+    if not form.is_valid():
+        return render(
+            request,
+            'enterprises/new_enterprise.html',
+            {
+                'form': form,
+                'exp_action': 'edit',
+                'enterprise': position,
+                'title_text': 'Редактировать должность',
+                'accept': 'Изменить',
+                'reject': 'Отменить',
+                'to_return': 'positions',
+                'param': '',
+            }
+        )
+    form.save()
+    return redirect('positions')
+
+def del_position(request, id):
+    position = get_object_or_404(Position, id=id)
+    position.delete()
+    return redirect('positions')
+
 def staffers(request):
     latest = Staffer.objects.all()
     context={
@@ -81,9 +145,53 @@ def staffers(request):
         'url': 'staffers',
         }
     return render(request, "enterprises/staffers.html", context)
-'''
-class NewEnterprise(CreateView):
-    form_class = AddEnterpriseForm
-    template_name = 'enterprises/new_enterprise.html'
-    success_url = reverse_lazy('enterprises:enterprises')
-'''
+
+def new_staffer(request):
+    form = AddStafferForm(request.POST or None, files=request.FILES or None)
+    if not form.is_valid():
+        return render(
+            request,
+            'enterprises/new_enterprise.html',
+            {
+                'form': form,
+                'exp_action': 'new',
+                'title_text': 'Новый сотрудник',
+                'accept': 'Добавить',
+                'reject': 'Отменить',
+                'to_return': 'staffers',
+                'param': '',
+            }
+        )
+    new_staffer = form.save(commit=False)
+    new_staffer.save()
+    return redirect('staffers')
+
+def edit_staffer(request, id):
+    staffer = get_object_or_404(Staffer, id=id)
+    form = AddStafferForm(
+        request.POST or None,
+        files=request.FILES or None,
+        instance=staffer,
+    )
+    if not form.is_valid():
+        return render(
+            request,
+            'enterprises/new_enterprise.html',
+            {
+                'form': form,
+                'exp_action': 'edit',
+                'enterprise': staffer,
+                'title_text': 'Редактировать сотрудника',
+                'accept': 'Изменить',
+                'reject': 'Отменить',
+                'to_return': 'staffers',
+                'param': '',
+            }
+        )
+    form.save()
+    return redirect('staffers')
+
+def del_staffer(request, id):
+    staffer = get_object_or_404(Position, id=id)
+    staffer.delete()
+    return redirect('staffers')

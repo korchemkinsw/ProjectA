@@ -1,21 +1,13 @@
 {% extends "base.html" %}
 {% block title %}
-  {% if exp_action == 'edit_enterprise' %}
-    Редактирование
-  {% else %}
-    Новое предприятие
-  {% endif %}
+  {{ title_text }}
 {% endblock %}
 {% block content %}
   <div class="row justify-content-center">
     <div class="col-md-11 p-5">
       <div class="card">
         <div class="card-header">
-          {% if exp_action == 'edit_enterprise' %}
-            Редактирование
-          {% else %}
-            Новое предприятие
-          {% endif %}
+          <h3>{{ title_text }}</h3>
         </div>
         <div class="card-body">
           {% load user_filters %}
@@ -56,13 +48,9 @@
               {% endfor %}
             <div class="col-md-6 offset-md-4">
               <button type="submit" class="btn btn-primary">
-                {% if exp_action == 'edit_enterprise' %}
-                  Изменить
-                {% else %}
-                  Добавить
-                {% endif %}
+                {{ accept }}
               </button>
-              <a class="btn btn-primary" href="{% url 'enterprises' %}" role="button">Отменить</a>
+              <a class="btn btn-primary" href="{% url to_return %}" role="button">{{ reject }}</a>
             </div>
           </form>
         </div> <!-- card body -->

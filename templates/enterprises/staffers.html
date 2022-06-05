@@ -9,11 +9,12 @@
         <h3>Сотрудники</h3>
       </div>
       <div class="card-body">
-        <table class="table table-bordered">
+        <table class="table table">
           <thead>
             <tr>
-              <th scope="col-4">Должность</th>
-              <th scope="col-8">Сотрудник</th>
+              <th scope="col-3">Должность</th>
+              <th scope="col-6">Сотрудник</th>
+              <th scope="col-3">Действие</th>
             </tr>
           </thead>
           <tbody>
@@ -23,6 +24,10 @@
                 <td>
                   {{ staffer.last_name }}
                   {{ staffer.first_name|first }}.{{ staffer.fathers_name|first }}.
+                </td>
+                <td>
+                  <a class="btn btn-outline-info btn-sm" href="{% url 'edit_staffer' staffer.id %}" role="button">Редактировать</a>
+                  <a class="btn btn-outline-danger btn-sm" href="{% url 'del_staffer' staffer.id %}" role="button">Удалить</a>
                 </td>
               </tr>
             {% endfor %}
