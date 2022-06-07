@@ -1,6 +1,7 @@
 import datetime
 
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from django.db import models
 from enterprises.models import Enterprise
 from users.models import CustomUser
@@ -53,15 +54,14 @@ class Order(models.Model):
     lastuser = models.ForeignKey(
         CustomUser,
         verbose_name="Последний пользователь",
-        help_text="Последний пользователь",
         null=True,
         on_delete=models.SET_NULL,
         related_name="lastuser",
+        blank=True
     )
     firm = models.ForeignKey(
         Enterprise,
         verbose_name="Предприятие",
-        help_text="Предприятие",
         on_delete=models.CASCADE,
         related_name="firm",
     )
@@ -78,7 +78,6 @@ class Order(models.Model):
     perday = models.DateField(
         "Выполнить в",
         default=datetime.date.today()
-        #auto_now_add=True
     )
     contractor = models.ManyToManyField(
         User,
@@ -98,6 +97,9 @@ class Order(models.Model):
         verbose_name = "Приказ"
         verbose_name_plural = 'Приказы'
 
+    def get_absolute_url(self):
+        return reverse('update_order', kwargs={'pk': self.pk})
+
     def __str__(self):
         return f'{self.status} {self.action} {self.firm}'
 
@@ -111,10 +113,14 @@ class ContractorsOrder(models.Model):
     )
     contractor = models.ForeignKey(
         CustomUser,
-        verbose_name='Исполнители',
+        verbose_name='Исполнитель',
         on_delete=models.CASCADE,
         related_name="contractors",
     )
+
+    class Meta:
+        verbose_name = 'Исполнитель'
+        verbose_name_plural = 'Исполнители'
 
 class FilesOrder(models.Model):
     order=models.ForeignKey(
@@ -129,5 +135,9 @@ class FilesOrder(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Файлы приказа',
         related_name="files",
+        blank=True
     )
 
+    class Meta:
+        verbose_name = 'Файл приказа'
+        verbose_name_plural = 'Файлы приказа'

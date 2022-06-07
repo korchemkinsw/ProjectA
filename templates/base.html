@@ -16,12 +16,12 @@
   </head>
   <body>
     {% include "includes/nav.html" %}
-    <div class="container">
-      <div class="row justify-content-center ">
-        <div class="col-1">
+    
+      <div class="row justify-auto-content-center ">
+        <div class="col-auto">
           {% include "includes/navsidebar.html" %}
         </div>
-        <div class="col-10">
+        <div class="container">
           <main>
             {% block content %}
             <!-- Содержимое страницы -->
@@ -29,7 +29,7 @@
           </main>
         </div>
       </div>
-    </div>
+    
     {% include "includes/footer.html" %}
   </body>
 </html>

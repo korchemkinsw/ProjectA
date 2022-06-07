@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}{% endblock %}
+{% block content %}
+    <h2></h2>
+    <hr>
+    <div>
+        <form action="" method="post">{% csrf_token %}
+            <p>
+                Приказ "{{ object }} "
+                <input type="submit" class="btn btn-danger" value="Удалить?"/>
+                <a class="btn btn-primary" href="{% url 'orders' %}" role="button">Отменить</a>
+            </p>
+        </form>
+    </div>
+{% endblock %}
