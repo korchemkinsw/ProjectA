@@ -92,6 +92,7 @@ class Order(models.Model):
         verbose_name='Файлы приказа',
         blank=True
     )
+    #file = models.FileField(verbose_name='Файл приказа', upload_to='orders/%Y-%m-%d/')
 
     class Meta:
         verbose_name = "Приказ"
@@ -101,7 +102,7 @@ class Order(models.Model):
         return reverse('update_order', kwargs={'pk': self.pk})
 
     def __str__(self):
-        return f'{self.status} {self.action} {self.firm}'
+        return f'{self.generated.date()} {self.action} {self.firm}'
 
 class ContractorsOrder(models.Model):
     order = models.ForeignKey(

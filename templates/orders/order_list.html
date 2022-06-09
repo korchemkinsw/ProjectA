@@ -59,9 +59,11 @@
                   {% endfor %}
                 </td>
                 <td>
-                  <a href="{% url 'update_order' order.pk %}">Изменить</a>
-                  <a href="{% url 'delete_order' order.pk %}">Удалить</a></td>
-                <tr>
+                  <a href="{% url 'order' order.pk %}">Просмотр</br></a>
+                  <a href="{% url 'update_order' order.pk %}">Изменить</br></a>
+                  <a href="{% url 'delete_order' order.pk %}">Удалить</a>
+                </td>
+              <tr>
             {% endfor %}
           </tbody>
         </table>

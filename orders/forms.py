@@ -3,11 +3,12 @@ from django.forms.models import BaseInlineFormSet
 from django.forms.models import inlineformset_factory, formset_factory
 from django.contrib.auth import get_user_model
 
-from .models import ContractorsOrder, FileOrder, Order
+from .models import ContractorsOrder, FilesOrder, FileOrder, Order
 
 User = get_user_model()
 
 class FileOrderForm(forms.ModelForm):
+    file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True})) 
     class Meta:
         model = FileOrder
         exclude = ()
@@ -19,7 +20,7 @@ class ContractorOrderForm(forms.ModelForm):
         exclude = ()
         fields = ('contractor',)
 
-class OrderForm(forms.ModelForm):
+class OrderForm(forms.ModelForm): 
     class Meta:
         model = Order
         exclude = ()
@@ -28,27 +29,16 @@ class OrderForm(forms.ModelForm):
             'firm',
             'action',
             'perday',
-            #'contractor',
-            #'order',
+            'order',
         )
         labels = {
             'status': 'Статус приказа',
             'firm': 'Организация',
             'action': 'Действие',
             'perday': 'Выполнить до',
-            #'contractor': 'Исполнители',
-            #'order': 'Файлы',
+            'order': 'Файлы',
         }
-    #contractor=forms.ModelMultipleChoiceField(ContractorOrder.objects.all())
-    #order=forms.ModelMultipleChoiceField(FileOrder.objects.all())
 
 ContractorOrderFormset = inlineformset_factory(Order, ContractorsOrder, form=ContractorOrderForm, extra=0)
-ContractorOrderFormset = inlineformset_factory(Order, ContractorsOrder, form=FileOrderForm, fields='__all__',min_num = 1,  extra=0)
+FileOrderFormset = inlineformset_factory(Order, FilesOrder, form=FileOrderForm, extra=0)
 
-
-'''
-class BaseContractorFormset(BaseInlineFormSet):
-    pass
-
-ContractorFormset = inlineformset_factory(Order, ContractorOrder, formset=BaseContractorFormset, extra=1)
-'''

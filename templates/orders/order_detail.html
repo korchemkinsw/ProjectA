@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}{{ order }}{% endblock %}
+{% load static %}
+{% block content %}
+<div style="text-align: center; font-size: 14px" class="row justify-content-center">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h2>{{ order }}</h2>
+      </div>
+      <div class="card-body">
+        <table style="text-align: left" class="table table">
+          <thead>
+            <tr>
+              <th scope="col">Статус</th>
+              <th scope="col">Автор</th>
+              <th scope="col">Создан/Изменен</th>
+              <th scope="col">Действие</th>
+              <th scope="col">Выполнить до:</th>
+              <th scope="col">Предприятие</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ order.status }}</td>
+              <td>{{ order.lastuser }}</td>
+              <td>{{ order.generated }}</td>
+              <td>{{ order.action }}</td>
+              <td>{{ order.perday }}</td>
+              <td>{{ order.firm }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <table style="text-align: left" class="table table">
+          <thead>
+            <tr>
+              <th scope="col">Исполнители</th>
+            </tr>
+          </thead>
+          <tbody>
+            <td>
+              {% for contractor in order.contractor.all %}
+                {{ contractor.last_name }}
+                {{ contractor.first_name|first }}.{{ contractor.fathers_name|first }}.&nbsp;&nbsp;
+              {% endfor %}
+            </td>
+           </tbody>
+        </table>
+        <table style="text-align: left" class="table table">
+            <thead>
+              <tr>
+                <th scope="col">Файлы</th>
+              </tr>
+            </thead>
+            <tbody>
+              <td>
+                {% for file in order.order.all %}
+                  <li>
+                    <a href="{{ file.file.url }}">{{ file.file }}</a>
+                  </li>
+                {% endfor %}
+                <a href="{% url 'doc' order.id  %}" role="button">Добавить файл</a>
+              </td>
+             </tbody>
+          </table>
+        <br>
+        <a class="btn btn-primary" href="{% url 'update_order' order.id  %}" role="button">Редактировать</a>
+        <a class="btn btn-primary" href="{% url 'orders' %}" role="button">Назад</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
