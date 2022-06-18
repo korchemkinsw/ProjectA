@@ -25,20 +25,22 @@ class OrderForm(forms.ModelForm):
         model = Order
         exclude = ()
         fields = (
-            'status',
+            'number',
             'firm',
             'action',
+            'status',
             'perday',
-            'order',
+            'comment',
         )
         labels = {
-            'status': 'Статус приказа',
+            'number': 'Номер приказа',
             'firm': 'Организация',
             'action': 'Действие',
+            'status': 'Статус приказа',
             'perday': 'Выполнить до',
-            'order': 'Файлы',
+            'comment': 'Комментарий',
         }
 
-ContractorOrderFormset = inlineformset_factory(Order, ContractorsOrder, form=ContractorOrderForm, extra=0)
-FileOrderFormset = inlineformset_factory(Order, FilesOrder, form=FileOrderForm, extra=0)
+ContractorOrderFormset = inlineformset_factory(Order, ContractorsOrder, form=ContractorOrderForm, extra=1)
+#FileOrderFormset = inlineformset_factory(Order, FilesOrder, form=FileOrderForm, extra=0)
 

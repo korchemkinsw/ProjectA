@@ -26,13 +26,12 @@ class ContractorOrderAdmin(admin.ModelAdmin):
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
-        "pk",
-        "status",
-        "lastuser",
-        "firm",
-        "action",
-        "generated",
-        "perday",
+        'pk',
+        'number',
+        'firm',
+        'action',
+        'status',
+        'perday',
     )
 
     search_fields = ("company",)

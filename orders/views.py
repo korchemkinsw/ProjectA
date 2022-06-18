@@ -17,20 +17,23 @@ class ListOrders(ListView):
 class CreateOrder(CreateView):
     model = Order
     fields = [
-        'status',
+        'number',
         'firm',
         'action',
+        'status',
         'perday',
+        'comment',
     ]
 
 class CreateContractorOrder(CreateView):
     model = Order
     fields = [
-        'status',
+        'number',
         'firm',
         'action',
+        'status',
         'perday',
-        'order'
+        'comment',
     ]
     success_url = reverse_lazy('orders')
 
@@ -57,19 +60,23 @@ class UpdateOrder(UpdateView):
     model = Order
     success_url = '/'
     fields = [
-        'status',
+        'number',
         'firm',
         'action',
+        'status',
         'perday',
+        'comment',
     ]
 
 class UpdateContractorOrder(UpdateView):
     model = Order
     fields = [
-        'status',
+        'number',
         'firm',
         'action',
+        'status',
         'perday',
+        'comment',
     ]
     success_url = reverse_lazy('order', 'pk')
         

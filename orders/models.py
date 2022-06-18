@@ -45,11 +45,54 @@ class Order(models.Model):
         (SUSPEND, 'Приостановить'),
     )
 
+    author = models.ForeignKey(
+        CustomUser,
+        verbose_name="Автор",
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="author",
+    )
+    number = models.CharField(
+        max_length=10,
+        verbose_name='Номер приказа',
+        null=True,
+    )
+    generated = models.DateTimeField(
+        "Дата создания",
+        auto_now_add=True
+    )
+    firm = models.ForeignKey(
+        Enterprise,
+        verbose_name="Предприятие",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="firm",
+    )
+    action = models.CharField(
+        max_length=15,
+        choices=ACTION_CHOICES,
+        verbose_name='Что сделать?',
+    )
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,
         default=NEW,
         verbose_name='Статус приказа',
+    )
+    perday = models.DateField(
+        "Выполнить в",
+        default=datetime.date.today()
+    )
+    comment = models.CharField(
+        max_length=300,
+        verbose_name='Комментарий',
+        blank=True
+    )
+    changed = models.DateTimeField(
+        "Дата изменения",
+        #auto_now_add=True,
+        default=datetime.datetime.today()
     )
     lastuser = models.ForeignKey(
         CustomUser,
@@ -59,38 +102,20 @@ class Order(models.Model):
         related_name="lastuser",
         blank=True
     )
-    firm = models.ForeignKey(
-        Enterprise,
-        verbose_name="Предприятие",
-        on_delete=models.CASCADE,
-        related_name="firm",
-    )
-    action = models.CharField(
-        max_length=15,
-        choices=ACTION_CHOICES,
-        default=NEW,
-        verbose_name='Что сделать?',
-    )
-    generated = models.DateTimeField(
-        "Дата создания",
-        auto_now_add=True
-    )
-    perday = models.DateField(
-        "Выполнить в",
-        default=datetime.date.today()
-    )
     contractor = models.ManyToManyField(
         User,
         through='ContractorsOrder',
         related_name='contractors_order',
-        blank=True
+        blank=True,
+        #null=True
     )
     order = models.ManyToManyField(
         FileOrder,
         through='FilesOrder',
         related_name='files_order',
         verbose_name='Файлы приказа',
-        blank=True
+        blank=True,
+        #null=True
     )
     #file = models.FileField(verbose_name='Файл приказа', upload_to='orders/%Y-%m-%d/')
 
@@ -98,10 +123,11 @@ class Order(models.Model):
         verbose_name = "Приказ"
         verbose_name_plural = 'Приказы'
 
-    def get_absolute_url(self):
-        return reverse('update_order', kwargs={'pk': self.pk})
+   # def get_absolute_url(self):
+   #     return reverse('update_order', kwargs={'pk': self.pk})
 
     def __str__(self):
+
         return f'{self.generated.date()} {self.action} {self.firm}'
 
 class ContractorsOrder(models.Model):
@@ -117,6 +143,8 @@ class ContractorsOrder(models.Model):
         verbose_name='Исполнитель',
         on_delete=models.CASCADE,
         related_name="contractors",
+        null=True,
+        blank=True,
     )
 
     class Meta:
@@ -136,7 +164,8 @@ class FilesOrder(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Файлы приказа',
         related_name="files",
-        blank=True
+        blank=True,
+        null=True
     )
 
     class Meta:

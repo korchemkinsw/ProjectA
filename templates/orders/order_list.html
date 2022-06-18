@@ -10,14 +10,14 @@
         <table class="table table-sm">
           <thead>
             <tr>
-              <th scope="col">Статус</th>
               <th scope="col">Автор</th>
-              <th scope="col">Создан/Изменен</th>
-              <th scope="col">Действие</th>
-              <th scope="col">Выполнить до:</th>
+              <th scope="col">Номер</th>
+              <th scope="col">Создан</th>
               <th scope="col">Предприятие</th>
-              <th scope="col">Исполнитель</th>
-              <th scope="col">Файлы</th>
+              <th scope="col">Что сделать</th>
+              <th scope="col">Статус</th>
+              <th scope="col">Выполнить до:</th>
+              <th scope="col">Назначен</th>
               <th scope="col">Действие</th>
             </tr>
           </thead>
@@ -25,23 +25,26 @@
             {% for order in orders %}
               <tr>
                 <td> 
-                  {{ order.status }}
+                  {{ order.author.last_name }}
+                  {{ order.author.first_name|first }}.{{ order.author.fathers_name|first }}.
                 </td>
                 <td> 
-                  {{ order.lastuser.last_name }}
-                  {{ order.lastuser.first_name|first }}.{{ order.lastuser.fathers_name|first }}.
+                  {{ order.number }}
                 </td>
                 <td> 
                   {{ order.generated }}
                 </td>
                 <td> 
+                  {{ order.firm }}
+                </td>
+                <td> 
                   {{ order.action }}
                 </td>
                 <td> 
-                  {{ order.perday }}
+                  {{ order.status }}
                 </td>
                 <td> 
-                  {{ order.firm }}
+                  {{ order.perday }}
                 </td>
                 <td>
                   {% for contractor in order.contractor.all %}
