@@ -30,12 +30,12 @@ class Order(models.Model):
     SUSPEND = 'Приостановить'
 
     STATUS_CHOICES = (
-        (NEW, 'Новый'),
+        #(NEW, 'Новый'),
         (INWORK, 'В работе'),
         (PENDING, 'Ожидающий'),
         (COMPLETED, 'Завершен'),
         (REDJECTED, 'Отклонен'),
-        (EXPIRED, 'Просрочен!')
+        #(EXPIRED, 'Просрочен!')
     )
 
     ACTION_CHOICES = (
@@ -65,7 +65,6 @@ class Order(models.Model):
         Enterprise,
         verbose_name="Предприятие",
         null=True,
-        blank=True,
         on_delete=models.CASCADE,
         related_name="firm",
     )
@@ -77,7 +76,7 @@ class Order(models.Model):
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,
-        default=NEW,
+        default='Новый',
         verbose_name='Статус приказа',
     )
     perday = models.DateField(
@@ -91,8 +90,7 @@ class Order(models.Model):
     )
     changed = models.DateTimeField(
         "Дата изменения",
-        #auto_now_add=True,
-        default=datetime.datetime.today()
+        auto_now_add=True,
     )
     lastuser = models.ForeignKey(
         CustomUser,
@@ -107,7 +105,6 @@ class Order(models.Model):
         through='ContractorsOrder',
         related_name='contractors_order',
         blank=True,
-        #null=True
     )
     order = models.ManyToManyField(
         FileOrder,
@@ -115,9 +112,7 @@ class Order(models.Model):
         related_name='files_order',
         verbose_name='Файлы приказа',
         blank=True,
-        #null=True
     )
-    #file = models.FileField(verbose_name='Файл приказа', upload_to='orders/%Y-%m-%d/')
 
     class Meta:
         verbose_name = "Приказ"
@@ -167,6 +162,8 @@ class FilesOrder(models.Model):
         blank=True,
         null=True
     )
+
+    #file = models.FileField(verbose_name='Файл приказа', upload_to='orders/%Y-%m-%d/')
 
     class Meta:
         verbose_name = 'Файл приказа'

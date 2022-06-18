@@ -50,5 +50,5 @@ class OrderForm(forms.ModelForm):
         }
 
 ContractorOrderFormset = inlineformset_factory(Order, ContractorsOrder, form=ContractorOrderForm, extra=1)
-FileOrderFormset = inlineformset_factory(Order, FilesOrder, form=FileOrderForm, extra=1)
+#FileOrderFormset = inlineformset_factory(Order, FilesOrder, form=FileOrderForm, extra=1)
 

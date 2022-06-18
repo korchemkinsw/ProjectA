@@ -22,6 +22,7 @@ class CustomUser(AbstractUser):
         (SECRETARY, 'Секретарь'),
     )
     email = models.EmailField(_('email address'), unique=True)
+    
     last_name = models.CharField(
         verbose_name='фамилия',
         max_length=150,

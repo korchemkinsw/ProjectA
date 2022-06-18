@@ -43,6 +43,16 @@
            </tbody>
         </table>
         <table style="text-align: left" class="table table">
+          <thead>
+            <tr>
+              <th scope="col">Комментарий:</th>
+            </tr>
+          </thead>
+          <tbody>
+            <td>{{ order.comment }}</td>
+          </tbody>
+        </table>
+        <table style="text-align: left" class="table table">
             <thead>
               <tr>
                 <th scope="col">Файлы</th>
@@ -55,7 +65,8 @@
                     <a href="{{ file.file.url }}">{{ file.file }}</a>
                   </li>
                 {% endfor %}
-                <a href="{% url 'doc' order.id  %}" role="button">Добавить файл</a>
+                <br>
+                <a class="btn btn-outline-info" href="{% url 'doc' order.id  %}" role="button">Добавить файл</a>
               </td>
              </tbody>
           </table>

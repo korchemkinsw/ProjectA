@@ -10,12 +10,11 @@
         <table class="table table-sm">
           <thead>
             <tr>
-              <th scope="col">Автор</th>
+              <th scope="col">Статус</th>
               <th scope="col">Номер</th>
               <th scope="col">Создан</th>
               <th scope="col">Предприятие</th>
               <th scope="col">Что сделать</th>
-              <th scope="col">Статус</th>
               <th scope="col">Выполнить до:</th>
               <th scope="col">Назначен</th>
               <th scope="col">Действие</th>
@@ -24,9 +23,10 @@
           <tbody>
             {% for order in orders %}
               <tr>
-                <td> 
-                  {{ order.author.last_name }}
-                  {{ order.author.first_name|first }}.{{ order.author.fathers_name|first }}.
+                <td>
+                  {{ order.status }}
+                  {{ order.lastuser.last_name }}
+                  {{ order.lastuser.first_name|first }}.{{ order.lastuser.fathers_name|first }}.
                 </td>
                 <td> 
                   {{ order.number }}
@@ -41,9 +41,6 @@
                   {{ order.action }}
                 </td>
                 <td> 
-                  {{ order.status }}
-                </td>
-                <td> 
                   {{ order.perday }}
                 </td>
                 <td>
@@ -55,8 +52,7 @@
                   {% endfor %}
                 </td>
                 <td>
-                  <a href="{% url 'order' order.pk %}">Просмотр</br></a>
-                  <a href="{% url 'update_order' order.pk %}">Изменить</br></a>
+                  <a class="btn btn-outline-info btn-sm" href="{% url 'order' order.pk %}" role="button">Просмотр</br></a>
                 </td>
               <tr>
             {% endfor %}

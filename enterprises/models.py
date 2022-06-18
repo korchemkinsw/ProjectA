@@ -8,7 +8,6 @@ class Position(models.Model):
         verbose_name='Наименование должности',
         help_text="Наименование должности",
         unique=True,
-        default='None'
     )
 
     class Meta:

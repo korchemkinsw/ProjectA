@@ -14,7 +14,7 @@ class CustomUserCreationForm(UserCreationForm):
             'last_name': 'Фамилия',
             'first_name': 'Имя',
             'fathers_name': 'Отчество',
-            'email': 'Адрес электронной почты',
+            'email': 'Электронная почта',
             'role': 'Права доступа',
         }
 

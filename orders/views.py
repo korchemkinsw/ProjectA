@@ -1,21 +1,18 @@
 import datetime
-from msilib.schema import Class
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.shortcuts import redirect, render, HttpResponseRedirect
-from django.forms import modelformset_factory
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
-from Project_A import settings
 
-from .forms import OrderForm, ContractorOrderForm, ContractorOrderFormset
-from .models import ContractorsOrder, FilesOrder, Order
+from .forms import OrderForm, ContractorOrderFormset
+from .models import FilesOrder, Order
 
 
 class ListOrders(ListView):
     model = Order
     context_object_name = 'orders'
 
-class CreateOrder(CreateView):
+class CreateOrder(LoginRequiredMixin, CreateView):
     model = Order
     fields = [
         'number',
@@ -26,14 +23,13 @@ class CreateOrder(CreateView):
         'comment',
     ]
 
-class CreateContractorOrder(CreateView):
+class CreateContractorOrder(LoginRequiredMixin, CreateView):
     model = Order
     form = OrderForm
     fields = [
         'number',
         'firm',
         'action',
-        'status',
         'perday',
         'comment',
     ]
@@ -55,16 +51,16 @@ class CreateContractorOrder(CreateView):
             self.object = form.save(commit=False)
             self.object.author = self.request.user
             self.object.created = datetime.datetime.today()
+            self.object.lastuser = self.request.user
+            self.object.changed = datetime.datetime.today()
             self.object = form.save()
-            #order=self.object
-
 
             if contractors.is_valid():
                 contractors.instance = self.object
                 contractors.save()
         return super(CreateContractorOrder, self).form_valid(form)
 
-class UpdateOrder(UpdateView):
+class UpdateOrder(LoginRequiredMixin, UpdateView):
     model = Order
     success_url = '/'
     fields = [
@@ -77,7 +73,7 @@ class UpdateOrder(UpdateView):
     ]
     success_url = reverse_lazy('order', 'pk')
 
-class UpdateContractorOrder(UpdateView):
+class UpdateContractorOrder(LoginRequiredMixin, UpdateView):
     model = Order
     fields = [
         'number',
@@ -105,7 +101,6 @@ class UpdateContractorOrder(UpdateView):
         context = self.get_context_data()
         contractors = context['contractors']
         with transaction.atomic():
-            #self.object = form.save()
             self.object = form.save(commit=False)
             self.object.lastuser = self.request.user
             self.object.changed = datetime.datetime.today()
@@ -116,7 +111,7 @@ class UpdateContractorOrder(UpdateView):
                 contractors.save()
         return super(UpdateContractorOrder, self).form_valid(form)
 
-class DeleteOrder(DeleteView):
+class DeleteOrder(LoginRequiredMixin, DeleteView):
     model = Order
     success_url = reverse_lazy('orders')
 
