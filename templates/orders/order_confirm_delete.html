@@ -9,7 +9,7 @@
             <p>
                 Приказ "{{ object }} "
                 <input type="submit" class="btn btn-danger" value="Удалить?"/>
-                <a class="btn btn-primary" href="{% url 'orders' %}" role="button">Отменить</a>
+                <a class="btn btn-primary" href="{% url 'order' order.id %}" role="button">Отменить</a>
             </p>
         </form>
     </div>

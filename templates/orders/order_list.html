@@ -55,16 +55,8 @@
                   {% endfor %}
                 </td>
                 <td>
-                  {% for file in order.order.all %}
-                    <p>
-                      <a href="{{ file.file.url }}">{{ file.file }}</a>
-                    </p>
-                  {% endfor %}
-                </td>
-                <td>
                   <a href="{% url 'order' order.pk %}">Просмотр</br></a>
                   <a href="{% url 'update_order' order.pk %}">Изменить</br></a>
-                  <a href="{% url 'delete_order' order.pk %}">Удалить</a>
                 </td>
               <tr>
             {% endfor %}

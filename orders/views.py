@@ -1,3 +1,4 @@
+import datetime
 from msilib.schema import Class
 from django.db import transaction
 from django.shortcuts import redirect, render, HttpResponseRedirect
@@ -27,6 +28,7 @@ class CreateOrder(CreateView):
 
 class CreateContractorOrder(CreateView):
     model = Order
+    form = OrderForm
     fields = [
         'number',
         'firm',
@@ -49,7 +51,13 @@ class CreateContractorOrder(CreateView):
         context = self.get_context_data()
         contractors = context['contractors']
         with transaction.atomic():
+            
+            self.object = form.save(commit=False)
+            self.object.author = self.request.user
+            self.object.created = datetime.datetime.today()
             self.object = form.save()
+            #order=self.object
+
 
             if contractors.is_valid():
                 contractors.instance = self.object
@@ -67,6 +75,7 @@ class UpdateOrder(UpdateView):
         'perday',
         'comment',
     ]
+    success_url = reverse_lazy('order', 'pk')
 
 class UpdateContractorOrder(UpdateView):
     model = Order
@@ -96,6 +105,10 @@ class UpdateContractorOrder(UpdateView):
         context = self.get_context_data()
         contractors = context['contractors']
         with transaction.atomic():
+            #self.object = form.save()
+            self.object = form.save(commit=False)
+            self.object.lastuser = self.request.user
+            self.object.changed = datetime.datetime.today()
             self.object = form.save()
 
             if contractors.is_valid():

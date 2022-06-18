@@ -20,7 +20,15 @@ class ContractorOrderForm(forms.ModelForm):
         exclude = ()
         fields = ('contractor',)
 
-class OrderForm(forms.ModelForm): 
+class OrderForm(forms.ModelForm):
+    perday = forms.DateField(
+        input_formats=['%d/%m/%Y'],
+        widget=forms.DateInput(attrs={
+            'class': 'form-control datetimepicker-input',
+            'data-target': '#datetimepicker1'
+        })
+    )
+    comment = forms.CharField(widget=forms.Textarea)
     class Meta:
         model = Order
         exclude = ()
@@ -42,5 +50,5 @@ class OrderForm(forms.ModelForm):
         }
 
 ContractorOrderFormset = inlineformset_factory(Order, ContractorsOrder, form=ContractorOrderForm, extra=1)
-#FileOrderFormset = inlineformset_factory(Order, FilesOrder, form=FileOrderForm, extra=0)
+FileOrderFormset = inlineformset_factory(Order, FilesOrder, form=FileOrderForm, extra=1)
 
