@@ -1,11 +1,13 @@
 import datetime
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.urls import reverse_lazy, reverse
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  UpdateView)
 
-from .forms import OrderForm, ContractorOrderFormset
-from .models import FilesOrder, Order
+from .forms import ContractorOrderFormset, OrderForm
+from .models import FileOrder, Order
 
 
 class ListOrders(ListView):
@@ -119,5 +121,39 @@ class DetailOrder(DetailView):
     model = Order
 
 class CreateDocument(CreateView):
-    model = FilesOrder
+    model = FileOrder
     fields = ['file']
+
+    def get_success_url(self):
+       pk = self.kwargs["pk"]
+       return reverse("order", kwargs={"pk": pk})
+'''
+class UpdateFileOrder(LoginRequiredMixin, UpdateView):
+    model = Order
+    template_name = 'orders/filesorder_form.html'
+    fields = []
+        
+    def get_success_url(self):
+       pk = self.kwargs["pk"]
+       return reverse("order", kwargs={"pk": pk})
+
+    def get_context_data(self, **kwargs):
+        data = super(UpdateFileOrder, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data['files'] = FileOrderFormset(self.request.POST, instance=self.object)
+        else:
+            data['files'] = FileOrderFormset(instance=self.object)
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        files = context['files']
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object = form.save()
+
+            if files.is_valid():
+                files.instance = self.object
+                files.save()
+        return super(UpdateFileOrder, self).form_valid(form)
+'''

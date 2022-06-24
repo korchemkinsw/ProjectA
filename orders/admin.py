@@ -2,14 +2,14 @@ from dataclasses import field
 
 from django.contrib import admin
 
-from .models import ContractorsOrder, FileOrder, FilesOrder, Order
+from .models import ContractorsOrder, FileOrder, Order
 
 
 class ContractorsOrderInline(admin.TabularInline):
     model = ContractorsOrder
     min_num = 1
     extra = 0
-
+'''
 class FilesOrderInline(admin.TabularInline):
     model = FilesOrder
     min_num = 1
@@ -17,9 +17,9 @@ class FilesOrderInline(admin.TabularInline):
 
 class FilesOrderAdmin(admin.ModelAdmin):
     field = ['order', 'file']
-
+'''
 class FileOrderAdmin(admin.ModelAdmin):
-    field = ['id', 'file']
+    field = ['order', 'file']
 
 class ContractorOrderAdmin(admin.ModelAdmin):
     field = ['order', 'contractor']
@@ -35,10 +35,10 @@ class OrderAdmin(admin.ModelAdmin):
     )
 
     search_fields = ("company",)
-    inlines = (ContractorsOrderInline, FilesOrderInline,)
+    inlines = [ContractorsOrderInline]
     empty_value_display = "-пусто-"
 
 admin.site.register(Order, OrderAdmin,)
-admin.site.register(FilesOrder, FilesOrderAdmin)
+#admin.site.register(FilesOrder, FilesOrderAdmin)
 admin.site.register(FileOrder, FileOrderAdmin)
 admin.site.register(ContractorsOrder, ContractorOrderAdmin)

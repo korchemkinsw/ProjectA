@@ -1,21 +1,21 @@
 import datetime
 
 from django.contrib.auth import get_user_model
-from django.urls import reverse
 from django.db import models
+from django.urls import reverse
 from enterprises.models import Enterprise
 from users.models import CustomUser
 
 User = get_user_model()
-
+'''
 class FileOrder(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True,)
     file = models.FileField(verbose_name='Файл приказа', upload_to='orders/%Y-%m-%d/')
     
     class Meta:
         verbose_name='Файл приказа'
         verbose_name_plural = 'Файл приказа'
-
+'''
 class Order(models.Model):
     NEW = 'новый'
     INWORK = 'в работе'
@@ -106,6 +106,7 @@ class Order(models.Model):
         related_name='contractors_order',
         blank=True,
     )
+    '''
     order = models.ManyToManyField(
         FileOrder,
         through='FilesOrder',
@@ -113,6 +114,7 @@ class Order(models.Model):
         verbose_name='Файлы приказа',
         blank=True,
     )
+    '''
 
     class Meta:
         verbose_name = "Приказ"
@@ -145,14 +147,14 @@ class ContractorsOrder(models.Model):
     class Meta:
         verbose_name = 'Исполнитель'
         verbose_name_plural = 'Исполнители'
-
+'''
 class FilesOrder(models.Model):
     order=models.ForeignKey(
         Order,
         verbose_name='Приказ',
         null=True,
         on_delete=models.SET_NULL,
-        related_name="files",
+        #related_name="files",
     )
     file = models.ForeignKey(
         FileOrder,
@@ -163,8 +165,21 @@ class FilesOrder(models.Model):
         null=True
     )
 
-    #file = models.FileField(verbose_name='Файл приказа', upload_to='orders/%Y-%m-%d/')
-
     class Meta:
         verbose_name = 'Файл приказа'
         verbose_name_plural = 'Файлы приказа'
+'''
+class FileOrder(models.Model):
+    order=models.ForeignKey(
+        Order,
+        verbose_name='Приказ',
+        null=True,
+        on_delete=models.SET_NULL,
+        #related_name="files",
+    )
+    file = models.FileField(verbose_name='Файл приказа', upload_to='orders/%Y-%m-%d/')
+    
+    class Meta:
+        verbose_name='Файл приказа'
+        verbose_name_plural = 'Файл приказа'
+

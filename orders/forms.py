@@ -1,14 +1,14 @@
 from django import forms
-from django.forms.models import BaseInlineFormSet
-from django.forms.models import inlineformset_factory, formset_factory
 from django.contrib.auth import get_user_model
+from django.forms.models import (BaseInlineFormSet, formset_factory,
+                                 inlineformset_factory)
 
-from .models import ContractorsOrder, FilesOrder, FileOrder, Order
+from .models import ContractorsOrder, FileOrder, Order
 
 User = get_user_model()
 
 class FileOrderForm(forms.ModelForm):
-    file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True})) 
+    #file = forms.FileField() #(widget=forms.ClearableFileInput(attrs={'multiple': True})) 
     class Meta:
         model = FileOrder
         exclude = ()
