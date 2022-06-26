@@ -9,15 +9,7 @@ class ContractorsOrderInline(admin.TabularInline):
     model = ContractorsOrder
     min_num = 1
     extra = 0
-'''
-class FilesOrderInline(admin.TabularInline):
-    model = FilesOrder
-    min_num = 1
-    extra = 0
 
-class FilesOrderAdmin(admin.ModelAdmin):
-    field = ['order', 'file']
-'''
 class FileOrderAdmin(admin.ModelAdmin):
     field = ['order', 'file']
 
@@ -39,6 +31,5 @@ class OrderAdmin(admin.ModelAdmin):
     empty_value_display = "-пусто-"
 
 admin.site.register(Order, OrderAdmin,)
-#admin.site.register(FilesOrder, FilesOrderAdmin)
 admin.site.register(FileOrder, FileOrderAdmin)
 admin.site.register(ContractorsOrder, ContractorOrderAdmin)

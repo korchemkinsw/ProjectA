@@ -6,7 +6,7 @@
   <div class="col-12">
     <div class="card">
       <div class="card-header">
-        <h4>Приказ №{{ order.number }} по предприятию: {{ order.firm }}: {{ order.action }}</h4>
+        <h3>Приказ №{{ order.number }} по предприятию: {{ order.firm }}: {{ order.action }}</h3>
       </div>
       <div class="card-body">
         <table style="text-align: left" class="table table">
@@ -55,18 +55,18 @@
         <table style="text-align: left" class="table table">
             <thead>
               <tr>
-                <th scope="col">Файлы</th>
+                <th scope="col">Файлы:</th>
               </tr>
             </thead>
             <tbody>
               <td>
-                {% for file in order.order.all %}
+                {% for file in order.files.all %}
                   <li>
                     <a href="{{ file.file.url }}">{{ file.file }}</a>
                   </li>
                 {% endfor %}
                 <br>
-                <a class="btn btn-outline-info" href="{% url 'doc' order.id  %}" role="button">Добавить файл</a>
+                <a class="btn btn-outline-info" href="{% url 'add_doc' order.id  %}" role="button">Добавить файл</a>
               </td>
              </tbody>
           </table>

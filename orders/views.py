@@ -1,5 +1,6 @@
 import datetime
 
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.urls import reverse, reverse_lazy
@@ -127,33 +128,10 @@ class CreateDocument(CreateView):
     def get_success_url(self):
        pk = self.kwargs["pk"]
        return reverse("order", kwargs={"pk": pk})
-'''
-class UpdateFileOrder(LoginRequiredMixin, UpdateView):
-    model = Order
-    template_name = 'orders/filesorder_form.html'
-    fields = []
-        
-    def get_success_url(self):
-       pk = self.kwargs["pk"]
-       return reverse("order", kwargs={"pk": pk})
-
-    def get_context_data(self, **kwargs):
-        data = super(UpdateFileOrder, self).get_context_data(**kwargs)
-        if self.request.POST:
-            data['files'] = FileOrderFormset(self.request.POST, instance=self.object)
-        else:
-            data['files'] = FileOrderFormset(instance=self.object)
-        return data
 
     def form_valid(self, form):
-        context = self.get_context_data()
-        files = context['files']
         with transaction.atomic():
             self.object = form.save(commit=False)
+            self.object.order = get_object_or_404(Order, id=self.kwargs['pk'])
             self.object = form.save()
-
-            if files.is_valid():
-                files.instance = self.object
-                files.save()
-        return super(UpdateFileOrder, self).form_valid(form)
-'''
+        return super(CreateDocument, self).form_valid(form)

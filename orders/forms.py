@@ -1,18 +1,16 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.forms.models import (BaseInlineFormSet, formset_factory,
-                                 inlineformset_factory)
+from django.forms.models import (BaseInlineFormSet, inlineformset_factory)
 
 from .models import ContractorsOrder, FileOrder, Order
 
 User = get_user_model()
 
 class FileOrderForm(forms.ModelForm):
-    #file = forms.FileField() #(widget=forms.ClearableFileInput(attrs={'multiple': True})) 
     class Meta:
         model = FileOrder
         exclude = ()
-        fields = ('file',)
+        fields = ('file', 'order',)
 
 class ContractorOrderForm(forms.ModelForm):
     class Meta:
@@ -50,5 +48,4 @@ class OrderForm(forms.ModelForm):
         }
 
 ContractorOrderFormset = inlineformset_factory(Order, ContractorsOrder, form=ContractorOrderForm, extra=1)
-#FileOrderFormset = inlineformset_factory(Order, FilesOrder, form=FileOrderForm, extra=1)
-
+FileOrderFormset = inlineformset_factory(Order, FileOrder, form=FileOrderForm, extra=1)
