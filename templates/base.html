@@ -13,6 +13,17 @@
     <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
     <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
     
+    {% block extrahead %}
+    
+      <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
+      <script type="text/javascript" src="{% static '/admin/js/core.js' %}"></script>
+      <link rel="stylesheet" type="text/css" href="{% static '/admin/css/widgets.css' %}">
+      <style>.calendar>table>caption{caption-side:unset}</style><!--caption fix for bootstrap4-->
+    
+      {{ form.media }}
+
+    {% endblock %}
+
   </head>
   <body>
     {% include "includes/nav.html" %}
@@ -33,5 +44,4 @@
     {% include "includes/footer.html" %}
   </body>
 </html>
-
 

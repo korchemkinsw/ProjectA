@@ -82,7 +82,7 @@ class Order(models.Model):
     )
     changed = models.DateTimeField(
         "Дата изменения",
-        auto_now_add=True,
+        auto_now_add=True
     )
     lastuser = models.ForeignKey(
         CustomUser,

@@ -1,13 +1,13 @@
 import datetime
 
-from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
-from .forms import ContractorOrderFormset, OrderForm
+from .forms import ContractorOrderFormset, OrderFormCreate, OrderFormUpdate
 from .models import FileOrder, Order
 
 
@@ -17,25 +17,11 @@ class ListOrders(ListView):
 
 class CreateOrder(LoginRequiredMixin, CreateView):
     model = Order
-    fields = [
-        'number',
-        'firm',
-        'action',
-        'status',
-        'perday',
-        'comment',
-    ]
+    form_class = OrderFormCreate
 
 class CreateContractorOrder(LoginRequiredMixin, CreateView):
     model = Order
-    form = OrderForm
-    fields = [
-        'number',
-        'firm',
-        'action',
-        'perday',
-        'comment',
-    ]
+    form_class = OrderFormCreate
     success_url = reverse_lazy('orders')
 
     def get_context_data(self, **kwargs):
@@ -54,6 +40,7 @@ class CreateContractorOrder(LoginRequiredMixin, CreateView):
             self.object = form.save(commit=False)
             self.object.author = self.request.user
             self.object.created = datetime.datetime.today()
+            self.object.status = 'Новый'
             self.object.lastuser = self.request.user
             self.object.changed = datetime.datetime.today()
             self.object = form.save()
@@ -65,27 +52,12 @@ class CreateContractorOrder(LoginRequiredMixin, CreateView):
 
 class UpdateOrder(LoginRequiredMixin, UpdateView):
     model = Order
-    success_url = '/'
-    fields = [
-        'number',
-        'firm',
-        'action',
-        'status',
-        'perday',
-        'comment',
-    ]
     success_url = reverse_lazy('order', 'pk')
+
 
 class UpdateContractorOrder(LoginRequiredMixin, UpdateView):
     model = Order
-    fields = [
-        'number',
-        'firm',
-        'action',
-        'status',
-        'perday',
-        'comment',
-    ]
+    form_class = OrderFormUpdate
     success_url = reverse_lazy('order', 'pk')
         
     def get_success_url(self):
