@@ -2,7 +2,7 @@ import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
@@ -107,3 +107,11 @@ class CreateDocument(CreateView):
             self.object.order = get_object_or_404(Order, id=self.kwargs['pk'])
             self.object = form.save()
         return super(CreateDocument, self).form_valid(form)
+
+class DeleteDocument(DeleteView):
+    model = FileOrder
+    fields = ['file']
+
+    def get_success_url(self):
+       file = get_object_or_404(FileOrder, id=self.kwargs['pk'])
+       return reverse('order', kwargs={"pk":file.order.id})

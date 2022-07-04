@@ -1,4 +1,5 @@
 from asyncio.windows_events import NULL
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -54,8 +55,5 @@ class CustomUser(AbstractUser):
 
     objects = CustomUserManager()
 
-   # def __str__(self):
-   #     return self.email
-
     def __str__(self):
-        return f'{self.last_name} {self.first_name} {self.fathers_name} {self.email}'
+        return f'{self.last_name} {self.first_name[:1]}.{self.fathers_name[:1]}. {self.email}'

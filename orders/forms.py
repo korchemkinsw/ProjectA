@@ -68,7 +68,7 @@ class OrderFormUpdate(forms.ModelForm):
             'action': 'Действие',
             'status': 'Статус приказа',
             'perday': 'Выполнить до',
-            'comment': 'Комментарий',
+            'comment': 'Пояснение',
         }
 
         widgets = {

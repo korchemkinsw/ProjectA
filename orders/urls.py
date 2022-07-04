@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 
 from . import views
 
@@ -9,4 +9,5 @@ urlpatterns = [
     path('delete_order/<int:pk>/', views.DeleteOrder.as_view(), name='delete_order'),
     path('<int:pk>',views.DetailOrder.as_view(), name='order'),
     path('add_doc/<int:pk>',views.CreateDocument.as_view(), name='add_doc'),
+    path('del_doc/<int:pk>',views.DeleteDocument.as_view(), name='del_doc'),
 ]

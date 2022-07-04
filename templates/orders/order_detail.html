@@ -42,34 +42,38 @@
             </td>
            </tbody>
         </table>
-        <table style="text-align: left" class="table table">
-          <thead>
-            <tr>
-              <th scope="col">Комментарий:</th>
-            </tr>
-          </thead>
-          <tbody>
-            <td>{{ order.comment }}</td>
-          </tbody>
-        </table>
-        <table style="text-align: left" class="table table">
+        {% if order.comment %}
+          <table style="text-align: left" class="table table">
             <thead>
               <tr>
-                <th scope="col">Файлы:</th>
+                <th scope="col">Пояснение:</th>
               </tr>
             </thead>
             <tbody>
-              <td>
-                {% for file in order.files.all %}
-                  <li>
-                    <a href="{{ file.file.url }}">{{ file.file }}</a>
-                  </li>
-                {% endfor %}
-                <br>
-                <a class="btn btn-outline-info" href="{% url 'add_doc' order.id  %}" role="button">Добавить файл</a>
-              </td>
-             </tbody>
+              <td>{{ order.comment }}</td>
+            </tbody>
           </table>
+        {% endif %}
+        <table style="text-align: left" class="table table">
+          <thead>
+            <tr>
+              <th scope="col">
+                Файлы:&nbsp;&nbsp;
+                <a class="badge rounded-pill bg-primary text-white" href="{% url 'add_doc' order.id  %}" role="button">Добавить</a>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <td>
+              {% for file in order.files.all %}
+                <li>
+                  <a href="{{ file.file.url }}">{{ file.file }}&nbsp;&nbsp;</a>
+                  <a class="badge rounded-pill bg-danger text-white" href="{% url 'del_doc' file.id %}" role="button">Удалить</a>
+                </li>
+              {% endfor %}
+            </td>
+          </tbody>
+        </table>
         <br>
         <a class="btn btn-primary" href="{% url 'orders' %}" role="button">Приказы</a>
         <a class="btn btn-primary" href="{% url 'update_order' order.id  %}" role="button">Редактировать</a>

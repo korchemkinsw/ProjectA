@@ -1,4 +1,5 @@
 import datetime
+import os
 
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -77,7 +78,7 @@ class Order(models.Model):
     )
     comment = models.CharField(
         max_length=300,
-        verbose_name='Комментарий',
+        verbose_name='Пояснение',
         blank=True
     )
     changed = models.DateTimeField(
@@ -102,9 +103,9 @@ class Order(models.Model):
     class Meta:
         verbose_name = "Приказ"
         verbose_name_plural = 'Приказы'
+        ordering = ('-generated',)
 
     def __str__(self):
-
         return f'{self.number} от {self.generated.date()} по {self.firm}'
 
 class ContractorsOrder(models.Model):
@@ -128,6 +129,12 @@ class ContractorsOrder(models.Model):
         verbose_name = 'Исполнитель'
         verbose_name_plural = 'Исполнители'
 
+    def __str__(self):
+        return (
+            f'Приказ №{self.order}; '
+            f'Исполнитель: {self.contractor} '
+        )
+
 class FileOrder(models.Model):
     order=models.ForeignKey(
         Order,
@@ -137,8 +144,55 @@ class FileOrder(models.Model):
         related_name='files'
     )
     file = models.FileField(verbose_name='Файл приказа', upload_to='orders/%Y-%m-%d/')
+
+    def delete(self, *args, **kwargs):
+        storage, path = self.file.storage, self.file.path
+        super(FileOrder,self).delete(*args,**kwargs)
+        storage.delete(path)
     
     class Meta:
         verbose_name='Файл приказа'
         verbose_name_plural = 'Файлы приказов'
 
+    def __str__(self):
+        return (
+            f'Приказ №{self.order}; '
+            f'Файл: {self.file} '
+        )
+
+class CommentOrder(models.Model):
+    created = models.DateTimeField(
+        "Дата создания",
+        auto_now_add=True
+    )
+    author = models.ForeignKey(
+        CustomUser,
+        verbose_name="Автор",
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='comments',
+    )
+    order=models.ForeignKey(
+        Order,
+        verbose_name='Приказ',
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='comments'
+    )
+    comment = models.CharField(
+        max_length=300,
+        verbose_name='Комментарий',
+        blank=True
+    )
+
+    class Meta:
+        verbose_name='Комментарий'
+        verbose_name_plural = 'Комментарии'
+        ordering = ('-created',)
+
+    def __str__(self):
+        return (
+            f'{self.author} '
+            f'{self.created.date()} '
+            f'{self.order} '
+            f'{self.comment[:15]}...')
