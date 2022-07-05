@@ -1,9 +1,7 @@
 import datetime
-import os
 
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.urls import reverse
 from enterprises.models import Enterprise
 from users.models import CustomUser
 
@@ -25,7 +23,7 @@ class Order(models.Model):
     STATUS_CHOICES = (
         #(NEW, 'Новый'),
         (INWORK, 'В работе'),
-        (PENDING, 'Ожидающий'),
+        #(PENDING, 'Ожидающий'),
         (COMPLETED, 'Завершен'),
         (REDJECTED, 'Отклонен'),
         #(EXPIRED, 'Просрочен!')
@@ -40,10 +38,10 @@ class Order(models.Model):
 
     author = models.ForeignKey(
         CustomUser,
-        verbose_name="Автор",
+        verbose_name='Автор',
         null=True,
         on_delete=models.SET_NULL,
-        related_name="author",
+        related_name='author',
     )
     number = models.CharField(
         max_length=10,
@@ -51,15 +49,15 @@ class Order(models.Model):
         null=True,
     )
     generated = models.DateTimeField(
-        "Дата создания",
+        'Дата создания',
         auto_now_add=True
     )
     firm = models.ForeignKey(
         Enterprise,
-        verbose_name="Предприятие",
+        verbose_name='Предприятие',
         null=True,
         on_delete=models.CASCADE,
-        related_name="firm",
+        related_name='firm',
     )
     action = models.CharField(
         max_length=15,
@@ -73,7 +71,7 @@ class Order(models.Model):
         verbose_name='Статус приказа',
     )
     perday = models.DateField(
-        "Выполнить в",
+        'Выполнить в',
         default=datetime.date.today()
     )
     comment = models.CharField(
@@ -82,15 +80,15 @@ class Order(models.Model):
         blank=True
     )
     changed = models.DateTimeField(
-        "Дата изменения",
+        'Дата изменения',
         auto_now_add=True
     )
     lastuser = models.ForeignKey(
         CustomUser,
-        verbose_name="Последний пользователь",
+        verbose_name='Последний пользователь',
         null=True,
         on_delete=models.SET_NULL,
-        related_name="lastuser",
+        related_name='lastuser',
         blank=True
     )
     contractor = models.ManyToManyField(
@@ -101,7 +99,7 @@ class Order(models.Model):
     )
 
     class Meta:
-        verbose_name = "Приказ"
+        verbose_name = 'Приказ'
         verbose_name_plural = 'Приказы'
         ordering = ('-generated',)
 
@@ -113,14 +111,14 @@ class ContractorsOrder(models.Model):
         Order,
         verbose_name='Приказ',
         null=True,
-        on_delete=models.SET_NULL,
-        related_name="contractors",
+        on_delete=models.CASCADE,
+        related_name='contractors',
     )
     contractor = models.ForeignKey(
         CustomUser,
         verbose_name='Исполнитель',
         on_delete=models.CASCADE,
-        related_name="contractors",
+        related_name='contractors',
         null=True,
         blank=True,
     )
@@ -140,7 +138,7 @@ class FileOrder(models.Model):
         Order,
         verbose_name='Приказ',
         null=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name='files'
     )
     file = models.FileField(verbose_name='Файл приказа', upload_to='orders/%Y-%m-%d/')
@@ -162,12 +160,12 @@ class FileOrder(models.Model):
 
 class CommentOrder(models.Model):
     created = models.DateTimeField(
-        "Дата создания",
+        'Дата создания',
         auto_now_add=True
     )
     author = models.ForeignKey(
         CustomUser,
-        verbose_name="Автор",
+        verbose_name='Автор',
         null=True,
         on_delete=models.SET_NULL,
         related_name='comments',

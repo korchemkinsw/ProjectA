@@ -1,9 +1,10 @@
+from attr import fields
 from django import forms
-from django.contrib.admin.widgets import AdminDateWidget, AdminTimeWidget
+from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.auth import get_user_model
 from django.forms.models import inlineformset_factory
 
-from .models import ContractorsOrder, FileOrder, Order
+from .models import CommentOrder, ContractorsOrder, FileOrder, Order
 
 User = get_user_model()
 
@@ -79,6 +80,13 @@ class OrderFormUpdate(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(OrderFormUpdate, self).__init__(*args, **kwargs)
         self.fields['perday'].widget = AdminDateWidget()
+
+class CommentForm(forms.ModelForm):
+    comment = forms.CharField(widget=forms.Textarea(attrs={'rows': 3,'cols': 70}))
+    class Meta:
+        model = CommentOrder
+        fields = ('comment',)
+
 
 ContractorOrderFormset = inlineformset_factory(Order, ContractorsOrder, form=ContractorOrderForm, extra=1)
 FileOrderFormset = inlineformset_factory(Order, FileOrder, form=FileOrderForm, extra=1)

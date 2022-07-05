@@ -32,7 +32,7 @@
                   {{ order.number }}
                 </td>
                 <td> 
-                  {{ order.generated }}
+                  {{ order.generated|date:"d.m.Y" }}
                 </td>
                 <td> 
                   {{ order.firm }}
@@ -41,7 +41,7 @@
                   {{ order.action }}
                 </td>
                 <td> 
-                  {{ order.perday }}
+                  {{ order.perday|date:"d.m.Y" }}
                 </td>
                 <td>
                   {% for contractor in order.contractor.all %}

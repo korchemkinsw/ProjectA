@@ -1,4 +1,4 @@
-from django.urls import path, re_path
+from django.urls import path
 
 from . import views
 
@@ -10,4 +10,5 @@ urlpatterns = [
     path('<int:pk>',views.DetailOrder.as_view(), name='order'),
     path('add_doc/<int:pk>',views.CreateDocument.as_view(), name='add_doc'),
     path('del_doc/<int:pk>',views.DeleteDocument.as_view(), name='del_doc'),
+    path('add_comment/<int:pk>',views.CreateComment.as_view(), name='add_comment'),
 ]

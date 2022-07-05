@@ -1,5 +1,3 @@
-from asyncio.windows_events import NULL
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -11,14 +9,14 @@ class CustomUser(AbstractUser):
     ADMIN = 'admin'
     USER = 'user'
     DIRECTOR = 'director'
-    ENGGINEER = 'engineer'
+    ENGINEER = 'engineer'
     TECHNICAN ='technican'
     SECRETARY = 'secretary'
     ROLE_CHOICES = (
         (ADMIN, 'Администратор'),
         (USER, 'Пользователь'),
         (DIRECTOR, 'Директор'),
-        (ENGGINEER, 'Инженер ПЦО'),
+        (ENGINEER, 'Инженер ПЦО'),
         (TECHNICAN, 'Техник'),
         (SECRETARY, 'Секретарь'),
     )
@@ -27,7 +25,7 @@ class CustomUser(AbstractUser):
     last_name = models.CharField(
         verbose_name='фамилия',
         max_length=150,
-        unique=True
+        blank=True
     )
     first_name = models.CharField(
         verbose_name='имя',

@@ -27,13 +27,13 @@
               {{ order.author.last_name }}
               {{ order.author.first_name|first }}.{{ order.author.fathers_name|first }}.
             </td>
-            <td>{{ order.generated }}</td>
-            <td>{{ order.perday }}</td>
+            <td>{{ order.generated|date:"d.m.Y" }}:{{ order.generated|time:"H:i" }}</td>
+            <td>{{ order.perday|date:"d.m.Y" }}</td>
             <td>
               {{ order.lastuser.last_name }}
               {{ order.lastuser.first_name|first }}.{{ order.lastuser.fathers_name|first }}.
             </td>
-            <td>{{ order.changed }}</td>
+            <td>{{ order.changed|date:"d.m.Y" }}:{{ order.changed|time:"H:i" }}</td>
             <td>
               {% for contractor in order.contractor.all %}
                 {{ contractor.last_name }}
@@ -70,6 +70,30 @@
                   <a href="{{ file.file.url }}">{{ file.file }}&nbsp;&nbsp;</a>
                   <a class="badge rounded-pill bg-danger text-white" href="{% url 'del_doc' file.id %}" role="button">Удалить</a>
                 </li>
+              {% endfor %}
+            </td>
+          </tbody>
+        </table>
+        <table style="text-align: left" class="table table">
+          <thead>
+            <tr>
+              <th scope="col">
+                Комментарии:&nbsp;&nbsp;
+                <a class="badge rounded-pill bg-primary text-white" href="{% url 'add_comment' order.id  %}" role="button">Добавить</a>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <td>
+              {% for comment in order.comments.all %}
+                <div class="row">
+                  <div class="col-5">
+                    {{ comment.created|date:"d.m.Y" }}:{{ comment.created|time:"H:i" }}  {{ comment.author }}:&nbsp;&nbsp;
+                  </div>
+                  <div class="col">
+                    {{ comment.comment }}
+                  </div>
+                </div>
               {% endfor %}
             </td>
           </tbody>

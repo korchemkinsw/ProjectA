@@ -2,18 +2,36 @@ import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
+from users.models import CustomUser
 
-from .forms import ContractorOrderFormset, OrderFormCreate, OrderFormUpdate
-from .models import FileOrder, Order
+from .forms import (CommentForm, ContractorOrderFormset, OrderFormCreate,
+                    OrderFormUpdate)
+from .models import CommentOrder, FileOrder, Order
 
 
-class ListOrders(ListView):
+class ListOrders(LoginRequiredMixin, ListView):
     model = Order
     context_object_name = 'orders'
+    
+    def get_queryset(self):
+        if self.request.user.role == CustomUser.ENGINEER:
+            return Order.objects.filter(
+                contractor=self.request.user
+                ).exclude(
+                    status=Order.COMPLETED
+                    )
+        if self.request.user.role == CustomUser.SECRETARY:
+            return Order.objects.filter(
+                author=self.request.user
+                ).exclude(
+                    status=Order.COMPLETED
+                    )
+        if self.request.user.role == CustomUser.ADMIN:
+            return Order.objects.all()
 
 class CreateOrder(LoginRequiredMixin, CreateView):
     model = Order
@@ -52,17 +70,18 @@ class CreateContractorOrder(LoginRequiredMixin, CreateView):
 
 class UpdateOrder(LoginRequiredMixin, UpdateView):
     model = Order
-    success_url = reverse_lazy('order', 'pk')
-
+    
+    def get_success_url(self):
+       pk = self.kwargs['pk']
+       return reverse('order', kwargs={'pk': pk})
 
 class UpdateContractorOrder(LoginRequiredMixin, UpdateView):
     model = Order
     form_class = OrderFormUpdate
-    success_url = reverse_lazy('order', 'pk')
-        
+
     def get_success_url(self):
-       pk = self.kwargs["pk"]
-       return reverse("order", kwargs={"pk": pk})
+       pk = self.kwargs['pk']
+       return reverse('order', kwargs={'pk': pk})
 
     def get_context_data(self, **kwargs):
         data = super(UpdateContractorOrder, self).get_context_data(**kwargs)
@@ -96,10 +115,10 @@ class DetailOrder(DetailView):
 class CreateDocument(CreateView):
     model = FileOrder
     fields = ['file']
-
+     
     def get_success_url(self):
-       pk = self.kwargs["pk"]
-       return reverse("order", kwargs={"pk": pk})
+       pk = self.kwargs['pk']
+       return reverse('order', kwargs={'pk': pk})
 
     def form_valid(self, form):
         with transaction.atomic():
@@ -114,4 +133,21 @@ class DeleteDocument(DeleteView):
 
     def get_success_url(self):
        file = get_object_or_404(FileOrder, id=self.kwargs['pk'])
-       return reverse('order', kwargs={"pk":file.order.id})
+       return reverse('order', kwargs={'pk':file.order.id})
+
+class CreateComment(CreateView):
+    model = CommentOrder
+    form_class = CommentForm
+    
+    def get_success_url(self):
+       pk = self.kwargs['pk']
+       return reverse('order', kwargs={'pk': pk})
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object.order = get_object_or_404(Order, id=self.kwargs['pk'])
+            self.object.created = datetime.datetime.today()
+            self.object.author = self.request.user
+            self.object = form.save()
+        return super(CreateComment, self).form_valid(form)
