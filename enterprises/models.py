@@ -1,4 +1,5 @@
 from tkinter import CASCADE
+
 from django.db import models
 
 
@@ -37,7 +38,7 @@ class Staffer(models.Model):
         Position,
         verbose_name="Должность",
         help_text="Должность",
-        on_delete=CASCADE
+        on_delete=models.CASCADE
     )
 
     class Meta:

@@ -1,4 +1,4 @@
-from attr import fields
+import django_filters
 from django import forms
 from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.auth import get_user_model
@@ -80,6 +80,12 @@ class OrderFormUpdate(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(OrderFormUpdate, self).__init__(*args, **kwargs)
         self.fields['perday'].widget = AdminDateWidget()
+
+class OrderFilter(django_filters.FilterSet):
+    number = django_filters.CharFilter(field_name='number', lookup_expr='contains')
+    class Meta:
+        model = Order
+        fields = ['number', 'status']
 
 class CommentForm(forms.ModelForm):
     comment = forms.CharField(widget=forms.Textarea(attrs={'rows': 3,'cols': 70}))

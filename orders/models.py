@@ -21,7 +21,7 @@ class Order(models.Model):
     SUSPEND = 'Приостановить'
 
     STATUS_CHOICES = (
-        #(NEW, 'Новый'),
+        (NEW, 'Новый'),
         (INWORK, 'В работе'),
         #(PENDING, 'Ожидающий'),
         (COMPLETED, 'Завершен'),

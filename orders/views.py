@@ -2,19 +2,21 @@ import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 from users.models import CustomUser
 
-from .forms import (CommentForm, ContractorOrderFormset, OrderFormCreate,
-                    OrderFormUpdate)
+from .forms import (CommentForm, ContractorOrderFormset, OrderFilter,
+                    OrderFormCreate, OrderFormUpdate)
 from .models import CommentOrder, FileOrder, Order
 
 
 class ListOrders(LoginRequiredMixin, ListView):
     model = Order
+    filterset_class = OrderFilter
+    filterset_fields = ('number',)
     context_object_name = 'orders'
     
     def get_queryset(self):
@@ -151,3 +153,7 @@ class CreateComment(CreateView):
             self.object.author = self.request.user
             self.object = form.save()
         return super(CreateComment, self).form_valid(form)
+
+def order_list(request):
+    f = OrderFilter(request.GET, queryset=Order.objects.all())
+    return render(request, 'orders/order_filter.html', {'filter': f})

@@ -39,13 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'upload_app.apps.UploadAppConfig',
+    'django_filters',
     'core',
     'Project_A',
     'users',
     'enterprises',
     'orders',
-    #'users.apps.UsersConfig',
     
 ]
 

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Приказы{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <h3>Приказы</h3>
+  </div>
+  <div class="card-body" style="text-align: left; font-size: 14px">
+    <form method="get">
+        <p>
+          Статус: {{ filter.form.status }}&nbsp;&nbsp;Номер: {{ filter.form.number }}&nbsp;&nbsp;
+          <input type="submit" value="Найти" />
+        </p>
+      </form>
+    <div style="text-align: center; font-size: 14px" class="table-responsive">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th scope="col">Статус</th>
+              <th scope="col">Номер</th>
+              <th scope="col">Создан</th>
+              <th scope="col">Предприятие</th>
+              <th scope="col">Что сделать</th>
+              <th scope="col">Выполнить до:</th>
+              <th scope="col">Назначен</th>
+              <th scope="col">Действие</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in filter.qs %}
+              <tr>
+                <td>
+                  {{ order.status }}
+                  {{ order.lastuser.last_name }}
+                  {{ order.lastuser.first_name|first }}.{{ order.lastuser.fathers_name|first }}.
+                </td>
+                <td> 
+                  {{ order.number }}
+                </td>
+                <td> 
+                  {{ order.generated|date:"d.m.Y" }}
+                </td>
+                <td> 
+                  {{ order.firm }}
+                </td>
+                <td> 
+                  {{ order.action }}
+                </td>
+                <td> 
+                  {{ order.perday|date:"d.m.Y" }}
+                </td>
+                <td>
+                  {% for contractor in order.contractor.all %}
+                    <p>
+                      {{ contractor.last_name }}
+                      {{ contractor.first_name|first }}.{{ contractor.fathers_name|first }}.
+                    </p>
+                  {% endfor %}
+                </td>
+                <td>
+                  <a class="btn btn-outline-info btn-sm" href="{% url 'order' order.pk %}" role="button">Просмотр</br></a>
+                </td>
+              <tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+    <div>
+        <p>
+            <a class="btn btn-primary" href="{% url 'new_order' %}" role="button">Создать</a>
+            <a class="btn btn-primary" href="{% url 'index' %}" role="button">Главная</a>
+        </p>
+    </div>
+  </div>
+{% endblock %}

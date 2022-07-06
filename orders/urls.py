@@ -11,4 +11,5 @@ urlpatterns = [
     path('add_doc/<int:pk>',views.CreateDocument.as_view(), name='add_doc'),
     path('del_doc/<int:pk>',views.DeleteDocument.as_view(), name='del_doc'),
     path('add_comment/<int:pk>',views.CreateComment.as_view(), name='add_comment'),
+    path('filter/', views.order_list, name="filter-list")
 ]
