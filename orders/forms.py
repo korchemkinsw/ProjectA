@@ -8,6 +8,22 @@ from .models import CommentOrder, ContractorsOrder, FileOrder, Order
 
 User = get_user_model()
 
+NEW = 'новый'
+INWORK = 'в работе'
+PENDING = 'ожидающий'
+COMPLETED = 'завершен'
+REDJECTED = 'отклонен'
+EXPIRED = 'Просрочен!'
+
+STATUS_CHOICES = (
+        (NEW, 'Новый'),
+        (INWORK, 'В работе'),
+        #(PENDING, 'Ожидающий'),
+        #(COMPLETED, 'Завершен'),
+        (REDJECTED, 'Отклонен'),
+        #(EXPIRED, 'Просрочен!')
+    )
+
 class FileOrderForm(forms.ModelForm):
     class Meta:
         model = FileOrder
@@ -83,9 +99,11 @@ class OrderFormUpdate(forms.ModelForm):
 
 class OrderFilter(django_filters.FilterSet):
     number = django_filters.CharFilter(field_name='number', lookup_expr='contains')
+    status = django_filters.ChoiceFilter(choices=STATUS_CHOICES)
+
     class Meta:
         model = Order
-        fields = ['number', 'status']
+        fields = ['number', 'status',]
 
 class CommentForm(forms.ModelForm):
     comment = forms.CharField(widget=forms.Textarea(attrs={'rows': 3,'cols': 70}))

@@ -1,11 +1,11 @@
 import datetime
 
+from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView)
+from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from users.models import CustomUser
 
 from .forms import (CommentForm, ContractorOrderFormset, OrderFilter,
@@ -13,11 +13,11 @@ from .forms import (CommentForm, ContractorOrderFormset, OrderFilter,
 from .models import CommentOrder, FileOrder, Order
 
 
-class ListOrders(LoginRequiredMixin, ListView):
+class ListOrders(LoginRequiredMixin, FilterView):
     model = Order
+    context_object_name = 'filter'
+    template_name = 'orders/order_filter.html'
     filterset_class = OrderFilter
-    filterset_fields = ('number',)
-    context_object_name = 'orders'
     
     def get_queryset(self):
         if self.request.user.role == CustomUser.ENGINEER:
