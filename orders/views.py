@@ -1,11 +1,11 @@
 import datetime
 
-from django_filters.views import FilterView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
+from django_filters.views import FilterView
 from users.models import CustomUser
 
 from .forms import (CommentForm, ContractorOrderFormset, OrderFilter,
@@ -18,20 +18,20 @@ class ListOrders(LoginRequiredMixin, FilterView):
     context_object_name = 'filter'
     template_name = 'orders/order_filter.html'
     filterset_class = OrderFilter
-    
+
     def get_queryset(self):
+        expireds = Order.objects.filter(perday__lt=datetime.date.today()).exclude(status='завершен')
+        for expired in expireds:
+            expired.status = 'Просрочен!'
+            expired.save()
         if self.request.user.role == CustomUser.ENGINEER:
             return Order.objects.filter(
                 contractor=self.request.user
-                ).exclude(
-                    status=Order.COMPLETED
-                    )
+                ).exclude(status='завершен').order_by('perday')
         if self.request.user.role == CustomUser.SECRETARY:
             return Order.objects.filter(
                 author=self.request.user
-                ).exclude(
-                    status=Order.COMPLETED
-                    )
+                ).exclude()
         if self.request.user.role == CustomUser.ADMIN:
             return Order.objects.all()
 
@@ -153,7 +153,3 @@ class CreateComment(CreateView):
             self.object.author = self.request.user
             self.object = form.save()
         return super(CreateComment, self).form_valid(form)
-
-def order_list(request):
-    f = OrderFilter(request.GET, queryset=Order.objects.all())
-    return render(request, 'orders/order_filter.html', {'filter': f})

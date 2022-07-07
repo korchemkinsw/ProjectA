@@ -74,7 +74,7 @@ class Order(models.Model):
         'Выполнить в',
         default=datetime.date.today()
     )
-    comment = models.CharField(
+    comment = models.TextField(
         max_length=300,
         verbose_name='Пояснение',
         blank=True

@@ -134,3 +134,4 @@ dmypy.json
 .rar
 static/
 media/
+0* .py

@@ -19,7 +19,7 @@ STATUS_CHOICES = (
         (NEW, 'Новый'),
         (INWORK, 'В работе'),
         #(PENDING, 'Ожидающий'),
-        #(COMPLETED, 'Завершен'),
+        (COMPLETED, 'Завершен'),
         (REDJECTED, 'Отклонен'),
         #(EXPIRED, 'Просрочен!')
     )
@@ -64,7 +64,7 @@ class OrderFormCreate(forms.ModelForm):
         
     def __init__(self, *args, **kwargs):
         super(OrderFormCreate, self).__init__(*args, **kwargs)
-        self.fields['perday'].widget = AdminDateWidget()
+        self.fields['perday'].widget=AdminDateWidget()
 
 class OrderFormUpdate(forms.ModelForm):
     
@@ -88,22 +88,31 @@ class OrderFormUpdate(forms.ModelForm):
             'comment': 'Пояснение',
         }
 
-        widgets = {
-            'perday': DateInput(),
-        }
+        widgets = {'perday': DateInput(),}
         
 
     def __init__(self, *args, **kwargs):
         super(OrderFormUpdate, self).__init__(*args, **kwargs)
-        self.fields['perday'].widget = AdminDateWidget()
+        self.fields['perday'].widget=AdminDateWidget()
 
 class OrderFilter(django_filters.FilterSet):
     number = django_filters.CharFilter(field_name='number', lookup_expr='contains')
     status = django_filters.ChoiceFilter(choices=STATUS_CHOICES)
+    generated_gt = django_filters.DateFilter(
+        field_name='generated',
+        widget=DateInput(attrs={'type': 'date'}),
+        lookup_expr='gt'
+        )
+    generated_lt = django_filters.DateFilter(
+        field_name='generated',
+        widget=DateInput(attrs={'type': 'date'}),
+        lookup_expr='lt'
+        )
+    comment = django_filters.CharFilter(field_name='comment', lookup_expr='contains')
 
     class Meta:
         model = Order
-        fields = ['number', 'status',]
+        fields = ['number', 'status', 'generated_gt', 'generated_lt', 'comment']
 
 class CommentForm(forms.ModelForm):
     comment = forms.CharField(widget=forms.Textarea(attrs={'rows': 3,'cols': 70}))
@@ -113,4 +122,4 @@ class CommentForm(forms.ModelForm):
 
 
 ContractorOrderFormset = inlineformset_factory(Order, ContractorsOrder, form=ContractorOrderForm, extra=1)
-FileOrderFormset = inlineformset_factory(Order, FileOrder, form=FileOrderForm, extra=1)
+#FileOrderFormset = inlineformset_factory(Order, FileOrder, form=FileOrderForm, extra=1)
