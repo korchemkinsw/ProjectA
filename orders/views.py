@@ -18,6 +18,7 @@ class ListOrders(LoginRequiredMixin, FilterView):
     context_object_name = 'filter'
     template_name = 'orders/order_filter.html'
     filterset_class = OrderFilter
+    paginate_by = 5
 
     def get_queryset(self):
         expireds = Order.objects.filter(perday__lt=datetime.date.today()).exclude(status='завершен')
