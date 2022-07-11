@@ -62,12 +62,12 @@ class OrderFormCreate(forms.ModelForm):
         self.fields['perday'].widget=AdminDateWidget()
 
 class OrderFormUpdate(forms.ModelForm):
-    STATUS = (
+    STATUS_CHOICES = (
         (INWORK, 'В работе'),
         (COMPLETED, 'Завершен'),
         (REDJECTED, 'Отклонен'),
     )
-    status = forms.ChoiceField(choices=STATUS)
+    status = forms.ChoiceField(choices=STATUS_CHOICES)
     class Meta:   
         model = Order
         exclude = ()
