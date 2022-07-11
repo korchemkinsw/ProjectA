@@ -61,7 +61,7 @@ class CreateContractorOrder(LoginRequiredMixin, CreateView):
             self.object = form.save(commit=False)
             self.object.author = self.request.user
             self.object.created = datetime.datetime.today()
-            self.object.status = 'Новый'
+            self.object.status = Order.NEW
             self.object.lastuser = self.request.user
             self.object.changed = datetime.datetime.today()
             self.object = form.save()
@@ -101,6 +101,8 @@ class UpdateContractorOrder(LoginRequiredMixin, UpdateView):
             self.object = form.save(commit=False)
             self.object.lastuser = self.request.user
             self.object.changed = datetime.datetime.today()
+            if self.object.author == self.request.user:
+                self.object.status = 'Новый'
             self.object = form.save()
 
             if contractors.is_valid():

@@ -27,7 +27,7 @@
             <th scope="col">Что сделать</th>
             <th scope="col">Выполнить до:</th>
             <th scope="col">Назначен</th>
-            <th scope="col">Действие</th>
+            <th scope="col">Файлы</th>
           </tr>
         </thead>
         <tbody>
@@ -39,7 +39,7 @@
                 {{ order.lastuser.first_name|first }}.{{ order.lastuser.fathers_name|first }}.
               </td>
               <td> 
-                {{ order.number }}
+                <a href="{% url 'order' order.pk %}">{{ order.number }}</a>
               </td>
               <td> 
                 {{ order.generated|date:"d.m.Y" }}
@@ -62,34 +62,45 @@
                 {% endfor %}
               </td>
               <td>
-                <a class="btn btn-outline-info btn-sm" href="{% url 'order' order.pk %}" role="button">Просмотр</br></a>
+                {% if user.role == 'secretary' %}
+                  <a class="badge rounded-pill bg-primary text-white" href="{% url 'add_doc' order.id  %}" role="button">Добавить файл</a>
+                {% endif %}
+                {% if order.files.all %}
+                  {% load static %}
+                  <a href="{% url 'order' order.pk %}"><img src="{% static 'img/documents.png' %}" alt="" width="15" height="15" class="d-inline-block align-text-top"></a>
+                {% endif %}
               </td>
             <tr>
           {% endfor %}
         </tbody>
       </table>
-      <div class="pagination">
-        <span class="step-links">
-          {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo;&laquo; 1-я</a>
-            <a href="?page={{ page_obj.previous_page_number }}">&laquo; предыдущая</a>
+      <nav aria-label="...">
+        <ul class="pagination pagination-sm">
+          {% if page_obj.number > 1 %}
+            <li class="page-item"><a class="page-link" href="?page=1{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}">&laquo; Первая</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a></li>
+          {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#">&laquo; Первая</a></li>
           {% endif %}
-          <span class="current">
-            Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
-          </span>
-          {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">следующая &raquo;</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}-я &raquo;&raquo;</a>
+          <li class="page-item active" aria-current="page">
+            <span class="page-link">{{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+          </li>
+          {% if page_obj.number < page_obj.paginator.num_pages %}
+            <li class="page-item"><a class="page-link" href="{% url 'orders' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}">{{ page_obj.next_page_number }}</a></li>
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Последняя &raquo;</a>
+          {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#">Последняя &raquo;</a></li>
           {% endif %}
-        </span>
-      </div>
+        </ul>
+      </nav>
       <br>
     </div>
     <div>
+      {% if user.role == 'secretary' %}
       <p>
         <a class="btn btn-primary" href="{% url 'new_order' %}" role="button">Создать</a>
-        <a class="btn btn-primary" href="{% url 'index' %}" role="button">Главная</a>
       </p>
+      {% endif %}
     </div>
   </div>
 {% endblock %}

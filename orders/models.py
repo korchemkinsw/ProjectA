@@ -26,7 +26,7 @@ class Order(models.Model):
         #(PENDING, 'Ожидающий'),
         (COMPLETED, 'Завершен'),
         (REDJECTED, 'Отклонен'),
-        #(EXPIRED, 'Просрочен!')
+        (EXPIRED, 'Просрочен!')
     )
 
     ACTION_CHOICES = (

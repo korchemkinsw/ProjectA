@@ -15,15 +15,6 @@ COMPLETED = 'завершен'
 REDJECTED = 'отклонен'
 EXPIRED = 'Просрочен!'
 
-STATUS_CHOICES = (
-        (NEW, 'Новый'),
-        (INWORK, 'В работе'),
-        #(PENDING, 'Ожидающий'),
-        (COMPLETED, 'Завершен'),
-        (REDJECTED, 'Отклонен'),
-        #(EXPIRED, 'Просрочен!')
-    )
-
 class FileOrderForm(forms.ModelForm):
     class Meta:
         model = FileOrder
@@ -35,6 +26,10 @@ class ContractorOrderForm(forms.ModelForm):
         model = ContractorsOrder
         exclude = ()
         fields = ('contractor',)
+
+    def __init__(self, *args, **kwargs):
+        super (ContractorOrderForm,self ).__init__(*args,**kwargs)
+        self.fields['contractor'].queryset = User.objects.filter(role=User.ENGINEER)
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -67,8 +62,13 @@ class OrderFormCreate(forms.ModelForm):
         self.fields['perday'].widget=AdminDateWidget()
 
 class OrderFormUpdate(forms.ModelForm):
-    
-    class Meta:
+    STATUS = (
+        (INWORK, 'В работе'),
+        (COMPLETED, 'Завершен'),
+        (REDJECTED, 'Отклонен'),
+    )
+    status = forms.ChoiceField(choices=STATUS)
+    class Meta:   
         model = Order
         exclude = ()
         fields = (
@@ -96,6 +96,14 @@ class OrderFormUpdate(forms.ModelForm):
         self.fields['perday'].widget=AdminDateWidget()
 
 class OrderFilter(django_filters.FilterSet):
+    STATUS_CHOICES = (
+        (NEW, 'Новый'),
+        (INWORK, 'В работе'),
+        #(PENDING, 'Ожидающий'),
+        (COMPLETED, 'Завершен'),
+        (REDJECTED, 'Отклонен'),
+        (EXPIRED, 'Просрочен!')
+    )
     number = django_filters.CharFilter(field_name='number', lookup_expr='contains')
     status = django_filters.ChoiceFilter(choices=STATUS_CHOICES)
     generated_gt = django_filters.DateFilter(

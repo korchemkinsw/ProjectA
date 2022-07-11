@@ -8,13 +8,16 @@
     <!-- Bootstrap CSS -->
 
     <title>{% block title %}{% endblock %}</title>
+
+    <link rel="icon" href="data:,">
     {% load static %}
     <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/logo.png' %}">
     <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
     <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
 
-    <!--script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script-->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     
     {% block extrahead %}
     
@@ -32,9 +35,9 @@
     {% include "includes/nav.html" %}
     
       <div class="row justify-auto-content-center ">
-        <div class="col-auto">
+        <!--div class="col-auto">
           {% include "includes/navsidebar.html" %}
-        </div>
+        </div-->
         <div class="container">
           <main>
             {% block content %}

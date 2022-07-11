@@ -16,7 +16,6 @@
 
         {% if next %}            
             <div class="alert alert-info" role="alert">
-              Вы обратились к странице, доступ к которой возможен только для залогиненных пользователей.<br>
               Пожалуйста, авторизуйтесь.
             </div>
         {% else %}
@@ -56,9 +55,9 @@
               <button type="submit" class="btn btn-primary">
                 Войти
               </button>
-              <a href="{% url 'password_reset' %}" class="btn btn-secondary">
+              <!--a href="{% url 'password_reset' %}" class="btn btn-secondary">
                 Забыли пароль?
-              </a>
+              </a-->
           </div>
         </form>
       </div> <!-- card body -->

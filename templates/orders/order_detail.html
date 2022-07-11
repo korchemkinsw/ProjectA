@@ -59,7 +59,9 @@
             <tr>
               <th scope="col">
                 Файлы:&nbsp;&nbsp;
-                <a class="badge rounded-pill bg-primary text-white" href="{% url 'add_doc' order.id  %}" role="button">Добавить</a>
+                {% if user.role == 'secretary' %}
+                  <a class="badge rounded-pill bg-primary text-white" href="{% url 'add_doc' order.id  %}" role="button">Добавить</a>
+                {% endif %}
               </th>
             </tr>
           </thead>
@@ -68,7 +70,9 @@
               {% for file in order.files.all %}
                 <li>
                   <a href="{{ file.file.url }}">{{ file.file }}&nbsp;&nbsp;</a>
-                  <a class="badge rounded-pill bg-danger text-white" href="{% url 'del_doc' file.id %}" role="button">Удалить</a>
+                  {% if user.role == 'secretary' %}
+                    <a class="badge rounded-pill bg-danger text-white" href="{% url 'del_doc' file.id %}" role="button">Удалить</a>
+                  {% endif %}
                 </li>
               {% endfor %}
             </td>
@@ -101,7 +105,9 @@
         <br>
         <a class="btn btn-primary" href="{% url 'orders' %}" role="button">Приказы</a>
         <a class="btn btn-primary" href="{% url 'update_order' order.id  %}" role="button">Редактировать</a>
-        <a class="btn btn-danger" href="{% url 'delete_order' order.id %}">Удалить</a>
+        {% if user.role == 'secretary' %}
+          <a class="btn btn-danger" href="{% url 'delete_order' order.id %}">Удалить</a>
+        {% endif %}
       </div>
     </div>
   </div>
