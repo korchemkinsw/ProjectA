@@ -1,6 +1,9 @@
 import datetime
 
+from django.contrib.auth import get_user_model
 from django.db import models
+
+User = get_user_model()
 
 
 class Responsible(models.Model):
@@ -142,7 +145,7 @@ class Individual(models.Model):
     )
     date = models.DateField(
         'Дата выдачи',
-        default=datetime.date.today()
+        #default=datetime.date.today()
     )
 
     class Meta:
@@ -161,6 +164,10 @@ class Application(models.Model):
     DX = 'dx'
     OTHER ='other'
 
+    NEW = 'новый'
+    CHANGED = 'изменён'
+    COMPLETED = 'завершен'
+
     SYSTEMS = (
         (ANDROMEDA, 'Си-Норд'),
         (RITM, 'Ритм'),
@@ -171,6 +178,18 @@ class Application(models.Model):
         (OTHER, 'Прочее оборудование'),
     )
 
+    STATUS_CHOICES = (
+        (NEW, 'Новый'),
+        (CHANGED, 'Изменён'),
+        (COMPLETED, 'Завершен'),
+    )
+
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='Новый',
+        verbose_name='Статус заявки',
+    )
     legal = models.ForeignKey(
         Legal,
         verbose_name='Юр.лицо',
@@ -187,11 +206,16 @@ class Application(models.Model):
         related_name='individ_app',
         blank=True,
     )
+    object_name = models.CharField(
+        max_length=400,
+        verbose_name='Название объекта',
+        help_text='Название объекта',
+        null=True,
+    )
     address = models.CharField(
         max_length=400,
         verbose_name='Адрес',
         help_text='Адрес',
-        blank=True
     )
     transmission = models.CharField(
         max_length=20,
@@ -205,10 +229,24 @@ class Application(models.Model):
         help_text='Примечание',
         blank=True
     )
+    manager = models.ForeignKey(
+        User,
+        verbose_name='Ответственный менеджер',
+        on_delete=models.SET_NULL,
+        related_name='manager',
+        null=True,
+        blank=True,
+    )
+    generated = models.DateTimeField(
+        'Дата создания',
+        null=True,
+        blank=True,
+        #auto_now_add=True
+    )
 
     class Meta:
         verbose_name = 'Заявка на охрану'
         verbose_name_plural = 'Заявки на охрану'
 
     def __str__(self):
-        return f'{self.legal}{self.individual} {self.address[:20]}...'
+        return f'{self.account} {self.legal}{self.individual} {self.object_name} {self.address[:20]}...'

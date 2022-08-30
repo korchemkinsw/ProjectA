@@ -50,7 +50,9 @@ class Order(models.Model):
     )
     generated = models.DateTimeField(
         'Дата создания',
-        auto_now_add=True
+        null=True,
+        blank=True,
+        #auto_now_add=True
     )
     firm = models.ForeignKey(
         Enterprise,
@@ -72,7 +74,7 @@ class Order(models.Model):
     )
     perday = models.DateField(
         'Выполнить в',
-        default=datetime.date.today()
+        #default=datetime.date.today()
     )
     comment = models.TextField(
         max_length=300,

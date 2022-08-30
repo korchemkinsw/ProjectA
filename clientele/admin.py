@@ -50,7 +50,27 @@ class IndividualAdmin(admin.ModelAdmin):
 
 @admin.register(Application)
 class ApplicationAdmin(admin.ModelAdmin):
-    list_display = ('legal', 'individual', 'address', 'note')
-    fields = ['legal', 'individual', 'address', 'note']
+    list_display = (
+        'status',
+        'legal',
+        'individual',
+        'object_name',
+        'address',
+        'transmission',
+        'note',
+        'manager',
+        'generated',
+        )
+    fields = [
+        'status',
+        'legal',
+        'individual',
+        'object_name',
+        'address',
+        'transmission',
+        'note',
+        'manager',
+        'generated',
+        ]
     search_fields = ('legal', 'individual', 'address',)
     empty_value_display = '-пусто-'

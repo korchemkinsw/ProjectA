@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'enterprises',
     'orders',
     'clientele',
+    'object_card',
     
 ]
 

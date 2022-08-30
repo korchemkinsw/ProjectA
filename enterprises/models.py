@@ -135,3 +135,23 @@ class Enterprise (models.Model):
 
     def __str__(self):
         return self.abbreviatedname
+
+class Responseteam(models.Model):
+    name = models.CharField(
+        max_length=50,
+        verbose_name='Название',
+        help_text='Название',
+    )
+    phone = models.CharField(
+        max_length=50,
+        verbose_name='Телефон',
+        help_text='Телефон',
+    )
+
+    class Meta:
+        verbose_name = 'Группа реагирования'
+        verbose_name_plural = 'Группы реагирования'
+
+    def __str__(self):
+        return self.name
+

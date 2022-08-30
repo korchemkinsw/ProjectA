@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Enterprise, Position, Staffer
+from .models import Enterprise, Position, Responseteam, Staffer
 
 
 @admin.register(Enterprise)
@@ -43,3 +43,8 @@ class PositionAdmin(admin.ModelAdmin):
 class StafferAdmin(admin.ModelAdmin):
     list_display = ('last_name', 'first_name', 'fathers_name', 'post')
     fields = ['last_name', 'first_name', 'fathers_name', 'post']
+
+@admin.register(Responseteam)
+class ResponseteamAdmin(admin.ModelAdmin):
+    list_display = ('name', 'phone')
+    fields = ['name', 'phone']
