@@ -12,6 +12,7 @@ class CustomUser(AbstractUser):
     ENGINEER = 'engineer'
     TECHNICAN ='technican'
     SECRETARY = 'secretary'
+    MANAGER = 'manager'
     ROLE_CHOICES = (
         (ADMIN, 'Администратор'),
         (USER, 'Пользователь'),
@@ -19,6 +20,7 @@ class CustomUser(AbstractUser):
         (ENGINEER, 'Инженер ПЦО'),
         (TECHNICAN, 'Техник'),
         (SECRETARY, 'Секретарь'),
+        (MANAGER, 'Менеджер'),
     )
     email = models.EmailField(_('email address'), unique=True)
     

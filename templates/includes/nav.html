@@ -6,20 +6,33 @@
         <span style="color:red">My</span>Company
       </a>
   </nav>
-  <nav class="my-2 my-md-0 mr-md-1">
+  <ul class="nav">
     {% if user.is_authenticated %}
-      Пользователь: <a class="p-2 text-dark" href="{% url 'index' %}">
-        {{ user.last_name }}
-        {{ user.first_name|first }}.{{ user.fathers_name|first }}.
-      {% if user.role == 'secretary' or user.role == 'engineer' %}
-        <a class="p-2 text-dark" href="{% url 'orders' %}">Приказы</a>
+      <a class="nav-link text-dark" >
+        Пользователь: {{ user.last_name }} {{ user.first_name|first }}.{{ user.fathers_name|first }}.
+      </a>
+      {% if user.role == 'manager' or user.role == 'admin'  %}
+        <div class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Клиенты</a>
+          <div class="dropdown-menu" style="background-color: #c4671c;" >
+            <a class="dropdown-item" href="{% url 'legal' %}">Клиенты ЮЛ</a>
+            <a class="dropdown-item" href="{% url 'individual' %}">Клиенты ФЛ</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Может и пошлю...</a>
+          </div>
+        </div>
+        <a class="nav-link text-dark" href="#">Ответственные лица</a>
+        <a class="nav-link text-dark" href="#">Заявки</a>
       {% endif %}
-      <a class="p-2 text-dark" href="{% url 'logout' %}">Выйти</a>
+      {% if user.role == 'secretary' or user.role == 'engineer' or user.role == 'admin'  %}
+        <a class="nav-link text-dark" href="{% url 'orders' %}">Приказы</a>
+      {% endif %}
+      <a class="nav-link text-dark" href="{% url 'logout' %}">Выйти</a>
       {% if user.role == 'admin' %}
-        <a class="p-2 text-dark" href="{% url 'users:new_user' %}">Регистрация</a>
+        <a class="nav-link text-dark" href="{% url 'users:new_user' %}">Регистрация</a>
       {% endif %}
     {% else %}
-      <a class="p-2 text-dark" href="{% url 'login' %}">Войти</a>
+      <a class="nav-link text-dark" href="{% url 'login' %}">Войти</a>
     {% endif %}
-  </nav>
+  </ul>
 </nav>
