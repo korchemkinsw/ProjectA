@@ -153,7 +153,7 @@ class Individual(models.Model):
         verbose_name_plural = 'Физические лица'
 
     def __str__(self):
-        return self.name
+        return f'{self.name}'
 
 class Application(models.Model):
     ANDROMEDA = 'andromeda'
