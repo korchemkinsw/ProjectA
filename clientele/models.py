@@ -1,10 +1,36 @@
-import datetime
-
 from django.contrib.auth import get_user_model
 from django.db import models
 
 User = get_user_model()
 
+
+class Phone(models.Model):
+    MOBILE = 'mobile'
+    HOME = 'home'
+    WORKER = 'worker'
+
+    TYPES = (
+        (MOBILE, 'мобильный'),
+        (HOME, 'домашний'),
+        (WORKER, 'рабочий')
+    )
+    type = models.CharField(
+        max_length=10,
+        choices=TYPES,
+        verbose_name='тип телефона',
+    )
+    phone = models.CharField(
+        verbose_name='номер телефона',
+        max_length=11,
+        unique=True
+    )
+
+    class Meta:
+        verbose_name = 'Номер телефона'
+        verbose_name_plural = 'Номера телефонов'
+    
+    def __str__(self):
+        return f'{self.type} | {self.phone}'
 
 class Responsible(models.Model):
     last_name = models.CharField(
@@ -20,10 +46,11 @@ class Responsible(models.Model):
         max_length=150,
         blank=True
     )
-    phone = models.CharField(
-        verbose_name='номер телефона',
-        max_length=11,
-        unique=True
+    phone = models.ManyToManyField(
+        Phone,
+        through='phonebook',
+        related_name='phones',
+        blank=True,
     )
 
     class Meta:
@@ -31,7 +58,29 @@ class Responsible(models.Model):
         verbose_name_plural = 'Ответственные лица'
 
     def __str__(self):
-        return f'{self.last_name} {self.first_name[:1]}.{self.fathers_name[:1]}. {self.phone}'
+        return f'{self.last_name} {self.first_name[:1]}.{self.fathers_name[:1]}.'
+
+class Phonebook(models.Model):
+    phone = models.ForeignKey(
+        Phone,
+        verbose_name='Телефон',
+        on_delete=models.CASCADE,
+        related_name='phonebook',
+    )
+    responsible = models.ForeignKey(
+        Responsible,
+        verbose_name='Ответственное лицо',
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = 'телефон'
+        verbose_name_plural = 'Телефонная книга'
+
+    def __str__(self):
+        return (
+            f'{self.responsible} {self.phone}'
+        )
 
 class Legal(models.Model):
     fullname = models.CharField(
