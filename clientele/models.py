@@ -71,6 +71,7 @@ class Phonebook(models.Model):
         Responsible,
         verbose_name='Ответственное лицо',
         on_delete=models.CASCADE,
+        related_name='phonebook',
     )
 
     class Meta:

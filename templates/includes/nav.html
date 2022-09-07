@@ -21,7 +21,7 @@
             <a class="dropdown-item" href="#">Может и пошлю...</a>
           </div>
         </div>
-        <a class="nav-link text-dark" href="#">Ответственные лица</a>
+        <a class="nav-link text-dark" href="{% url 'responsible' %}">Ответственные лица</a>
         <a class="nav-link text-dark" href="#">Заявки</a>
       {% endif %}
       {% if user.role == 'secretary' or user.role == 'engineer' or user.role == 'admin'  %}

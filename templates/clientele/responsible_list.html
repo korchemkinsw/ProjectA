@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Ответственные лица{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3>Ответственные лица</h3>
+      </div>
+    
+      <div class="card-body">
+        {% for responsible in object_list %}
+          <li>
+            <a href="#"> 
+              {{ responsible }}
+            </a>
+          </li>
+        {% endfor %}
+        <br>
+        <a class="btn btn-primary" href="{% url 'index' %}" role="button">Назад</a>
+        <a class="btn btn-primary" href="{% url 'add_responsible' %}" role="button">Добавить</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

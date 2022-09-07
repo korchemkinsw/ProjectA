@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Добавить телефон{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <h3>Добавить телефон</h3>
+      </div>
+      <div class="card-body">
+        <form method="post" enctype="multipart/form-data" action="">
+          {% csrf_token %}
+          {{ form.as_p }} 
+          <button type="submit" class="btn btn-outline-success btn-sm">Добавить</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
