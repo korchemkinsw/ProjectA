@@ -32,18 +32,14 @@
           {% endfor %}
 
           <table class="table">
-            {{ phonebook.management_form }}
-              {% for form in phonebook.forms %}
+            {{ contacts.management_form }}
+              {% for form in contacts.forms %}
                 {% if forloop.first %}
                   <thead>
                     <tr>
                       {% for field in form.visible_fields %}
                         <th>
-                          {% if field.label == 'Телефон' %}  
-                            <a class="btn btn-outline-primary btn-sm" href="{% url 'add_phone' %}" role="button">{{ field.label|capfirst }} (добавить номер)</a>
-                          {% else %}
-                              {{ field.label|capfirst }}
-                          {% endif %}
+                          {{ field.label|capfirst }}
                         </th>
                       {% endfor %}
                     </tr>
@@ -74,7 +70,7 @@
         $('.formset_row').formset({
             addText: 'Ещё один телефон',
             deleteText: 'Удалить',
-            prefix: 'phonebook',
+            prefix: 'contacts',
           });
       </script>
 

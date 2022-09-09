@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import (Application, Individual, Legal, Phone, Phonebook,
+from .models import (Application, Contact, Individual, Legal, Phone, Phonebook,
                      Responsible)
 
 
@@ -9,8 +9,14 @@ class PhonebookInline(admin.TabularInline):
     min_num = 1
     extra = 0
 
-@admin.register(Phone)
+@admin.register(Contact)
 class PhoneAdmin(admin.ModelAdmin):
+    list_display = ('responsible', 'type', 'phone')
+    fields = ['responsible', 'type', 'phone']
+    search_fields = ('responsible', 'phone',)
+
+@admin.register(Phone)
+class ContactAdmin(admin.ModelAdmin):
     list_display = ('type', 'phone')
     fields = ['type', 'phone']
     search_fields = ('phone',)

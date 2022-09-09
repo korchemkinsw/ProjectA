@@ -1,24 +1,42 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Ответственные лица{% endblock %}
+{% block title %}Контакты{% endblock %}
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-12">
     <div class="card">
       <div class="card-header">
-        <h3>Ответственные лица</h3>
+        <h3>Контакты</h3>
       </div>
-    
       <div class="card-body">
-        {% for responsible in object_list %}
-          <li>
-            <a href="#"> 
-              {{ responsible }}
-            </a>
-          </li>
-        {% endfor %}
-        <br>
+        <div style="text-align: left; font-size: 14px" class="table-responsive">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Контакт</th>
+                <th scope="col">Телефоны</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for responsible in object_list %}
+                <tr>
+                  <td>
+                    <a href="#">{{ responsible.last_name }} {{responsible.first_name }} {{ responsible.fathers_name }}</a>
+                  </td>
+                  <td>
+                    {% for phone in responsible.phone.all %}
+                      <p>
+                        {{ phone.type }} | {{ phone.phone }}
+                      </p>
+                    {% endfor %}
+                  </td>
+                <tr>
+              {% endfor %}
+            </tbody>
+          </table>
+ 
+        </div>
         <a class="btn btn-primary" href="{% url 'index' %}" role="button">Назад</a>
         <a class="btn btn-primary" href="{% url 'add_responsible' %}" role="button">Добавить</a>
       </div>

@@ -3,6 +3,7 @@
 
 {% block title %}Добавить контакт{% endblock %}
 {% block content %}
+{% load user_filters %}
 <div class="row justify-content-center">
   <div class="col-md-12">
     <div class="card">
@@ -12,7 +13,27 @@
       <div class="card-body">
         <form method="post" enctype="multipart/form-data" action="">
           {% csrf_token %}
-          {{ form.as_p }} 
+          {% for field in form %}
+            <div class="form-group row" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+              <label for="{{ field.id_for_label }}" class="col-md-2 col-form-label text-md-left">
+                {% if field.id_for_label == 'id_phone' %}  
+                  <a class="btn btn-outline-primary btn-sm" href="{% url 'add_phone' %}" role="button">{{ field.label }} (добавить номер)</a>
+                {% else %}
+                  {{ field.label }}
+                {% endif %}
+                {% if field.field.required %}
+                  <span class="required">*</span>
+                {% endif %}
+              </label>
+              <div class="col-md-6">
+                {# подключаем фильтр и указываем класс #}
+                {{ field|addclass:"form-control" }}
+                {% if field.help_text %}
+                  <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+                {% endif %}
+              </div>                
+            </div>
+          {% endfor %}
           <button type="submit" class="btn btn-outline-success btn-sm">Добавить</button>
         </form>
       </div>

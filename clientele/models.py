@@ -5,9 +5,9 @@ User = get_user_model()
 
 
 class Phone(models.Model):
-    MOBILE = 'mobile'
-    HOME = 'home'
-    WORKER = 'worker'
+    MOBILE = 'мобильный'
+    HOME = 'домашний'
+    WORKER = 'рабочий'
 
     TYPES = (
         (MOBILE, 'мобильный'),
@@ -48,7 +48,7 @@ class Responsible(models.Model):
     )
     phone = models.ManyToManyField(
         Phone,
-        through='phonebook',
+        through='Phonebook',
         related_name='phones',
         blank=True,
     )
@@ -59,6 +59,40 @@ class Responsible(models.Model):
 
     def __str__(self):
         return f'{self.last_name} {self.first_name[:1]}.{self.fathers_name[:1]}.'
+
+class Contact(models.Model):
+    MOBILE = 'мобильный'
+    HOME = 'домашний'
+    WORKER = 'рабочий'
+
+    TYPES = (
+        (MOBILE, 'мобильный'),
+        (HOME, 'домашний'),
+        (WORKER, 'рабочий')
+    )
+    responsible = models.ForeignKey(
+        Responsible,
+        verbose_name='Ответственное лицо',
+        on_delete=models.CASCADE,
+        related_name='contacts',
+    )
+    type = models.CharField(
+        max_length=10,
+        choices=TYPES,
+        verbose_name='тип телефона',
+    )
+    phone = models.CharField(
+        verbose_name='номер телефона',
+        max_length=11,
+        unique=True
+    )
+
+    class Meta:
+        verbose_name = 'Контакт'
+        verbose_name_plural = 'Контакты'
+    
+    def __str__(self):
+        return f'{self.responsible} | {self.type} {self.phone}'
 
 class Phonebook(models.Model):
     phone = models.ForeignKey(
