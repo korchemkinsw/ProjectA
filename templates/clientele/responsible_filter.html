@@ -26,18 +26,18 @@
           </tr>
         </thead>
         <tbody>
-          {% for responsible in page_obj %}
+          {% for contact in page_obj %}
             <tr>
               <td>
-                <a href="#">{{ responsible.last_name }}</a>
+                <a href="{% url 'contact' contact.pk %}">{{ contact.last_name }}</a>
               </td>
               <td>
-                {{responsible.first_name }}
+                {{contact.first_name }}
               </td>
               <td> 
-                {{ responsible.fathers_name }}
+                {{ contact.fathers_name }}
               <td>
-                {% for phone in responsible.phone.all %}
+                {% for phone in contact.contacts.all %}
                   <p>
                     {{ phone.type }} | {{ phone.phone }}
                   </p>
@@ -71,7 +71,7 @@
     <div>
       {% if user.role == 'manager' or user.role == 'admin'  %}
       <p>
-        <a class="btn btn-primary" href="{% url 'add_contact' %}" role="button">Создать контакт</a>
+        <a class="btn btn-outline-primary btn-sm" href="{% url 'add_contact' %}" role="button">Создать контакт</a>
       </p>
       {% endif %}
     </div>

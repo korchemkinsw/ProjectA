@@ -8,10 +8,8 @@
   </nav>
   <ul class="nav">
     {% if user.is_authenticated %}
-      <a class="nav-link text-dark" >
-        Пользователь: {{ user.last_name }} {{ user.first_name|first }}.{{ user.fathers_name|first }}.
-      </a>
       {% if user.role == 'manager' or user.role == 'admin'  %}
+        <a class="nav-link text-dark" href="{% url 'contactlist' %}">Контакты</a>
         <div class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Клиенты</a>
           <div class="dropdown-menu" style="background-color: #c4671c;" >
@@ -21,17 +19,21 @@
             <a class="dropdown-item" href="#">Может и пошлю...</a>
           </div>
         </div>
-        <a class="nav-link text-dark" href="{% url 'responsible' %}">Ответственные лица</a>
-        <a class="nav-link text-dark" href="{% url 'contacts' %}">Контакты</a>
         <a class="nav-link text-dark" href="#">Заявки</a>
       {% endif %}
+      <a class="nav-link text-dark" href="#">Оборудование</a>
+      <a class="nav-link text-dark" href="#">Договор</a>
+      <a class="nav-link text-dark" href="#">Карточка</a>
       {% if user.role == 'secretary' or user.role == 'engineer' or user.role == 'admin'  %}
         <a class="nav-link text-dark" href="{% url 'orders' %}">Приказы</a>
       {% endif %}
-      <a class="nav-link text-dark" href="{% url 'logout' %}">Выйти</a>
       {% if user.role == 'admin' %}
         <a class="nav-link text-dark" href="{% url 'users:new_user' %}">Регистрация</a>
       {% endif %}
+      <a class="nav-link text-dark" >
+        Пользователь: {{ user.last_name }} {{ user.first_name|first }}.{{ user.fathers_name|first }}.
+      </a>
+      <a class="nav-link text-dark" href="{% url 'logout' %}">Выйти</a>
     {% else %}
       <a class="nav-link text-dark" href="{% url 'login' %}">Войти</a>
     {% endif %}

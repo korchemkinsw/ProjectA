@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Карточка контакта: {{ responsible }}{% endblock %}
+{% load static %}
+{% block content %}
+<div style="text-align: left; font-size: 14px" class="row justify-content-center">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3>{{ responsible }}</h3>
+      </div>
+      <div class="card-body">
+        <div style="text-align: left; font-size: 14px" class="table-responsive">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Телефоны:</th>
+              </tr>
+            </thead>
+            <tbody>
+              <td>
+                {% for phone in responsible.contacts.all %}
+                  <p>
+                    <div class="row">
+                      <div class="col-sm-2">{{ phone.type }}</div>
+                      <div class="col-sm-2">{{ phone.phone }}</div>
+                    </div>
+                  </p>
+                {% endfor %}
+              </td>
+            </tbody>
+          </table>
+          <p>
+            <a class="btn btn-outline-primary btn-sm" href="#" role="button">Создать клиента ЮЛ</a>
+            <a class="btn btn-outline-primary btn-sm" href="#" role="button">Создать клиента ФЛ</a>
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'contactlist' %}" role="button">Список контактов</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,10 +1,7 @@
 import django_filters
 from django import forms
-from django.contrib.admin.widgets import (AdminDateWidget,
-                                          FilteredSelectMultiple)
-from django.contrib.auth import get_user_model
+from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
-from pyexpat import model
 
 from .models import Contact, Legal, Phone, Phonebook, Responsible
 
@@ -108,5 +105,3 @@ class BaseContactFormset(BaseInlineFormSet):
     pass
 
 ContactFormset = inlineformset_factory(Responsible, Contact, form=ContactsForm,extra=1)
-
-PhoneFormset = inlineformset_factory(Responsible, Phonebook, form=PhonebookForm, extra=1)
