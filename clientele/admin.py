@@ -1,32 +1,19 @@
 from django.contrib import admin
 
-from .models import (Application, Contact, Individual, Legal, Phone, Phonebook,
-                     Responsible)
+from .models import Application, Contact, Individual, Legal, Responsible
 
-
-class PhonebookInline(admin.TabularInline):
-    model = Phonebook
-    min_num = 1
-    extra = 0
 
 @admin.register(Contact)
-class PhoneAdmin(admin.ModelAdmin):
+class ContactAdmin(admin.ModelAdmin):
     list_display = ('responsible', 'type', 'phone')
     fields = ['responsible', 'type', 'phone']
     search_fields = ('responsible', 'phone',)
-
-@admin.register(Phone)
-class ContactAdmin(admin.ModelAdmin):
-    list_display = ('type', 'phone')
-    fields = ['type', 'phone']
-    search_fields = ('phone',)
 
 @admin.register(Responsible)
 class ResponsibleAdmin(admin.ModelAdmin):
     list_display = ('last_name', 'first_name', 'fathers_name')
     fields = ['last_name', 'first_name', 'fathers_name']
-    search_fields = ('phone', 'last_name')
-    inlines = [PhonebookInline]
+    search_fields = ('last_name',)
     empty_value_display = '-пусто-'
 
 @admin.register(Legal)

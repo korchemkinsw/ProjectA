@@ -4,34 +4,6 @@ from django.db import models
 User = get_user_model()
 
 
-class Phone(models.Model):
-    MOBILE = 'мобильный'
-    HOME = 'домашний'
-    WORKER = 'рабочий'
-
-    TYPES = (
-        (MOBILE, 'мобильный'),
-        (HOME, 'домашний'),
-        (WORKER, 'рабочий')
-    )
-    type = models.CharField(
-        max_length=10,
-        choices=TYPES,
-        verbose_name='тип телефона',
-    )
-    phone = models.CharField(
-        verbose_name='номер телефона',
-        max_length=11,
-        unique=True
-    )
-
-    class Meta:
-        verbose_name = 'Номер телефона'
-        verbose_name_plural = 'Номера телефонов'
-    
-    def __str__(self):
-        return f'{self.type} | {self.phone}'
-
 class Responsible(models.Model):
     last_name = models.CharField(
         verbose_name='фамилия',
@@ -45,12 +17,6 @@ class Responsible(models.Model):
         verbose_name='отчество',
         max_length=150,
         blank=True
-    )
-    phone = models.ManyToManyField(
-        Phone,
-        through='Phonebook',
-        related_name='phones',
-        blank=True,
     )
 
     class Meta:
@@ -75,6 +41,7 @@ class Contact(models.Model):
         verbose_name='Ответственное лицо',
         on_delete=models.CASCADE,
         related_name='contacts',
+        blank=True,
     )
     type = models.CharField(
         max_length=10,
@@ -93,29 +60,6 @@ class Contact(models.Model):
     
     def __str__(self):
         return f'{self.responsible} | {self.type} {self.phone}'
-
-class Phonebook(models.Model):
-    phone = models.ForeignKey(
-        Phone,
-        verbose_name='Телефон',
-        on_delete=models.CASCADE,
-        related_name='phonebook',
-    )
-    responsible = models.ForeignKey(
-        Responsible,
-        verbose_name='Ответственное лицо',
-        on_delete=models.CASCADE,
-        related_name='phonebook',
-    )
-
-    class Meta:
-        verbose_name = 'телефон'
-        verbose_name_plural = 'Телефонная книга'
-
-    def __str__(self):
-        return (
-            f'{self.responsible} {self.phone}'
-        )
 
 class Legal(models.Model):
     fullname = models.CharField(
@@ -219,7 +163,7 @@ class Individual(models.Model):
         max_length=11,
         verbose_name='Серия и номер паспорта',
         help_text='Серия и номер паспорта',
-        blank=True
+        unique=True
     )
     issued = models.CharField(
         max_length=150,
@@ -228,7 +172,9 @@ class Individual(models.Model):
         blank=True,
     )
     date = models.DateField(
-        'Дата выдачи',
+        verbose_name='Дата выдачи',
+        help_text='Дата выдачи',
+        blank=True,
         #default=datetime.date.today()
     )
 

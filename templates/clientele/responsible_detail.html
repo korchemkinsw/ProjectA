@@ -31,7 +31,7 @@
           </table>
           <p>
             <a class="btn btn-outline-primary btn-sm" href="#" role="button">Создать клиента ЮЛ</a>
-            <a class="btn btn-outline-primary btn-sm" href="#" role="button">Создать клиента ФЛ</a>
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'add_individ' responsible.id  %}" role="button">Создать клиента ФЛ</a>
             <a class="btn btn-outline-primary btn-sm" href="{% url 'contactlist' %}" role="button">Список контактов</a>
           </p>
         </div>

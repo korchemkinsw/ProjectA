@@ -1,36 +1,18 @@
 import django_filters
 from django import forms
-from django.contrib.admin.widgets import FilteredSelectMultiple
+from django.contrib.admin.widgets import (AdminDateWidget,
+                                          FilteredSelectMultiple)
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
+from orders.forms import DateInput
 
-from .models import Contact, Legal, Phone, Phonebook, Responsible
+from .models import Contact, Individual, Legal, Responsible
 
-
-class PhoneForm(forms.ModelForm):
-    class Meta:
-        model = Phone
-        exclude = ()
-        fields = ('type', 'phone',)
 
 class ContactsForm(forms.ModelForm):
     class Meta:
         model = Contact
         exclude = ()
         fields = ('type', 'phone',)
-
-class PhonebookForm(forms.ModelForm):
-    class Meta:
-        model = Phonebook
-        exclude = ()
-        fields = ('phone',)
-  
-    def __init__(self, *args, **kwargs):
-        super (PhonebookForm,self ).__init__(*args,**kwargs)
-        phones=Phone.objects.all()
-        phonebook=Phonebook.objects.all()
-        for contact in phonebook:
-            phones=phones.exclude(phone=contact.phone.phone)
-        self.fields['phone'].queryset = phones
 
 class ContactForm(forms.ModelForm):
     class Meta:
@@ -43,34 +25,6 @@ class ContactForm(forms.ModelForm):
             'fathers_name': 'Отчество',
         }
 
-class ResponsibleForm(forms.ModelForm):
-    class Meta:
-        model = Responsible
-        fields = ('last_name', 'first_name', 'fathers_name', 'phone',)
-        labels ={
-            'last_name': 'Фамилия',
-            'first_name': 'Имя',
-            'fathers_name': 'Отчество',
-            'phone': 'Телефон',
-        }
-        widgets = {
-            'phone':FilteredSelectMultiple(u'телефоны', False),
-        }
-
-    class Media:
-        css = {
-            'all': ['admin/css/widgets.css'],
-        }
-        js = ['/admin/jsi18n/']
-
-    def __init__(self, *args, **kwargs):
-        super (ResponsibleForm,self ).__init__(*args,**kwargs)
-        phones=Phone.objects.all()
-        phonebook=Phonebook.objects.all()
-        for contact in phonebook:
-            phones=phones.exclude(phone=contact.phone.phone)
-        self.fields['phone'].queryset = phones
-
 class ResponsibleFilter(django_filters.FilterSet):
     last_name = django_filters.CharFilter(field_name='last_name', lookup_expr='contains')
     first_name = django_filters.CharFilter(field_name='first_name', lookup_expr='contains')
@@ -81,11 +35,22 @@ class ResponsibleFilter(django_filters.FilterSet):
         model = Responsible
         fields = ['last_name', 'first_name', 'fathers_name']
 
+class IndividualForm(forms.ModelForm):
+    class Meta:
+        model = Individual
+        exclude = ()
+        fields = ['num_pass', 'issued', 'date']
+        widgets = {'date': DateInput()}
+
+    def __init__(self, *args, **kwargs):
+        super(IndividualForm, self).__init__(*args, **kwargs)
+        self.fields['date'].widget=AdminDateWidget()
+
 class LegalForm(forms.ModelForm):
     class Meta:
         model = Legal
         exclude = ()
-        fields = (
+        fields = [
             'fullname',
             'abbreviatedname',
             'legaladdress',
@@ -99,7 +64,7 @@ class LegalForm(forms.ModelForm):
             'bic',
             'bank',
             'bigboss',
-        )
+        ]
 
 class BaseContactFormset(BaseInlineFormSet):
     pass
