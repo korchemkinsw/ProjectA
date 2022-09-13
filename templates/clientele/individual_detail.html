@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Физическое лицо: {{ individual }}{% endblock %}
+{% load static %}
+{% block content %}
+<div style="text-align: left; font-size: 14px" class="row justify-content-center">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3>{{ individual.name.last_name }} {{ individual.name.first_name }} {{ individual.name.fathers_name }}</h3>
+      </div>
+      <div class="card-body">
+        <div style="text-align: left; font-size: 14px" class="table-responsive">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th class="col-lg-2">Паспорт:</th>
+                <th class="col-lg-10"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th class="col-lg-2">Серия Номер: </th>
+                <td class="col-md-10">{{ individual.num_pass }}</td>
+              </tr>
+              <tr>
+                <th class="col-lg-2">Выдан: </th>
+                <td class="col-lg-10">{{ individual.issued }}</td>
+              </tr>
+              <tr>
+                <th class="col-lg-2">Дата выдачи: </th>
+                <td class="col-lg-10">{{ individual.date }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <br>
+          <p>
+            <a class="btn btn-outline-primary btn-sm" href="#" role="button">Создать заявку на охрану</a>
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'individual' %}" role="button">Список клиентов ФЛ</a>
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'contactlist' %}" role="button">Список контактов</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

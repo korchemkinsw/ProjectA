@@ -1,7 +1,5 @@
 import django_filters
 from django import forms
-from django.contrib.admin.widgets import (AdminDateWidget,
-                                          FilteredSelectMultiple)
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
 from orders.forms import DateInput
 
@@ -25,6 +23,9 @@ class ContactForm(forms.ModelForm):
             'fathers_name': 'Отчество',
         }
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
 class ResponsibleFilter(django_filters.FilterSet):
     last_name = django_filters.CharFilter(field_name='last_name', lookup_expr='contains')
     first_name = django_filters.CharFilter(field_name='first_name', lookup_expr='contains')
@@ -40,11 +41,10 @@ class IndividualForm(forms.ModelForm):
         model = Individual
         exclude = ()
         fields = ['num_pass', 'issued', 'date']
-        widgets = {'date': DateInput()}
 
     def __init__(self, *args, **kwargs):
         super(IndividualForm, self).__init__(*args, **kwargs)
-        self.fields['date'].widget=AdminDateWidget()
+        self.fields['date'].widget=DateInput(attrs={'type': 'date'})
 
 class LegalForm(forms.ModelForm):
     class Meta:

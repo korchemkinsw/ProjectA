@@ -55,10 +55,7 @@ class ListIndividual(ListView):
 class CreateIndividual(CreateView):
     model = Individual
     form_class = IndividualForm
-     
-    def get_success_url(self):
-       pk = self.kwargs['pk']
-       return reverse('contact', kwargs={'pk': pk})
+    success_url = reverse_lazy('individual')
 
     def get_context_data(self, **kwargs):
         if 'individual' not in kwargs:
@@ -71,3 +68,7 @@ class CreateIndividual(CreateView):
             self.object.name = get_object_or_404(Responsible, id=self.kwargs['pk'])
             self.object = form.save()
         return super(CreateIndividual, self).form_valid(form)
+
+class DetailIndividual(DetailView):
+    model = Individual
+

@@ -13,8 +13,8 @@
       <div class="card-body">
         {% for individual in object_list %}
           <li>
-            <a href="#"> 
-              {{ individual }}
+            <a href="{% url 'individ' individual.pk  %}"> 
+              {{ individual.name.last_name }} {{ individual.name.first_name }} {{ individual.name.fathers_name }}
             </a>
           </li>
         {% endfor %}
