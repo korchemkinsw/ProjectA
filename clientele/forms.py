@@ -1,4 +1,5 @@
 import django_filters
+from core.widgets import FengyuanChenDatePickerInput
 from django import forms
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
 from orders.forms import DateInput
@@ -37,6 +38,13 @@ class ResponsibleFilter(django_filters.FilterSet):
         fields = ['last_name', 'first_name', 'fathers_name']
 
 class IndividualForm(forms.ModelForm):
+    '''
+    date = forms.DateField(
+        input_formats=['%d/%m/%Y'],
+        label='Дата выдачи',
+        help_text='Дата выдачи',
+    )
+    '''
     class Meta:
         model = Individual
         exclude = ()
@@ -44,7 +52,7 @@ class IndividualForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(IndividualForm, self).__init__(*args, **kwargs)
-        self.fields['date'].widget=DateInput(attrs={'type': 'date'})
+        self.fields['date'].widget=FengyuanChenDatePickerInput()
 
 class LegalForm(forms.ModelForm):
     class Meta:

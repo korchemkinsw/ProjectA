@@ -1,0 +1,10 @@
+{% include "django/forms/widgets/input.html" %}
+
+<script src="{% static 'js/datepicker.ru-RU.min.js' %}"></script>
+<script>
+  $(function () {
+    $("input[name='{{ widget.name }}']").datepicker({
+      format:'dd/mm/yyyy',
+    });
+  });
+</script>
