@@ -96,7 +96,7 @@
       <br>
     </div>
     <div>
-      {% if user.role == 'secretary' %}
+      {% if user.role == 'secretary' or user.role == 'admin' %}
       <p>
         <a class="btn btn-primary" href="{% url 'new_order' %}" role="button">Создать</a>
       </p>

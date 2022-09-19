@@ -29,9 +29,53 @@
               </td>
             </tbody>
           </table>
+          {% if responsible.individual %}
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th scope="col">Физическое лицо:</th>
+                </tr>
+              </thead>
+              <tbody>
+                <td>
+                  {% for individ in responsible.individual.all %}
+                    <p>
+                      <div class="row">
+                        <div class="col-sm-2">{{ individ.name }}</div>
+                        <!--div class="col-sm-2">{{ individ.phone }}</div-->
+                      </div>
+                    </p>
+                  {% endfor %}
+                </td>
+              </tbody>
+            </table>
+          {% endif %}
+          {% if responsible.bigboss %}
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th scope="col">Генеральный директор:</th>
+                </tr>
+              </thead>
+              <tbody>
+                <td>
+                  {% for legal in responsible.bigboss.all %}
+                    <p>
+                      <div class="row">
+                        <div class="col-sm-2">{{ legal }}</div>
+                        <!--div class="col-sm-2">{{ individ.phone }}</div-->
+                      </div>
+                    </p>
+                  {% endfor %}
+                </td>
+              </tbody>
+            </table>
+          {% endif %} 
           <p>
-            <a class="btn btn-outline-primary btn-sm" href="#" role="button">Создать клиента ЮЛ</a>
-            <a class="btn btn-outline-primary btn-sm" href="{% url 'add_individ' responsible.id  %}" role="button">Создать клиента ФЛ</a>
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'add_legal' responsible.id  %}" role="button">Создать клиента ЮЛ</a>
+            {% if not responsible.individual %}
+              <a class="btn btn-outline-primary btn-sm" href="{% url 'add_individ' responsible.id  %}" role="button">Создать клиента ФЛ</a>
+            {% endif %}
             <a class="btn btn-outline-primary btn-sm" href="{% url 'contactlist' %}" role="button">Список контактов</a>
           </p>
         </div>

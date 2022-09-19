@@ -6,8 +6,8 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 from django_filters.views import FilterView
 
-from .forms import (ContactForm, ContactFormset, IndividualForm,
-                    ResponsibleFilter)
+from .forms import (ContactFilter, ContactForm, ContactFormset, IndividualForm,
+                    LegalForm)
 from .models import Application, Individual, Legal, Responsible
 
 
@@ -15,7 +15,7 @@ class FilterContact(FilterView):
     model = Responsible
     context_object_name = 'filter'
     template_name = 'clientele/responsible_filter.html'
-    filterset_class = ResponsibleFilter
+    filterset_class = ContactFilter
     paginate_by = 5
 
 class CreateContact(CreateView):
@@ -72,3 +72,24 @@ class CreateIndividual(CreateView):
 class DetailIndividual(DetailView):
     model = Individual
 
+class CreateLegal(CreateView):
+    model = Legal
+    form_class = LegalForm
+    success_url = reverse_lazy('legals')
+
+    def get_context_data(self, **kwargs):
+        if 'legal' not in kwargs:
+            kwargs['legal'] = get_object_or_404(Responsible, id=self.kwargs['pk'])
+        context = super().get_context_data(**kwargs)
+        context['form'].fields['bigboss'].queryset = Responsible.objects.filter(id=self.kwargs['pk'])
+        return context
+        
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object.bigboss = get_object_or_404(Responsible, id=self.kwargs['pk'])
+            self.object = form.save()
+        return super(CreateLegal, self).form_valid(form)
+
+class DetailLegal(DetailView):
+    model = Legal

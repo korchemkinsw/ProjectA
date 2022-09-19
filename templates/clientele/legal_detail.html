@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Юридическое лицо: {{ legal }}{% endblock %}
+{% load static %}
+{% block content %}
+<div style="text-align: left; font-size: 14px" class="row justify-content-center">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3>{{ legal }} </h3>
+      </div>
+      <div class="card-body">
+        <table style="text-align: left" class="table table-bordered">
+          <tbody>
+            <tr>
+              <td>Полное наименование</td>
+              <td>{{ legal.fullname }}</td>
+            </tr>
+            <tr>
+              <td>Сокращенное наименование</td>
+              <td>{{ legal.abbreviatedname }}</td>
+            </tr>
+            <tr>
+              <td>Юридический адрес</td>
+              <td>{{ legal.legaladdress }}</td>
+            </tr>
+            <tr>
+              <td>Почтовый адрес</td>
+              <td>{{ legal.postaladdress }}</td>
+            </tr>
+            <tr>
+              <td>Телефон/факс</td>
+              <td>{{ legal.telephone }}</td>
+            </tr>
+            <tr>
+              <td>ИНН</td>
+              <td>{{ legal.inn }}</td>
+            </tr>
+            <tr>
+              <td>КПП</td>
+              <td>{{ legal.kpp }}</td>
+            </tr>
+            <tr>
+              <td>ОГРН</td>
+              <td>{{ legal.ogrn }}</td>
+            </tr>
+            <tr>
+              <td>Рассчётный счёт</td>
+              <td>{{ legal.payment }}</td>
+            </tr>
+            <tr>
+              <td>Корреспондентский счёт</td>
+              <td>{{ legal.correspondent }}</td>
+            </tr>
+            <tr>
+              <td>БИК банка</td>
+              <td>{{ legal.bic }}</td>
+            </tr>
+            <tr>
+              <td>Банк</td>
+              <td>{{ legal.bank }}</td>
+            </tr>
+            <tr>
+              <td>Ген. директор</td>
+              <td>{{ legal.bigboss }}</td>
+            </tr>
+          </tbody>
+        </table> 
+        <br>
+        <p>
+          <a class="btn btn-outline-primary btn-sm" href="#" role="button">Создать заявку на охрану</a>
+          <a class="btn btn-outline-primary btn-sm" href="{% url 'legals' %}" role="button">Список клиентов ЮЛ</a>
+          <a class="btn btn-outline-primary btn-sm" href="{% url 'contactlist' %}" role="button">Список контактов</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

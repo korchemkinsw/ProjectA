@@ -96,7 +96,7 @@ class Legal(models.Model):
         max_length=10,
         verbose_name='ИНН',
         help_text='ИНН',
-        blank=True
+        unique=True
     )
     kpp = models.CharField(
         max_length=10,

@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Добавить данные физического лица{% endblock %}
+{% block title %}Добавить данные юридического лица{% endblock %}
 {% block content %}
 {% load user_filters %}
 <div class="row justify-content-center">
   <div class="col-md-12">
     <div class="card">
       <div class="card-header">
-        <h3>{{ individual.last_name }} {{ individual.first_name }} {{ individual.fathers_name }}</h3>
+        <h3>Добавить данные юридического лица</h3>
       </div>
       <div class="card-body">
         <form method="post" enctype="multipart/form-data" action="">
@@ -36,17 +36,6 @@
           {% endfor %}
           <button type="submit" class="btn btn-outline-success btn-sm">Добавить</button>
         </form>
-        
-        <script src="{% static 'js/datepicker.ru-RU.min.js' %}"></script>
-        <script>
-          $(function () {
-            $("#id_date").datepicker({
-              language:'ru-RU',
-              format:'dd.mm.yyyy',
-              autoPick:true,
-            });
-          });
-        </script>
       </div>
     </div>
   </div>

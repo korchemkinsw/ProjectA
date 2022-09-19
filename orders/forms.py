@@ -1,4 +1,5 @@
 import django_filters
+from core.widgets import FengyuanChenDatePickerInput
 from django import forms
 from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.auth import get_user_model
@@ -53,13 +54,12 @@ class OrderFormCreate(forms.ModelForm):
             'comment': 'Комментарий',
         }
 
-        widgets = {
-            'perday': DateInput(),
-        }
+        widgets = {'perday': DateInput(),}
         
     def __init__(self, *args, **kwargs):
         super(OrderFormCreate, self).__init__(*args, **kwargs)
         self.fields['perday'].widget=AdminDateWidget()
+        #self.fields['perday'].widget=FengyuanChenDatePickerInput()
 
 class OrderFormUpdate(forms.ModelForm):
     STATUS_CHOICES = (
@@ -94,6 +94,7 @@ class OrderFormUpdate(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(OrderFormUpdate, self).__init__(*args, **kwargs)
         self.fields['perday'].widget=AdminDateWidget()
+        #self.fields['perday'].widget=FengyuanChenDatePickerInput()
 
 class OrderFilter(django_filters.FilterSet):
     STATUS_CHOICES = (
@@ -114,7 +115,7 @@ class OrderFilter(django_filters.FilterSet):
     generated_lt = django_filters.DateFilter(
         field_name='generated',
         widget=DateInput(attrs={'type': 'date'}),
-        lookup_expr='lt'
+        lookup_expr='lte'
         )
     comment = django_filters.CharFilter(field_name='comment', lookup_expr='contains')
 
