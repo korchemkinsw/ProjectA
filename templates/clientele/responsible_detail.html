@@ -41,8 +41,7 @@
                   {% for individ in responsible.individual.all %}
                     <p>
                       <div class="row">
-                        <div class="col-sm-2">{{ individ.name }}</div>
-                        <!--div class="col-sm-2">{{ individ.phone }}</div-->
+                        <a class="col-sm-2" href="{% url 'individ' individ.pk  %}">{{ individ.name }}</a>
                       </div>
                     </p>
                   {% endfor %}
@@ -62,8 +61,7 @@
                   {% for legal in responsible.bigboss.all %}
                     <p>
                       <div class="row">
-                        <div class="col-sm-2">{{ legal }}</div>
-                        <!--div class="col-sm-2">{{ individ.phone }}</div-->
+                        <a class="col-sm-2" href="{% url 'legal' legal.pk  %}">{{ legal }}</a>
                       </div>
                     </p>
                   {% endfor %}
@@ -73,7 +71,7 @@
           {% endif %} 
           <p>
             <a class="btn btn-outline-primary btn-sm" href="{% url 'add_legal' responsible.id  %}" role="button">Создать клиента ЮЛ</a>
-            {% if not responsible.individual %}
+            {% if not responsible.individual.all %}
               <a class="btn btn-outline-primary btn-sm" href="{% url 'add_individ' responsible.id  %}" role="button">Создать клиента ФЛ</a>
             {% endif %}
             <a class="btn btn-outline-primary btn-sm" href="{% url 'contactlist' %}" role="button">Список контактов</a>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Заявки на охрану{% endblock %}
+{% block content %}
+<div class="row justify-content-centr">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3>Заявки на охрану</h3>
+      </div>
+      <div class="card-body">
+        <div style="text-align: center; font-size: 12px" class="table-responsive">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Статус</th>
+                <th scope="col">Созданa</th>
+                <th scope="col">Клиент</th>
+                <th scope="col">Объект</th>
+                <th scope="col">Адрес</th>
+                <th scope="col">Менеджер</th>
+                <th scope="col">Действие</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for application in object_list %}
+                <tr>
+                  <td>
+                    {{ application.status }}
+                  </td>
+                  <td>
+                    {{ application.generated|date:"d.m.Y" }} {{ application.generated|time:"H:i" }} 
+                  </td>
+                  <td>
+                    {% if application.legal %}
+                      {{ application.legal }}
+                    {% endif %}
+                    {% if application.individual %}
+                      {{ application.individual }}
+                    {% endif %}
+                  </td>
+                  <td> 
+                    {{ application.object_name }}
+                  </td>
+                  <td> 
+                    {{ application.address }}
+                  </td>
+                  <td>
+                    {{ application.manager }}
+                  </td>
+                  <td>
+                    <a class="badge badge-info" href="{% url 'application' application.pk %}" role="button">открыть</a>
+                  </td>
+                <tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <br>
+        </div>
+        <a class="btn btn-outline-primary btn-sm" href="{% url 'contactlist' %}" role="button">Контакты</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

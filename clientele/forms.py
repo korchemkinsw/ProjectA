@@ -2,8 +2,9 @@ import django_filters
 from core.widgets import FengyuanChenDatePickerInput
 from django import forms
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
+from pyexpat import model
 
-from .models import Contact, Individual, Legal, Responsible
+from .models import Application, Contact, Individual, Legal, Responsible
 
 
 class ContactsForm(forms.ModelForm):
@@ -66,6 +67,30 @@ class LegalForm(forms.ModelForm):
             'bigboss',
         ]
 
+class AppIndividualForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        exclude = ()
+        fields = [
+            'individual',
+            'object_name',
+            'address',
+            'transmission',
+            'note',
+        ]
+
+class AppLegalForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        exclude = ()
+        fields = [
+            'legal',
+            'object_name',
+            'address',
+            'transmission',
+            'note',
+        ]
+        
 class BaseContactFormset(BaseInlineFormSet):
     pass
 

@@ -195,6 +195,9 @@ class Application(models.Model):
     OTHER ='other'
 
     NEW = 'новый'
+    ACCOUNT = 'пультовой номер'
+    CONTRACT = 'договор'
+    MONTAGE = 'монтаж'
     CHANGED = 'изменён'
     COMPLETED = 'завершен'
 
@@ -210,6 +213,9 @@ class Application(models.Model):
 
     STATUS_CHOICES = (
         (NEW, 'Новый'),
+        (ACCOUNT, 'пультовой номер'),
+        (CONTRACT, 'договор'),
+        (MONTAGE, 'монтаж'),
         (CHANGED, 'Изменён'),
         (COMPLETED, 'Завершен'),
     )
@@ -224,17 +230,19 @@ class Application(models.Model):
         Legal,
         verbose_name='Юр.лицо',
         help_text='Юр.лицо',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name='legal_app',
         blank=True,
+        null=True,
     )
     individual = models.ForeignKey(
         Individual,
         verbose_name='Физ.лицо',
         help_text='Физ.лицо',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name='individ_app',
         blank=True,
+        null=True,
     )
     object_name = models.CharField(
         max_length=400,
@@ -279,4 +287,4 @@ class Application(models.Model):
         verbose_name_plural = 'Заявки на охрану'
 
     def __str__(self):
-        return f'{self.account} {self.legal}{self.individual} {self.object_name} {self.address[:20]}...'
+        return f'{self.legal}{self.individual} {self.object_name} {self.address[:20]}...'

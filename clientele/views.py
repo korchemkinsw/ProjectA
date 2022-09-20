@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -6,8 +8,8 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 from django_filters.views import FilterView
 
-from .forms import (ContactFilter, ContactForm, ContactFormset, IndividualForm,
-                    LegalForm)
+from .forms import (AppIndividualForm, AppLegalForm, ContactFilter,
+                    ContactForm, ContactFormset, IndividualForm, LegalForm)
 from .models import Application, Individual, Legal, Responsible
 
 
@@ -46,9 +48,6 @@ class CreateContact(CreateView):
 class DetailContact(DetailView):
     model = Responsible
 
-class ListLegal(ListView):
-    model = Legal
-
 class ListIndividual(ListView):
     model = Individual
 
@@ -72,6 +71,9 @@ class CreateIndividual(CreateView):
 class DetailIndividual(DetailView):
     model = Individual
 
+class ListLegal(ListView):
+    model = Legal
+
 class CreateLegal(CreateView):
     model = Legal
     form_class = LegalForm
@@ -87,9 +89,60 @@ class CreateLegal(CreateView):
     def form_valid(self, form):
         with transaction.atomic():
             self.object = form.save(commit=False)
-            self.object.bigboss = get_object_or_404(Responsible, id=self.kwargs['pk'])
+            #self.object.bigboss = get_object_or_404(Responsible, id=self.kwargs['pk'])
             self.object = form.save()
         return super(CreateLegal, self).form_valid(form)
 
 class DetailLegal(DetailView):
     model = Legal
+
+class ListApplication(ListView):
+    model = Application
+
+class CreateAppIndividual(CreateView):
+    model = Application
+    form_class = AppIndividualForm
+    success_url = reverse_lazy('individual')
+
+    def get_context_data(self, **kwargs):
+        if 'application' not in kwargs:
+            kwargs['application'] = get_object_or_404(Individual, id=self.kwargs['pk'])
+        context = super().get_context_data(**kwargs)
+        context['form'].fields['individual'].queryset = Individual.objects.filter(id=self.kwargs['pk'])
+        context['client']=kwargs['application'].name
+        return context
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object.status = Application.NEW
+            self.object.manager = self.request.user
+            self.object.generated = datetime.datetime.today()
+            self.object = form.save()
+        return super(CreateAppIndividual, self).form_valid(form)
+
+class CreateAppLegal(CreateView):
+    model = Application
+    form_class = AppLegalForm
+    success_url = reverse_lazy('legals')
+
+    def get_context_data(self, **kwargs):
+        if 'application' not in kwargs:
+            kwargs['application'] = get_object_or_404(Legal, id=self.kwargs['pk'])
+        context = super().get_context_data(**kwargs)
+        context['form'].fields['legal'].queryset = Legal.objects.filter(id=self.kwargs['pk'])
+        context['client']=kwargs['application'].abbreviatedname
+        return context
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object.status = Application.NEW
+            self.object.manager = self.request.user
+            self.object.generated = datetime.datetime.today()
+            self.object = form.save()
+        return super(CreateAppLegal, self).form_valid(form)
+
+class DetailApplication(DetailView):
+    model = Application
+    

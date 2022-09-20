@@ -16,6 +16,7 @@ urlpatterns = [
     path('orders/', include('orders.urls')),
     path('guide/', views.guide, name='guide'),
     path('clientele/', include('clientele.urls')),
+    path('object_card/', include('object_card.urls')),
 ]
 
 if settings.DEBUG:

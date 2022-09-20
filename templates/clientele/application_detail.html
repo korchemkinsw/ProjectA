@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}
+  {% if application.legal %}
+    Заявка на пультовую охрану {{ application.legal }}
+  {% endif %}
+  {% if application.individual %}
+    Заявка на пультовую охрану {{ application.individual }}
+  {% endif %}
+{% endblock %}
+{% load static %}
+{% block content %}
+<div style="text-align: left; font-size: 14px" class="row justify-content-center">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3>
+          {% if application.legal %}
+            Заявка на пультовую охрану {{ application.legal }}
+          {% endif %}
+          {% if application.individual %}
+            Заявка на пультовую охрану {{ application.individual }}
+          {% endif %}
+        </h3>
+      </div>
+      <div class="card-body">
+        <div style="text-align: left; font-size: 14px" class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th class="col-lg-3">Данные объекта охраны:</th>
+                  <th class="col-lg-9"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th class="col-lg-3">Клиент: </th>
+                  <td class="col-md-9">
+                    {% if application.legal %}
+                      {{ application.legal.fullname }}
+                    {% endif %}
+                    {% if application.individual %}
+                      {{ application.individual }}
+                    {% endif %}
+                  </td>
+                </tr>
+                <tr>
+                  <th class="col-lg-3">Объект: </th>
+                  <td class="col-lg-9">{{ application.object_name }}</td>
+                </tr>
+                <tr>
+                  <th class="col-lg-3">Адрес: </th>
+                  <td class="col-lg-9">{{ application.address }}</td>
+                </tr>
+                <tr>
+                  <th class="col-lg-3">Система передачи извещений: </th>
+                  <td class="col-lg-9">{{ application.transmission }}</td>
+                </tr>
+                <tr>
+                  <th class="col-lg-3">Примечание: </th>
+                  <td class="col-lg-9">{{ application.note }}</td>
+                </tr>
+                <tr>
+                  <th class="col-lg-3">Подготовил: </th>
+                  <td class="col-lg-9">{{ application.manager }} {{ application.generated|date:"d.m.Y" }} {{ application.generated|time:"H:i" }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <br>
+            <p>
+              <a class="btn btn-outline-primary btn-sm" href="{% url 'applications' %}" role="button">Заявки</a>
+            </p>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

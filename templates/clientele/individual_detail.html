@@ -34,7 +34,7 @@
           </table>
           <br>
           <p>
-            <a class="btn btn-outline-primary btn-sm" href="#" role="button">Создать заявку на охрану</a>
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'add_appindivid' individual.pk %}" role="button">Создать заявку на охрану</a>
             <a class="btn btn-outline-primary btn-sm" href="{% url 'individual' %}" role="button">Список клиентов ФЛ</a>
             <a class="btn btn-outline-primary btn-sm" href="{% url 'contactlist' %}" role="button">Список контактов</a>
           </p>

@@ -12,9 +12,8 @@ urlpatterns = [
     path('individual/', views.ListIndividual.as_view(), name='individual'),
     path('add_individ/<int:pk>/', views.CreateIndividual.as_view(), name='add_individ'),
     path('individual/<int:pk>/',views.DetailIndividual.as_view(), name='individ'),
-    #path('responsible/', views.ListResponsible.as_view(), name='responsible'),
-    #path('phonebook/', views.CreateContacts.as_view(), name='phonebook'),
-    #path('add_phone/', views.CreateContact.as_view(), name='add_phone'),
-    #path('add_responsible/', views.CreateResponsible.as_view(), name='add_responsible'),
-    
+    path('applications/', views.ListApplication.as_view(), name='applications'),
+    path('add_appindivid/<int:pk>/', views.CreateAppIndividual.as_view(), name='add_appindivid'),
+    path('add_applegal/<int:pk>/', views.CreateAppLegal.as_view(), name='add_applegal'),
+    path('application/<int:pk>/', views.DetailApplication.as_view(), name='application'),
 ]
