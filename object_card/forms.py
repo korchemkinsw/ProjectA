@@ -1,4 +1,7 @@
+from dataclasses import fields
+
 import django_filters
+from clientele.models import Application
 from django import forms
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
 
@@ -11,8 +14,4 @@ class DeviceForm(forms.ModelForm):
         exclude = ()
         fields = ('account', 'device', 'sim_first', 'sim_two',)
 
-class CardDevForm(forms.ModelForm):
-    class Meta:
-        model = Card
-        exclude = ()
-        fields = ('device', 'application',)
+

@@ -59,7 +59,8 @@ class CreateIndividual(CreateView):
     def get_context_data(self, **kwargs):
         if 'individual' not in kwargs:
             kwargs['individual'] = get_object_or_404(Responsible, id=self.kwargs['pk'])
-        return super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+        return context
         
     def form_valid(self, form):
         with transaction.atomic():

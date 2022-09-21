@@ -68,6 +68,9 @@
             <br>
             <p>
               <a class="btn btn-outline-primary btn-sm" href="{% url 'applications' %}" role="button">Заявки</a>
+              {% if not application.controldev.all %}
+                <a class="btn btn-outline-primary btn-sm" href="{% url 'add_device' application.id  %}" role="button">Добавить прибор</a>
+              {% endif %}
             </p>
           </div>
       </div>

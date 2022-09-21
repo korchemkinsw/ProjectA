@@ -33,6 +33,14 @@ class Device(models.Model):
         help_text='Вторая сим',
         blank=True
     )
+    application = models.ForeignKey(
+        Application,
+        verbose_name='Объект',
+        help_text='Объект',
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='controldev',
+    )
     enginer_pult = models.ForeignKey(
         User,
         verbose_name='Инженер пульта',
@@ -69,6 +77,14 @@ class Contract(models.Model):
         verbose_name='Номер договора',
         help_text='Номер договора',
         blank=True
+    )
+    application = models.ForeignKey(
+        Application,
+        verbose_name='Объект',
+        help_text='Объект',
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='contract',
     )
     qteam = models.ForeignKey(
         Responseteam,
@@ -107,7 +123,7 @@ class Card(models.Model):
         help_text='ППК',
         null=True,
         on_delete=models.SET_NULL,
-        related_name='control_device',
+        related_name='control',
     )
     application = models.ForeignKey(
         Application,
@@ -123,7 +139,7 @@ class Card(models.Model):
         help_text='Договор',
         null=True,
         on_delete=models.SET_NULL,
-        related_name='contract',
+        related_name='contr',
     )
 
     enginer = models.ForeignKey(

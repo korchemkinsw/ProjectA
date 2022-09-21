@@ -287,4 +287,7 @@ class Application(models.Model):
         verbose_name_plural = 'Заявки на охрану'
 
     def __str__(self):
-        return f'{self.legal}{self.individual} {self.object_name} {self.address[:20]}...'
+        if self.legal:
+            return f'{self.legal} {self.object_name} {self.address}'
+        if self.individual:
+            return f'{self.individual} {self.object_name} {self.address}'

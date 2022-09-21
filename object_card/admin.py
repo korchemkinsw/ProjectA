@@ -5,15 +5,15 @@ from .models import Card, Contract, Device, Partition, Zone
 
 @admin.register(Device)
 class DeviceAdmin(admin.ModelAdmin):
-    list_display = ('account', 'device', 'sim_first', 'sim_two')
-    fields = ['account', 'device', 'sim_first', 'sim_two']
+    list_display = ('account', 'device', 'sim_first', 'sim_two', 'application')
+    fields = ['account', 'device', 'sim_first', 'sim_two', 'application']
     search_fields = ('account',)
     empty_value_display = '-пусто-'
 
 @admin.register(Contract)
 class ContractAdmin(admin.ModelAdmin):
-    list_display = ('enterprise', 'number', 'qteam')
-    fields = ['enterprise', 'number', 'qteam']
+    list_display = ('enterprise', 'number', 'qteam', 'application')
+    fields = ['enterprise', 'number', 'qteam', 'application']
     search_fields = ('enterprise', 'number', 'qteam')
     empty_value_display = '-пусто-'
 
