@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #'bootstrap4',
     #'bootstrap_datepicker_plus',
+    'betterforms',
     'django_filters',
     'core',
     'Project_A',

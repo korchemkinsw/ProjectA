@@ -213,15 +213,15 @@ class Application(models.Model):
 
     STATUS_CHOICES = (
         (NEW, 'Новый'),
-        (ACCOUNT, 'пультовой номер'),
-        (CONTRACT, 'договор'),
-        (MONTAGE, 'монтаж'),
+        (ACCOUNT, 'Пультовой номер'),
+        (CONTRACT, 'Договор'),
+        (MONTAGE, 'Монтаж'),
         (CHANGED, 'Изменён'),
         (COMPLETED, 'Завершен'),
     )
 
     status = models.CharField(
-        max_length=10,
+        max_length=15,
         choices=STATUS_CHOICES,
         default='Новый',
         verbose_name='Статус заявки',

@@ -13,14 +13,19 @@
   <div class="col-12">
     <div class="card">
       <div class="card-header">
-        <h3>
-          {% if application.legal %}
-            Заявка на пультовую охрану {{ application.legal }}
-          {% endif %}
-          {% if application.individual %}
-            Заявка на пультовую охрану {{ application.individual }}
-          {% endif %}
-        </h3>
+        <h4>
+          {% for app in application.contract.all %}
+            <p>{{ app.enterprise }}</p>
+          {% endfor %}
+          <p>
+            {% if application.legal %}
+              Заявка на пультовую охрану {{ application.legal }}
+            {% endif %}
+            {% if application.individual %}
+              Заявка на пультовую охрану {{ application.individual }}
+            {% endif %}
+        </p>
+        </h4>
       </div>
       <div class="card-body">
         <div style="text-align: left; font-size: 14px" class="table-responsive">
@@ -28,7 +33,9 @@
               <thead>
                 <tr>
                   <th class="col-lg-3">Данные объекта охраны:</th>
-                  <th class="col-lg-9"></th>
+                  {% for app in application.controldev.all %}
+                    <th class="col-lg-9">{{ app.account }}</th>
+                  {% endfor %}
                 </tr>
               </thead>
               <tbody>
@@ -51,6 +58,12 @@
                   <th class="col-lg-3">Адрес: </th>
                   <td class="col-lg-9">{{ application.address }}</td>
                 </tr>
+                {% for app in application.contract.all %}
+                  <tr>
+                    <th class="col-lg-3">Группа реагирования: </th>
+                    <td class="col-lg-9">{{ app.qteam }}</td>
+                  </tr>
+                {% endfor %}
                 <tr>
                   <th class="col-lg-3">Система передачи извещений: </th>
                   <td class="col-lg-9">{{ application.transmission }}</td>
@@ -70,6 +83,10 @@
               <a class="btn btn-outline-primary btn-sm" href="{% url 'applications' %}" role="button">Заявки</a>
               {% if not application.controldev.all %}
                 <a class="btn btn-outline-primary btn-sm" href="{% url 'add_device' application.id  %}" role="button">Добавить прибор</a>
+              {% else %}
+                {% if not application.contract.all %}
+                  <a class="btn btn-outline-primary btn-sm" href="{% url 'add_contract' application.id  %}" role="button">Добавить реагирование</a>
+                {% endif %}
               {% endif %}
             </p>
           </div>
