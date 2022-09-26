@@ -21,9 +21,9 @@
         </div>
         <a class="nav-link text-dark" href="{% url 'applications' %}">Заявки</a>
       {% endif %}
-      <a class="nav-link text-dark" href="{% url 'devices' %}">Оборудование</a>
+      <a class="nav-link text-dark" href="#">Оборудование</a>
       <a class="nav-link text-dark" href="#">Договор</a>
-      <a class="nav-link text-dark" href="#">Карточка</a>
+      <a class="nav-link text-dark" href="{% url 'cards' %}">Карточки</a>
       {% if user.role == 'secretary' or user.role == 'engineer' or user.role == 'admin'  %}
         <a class="nav-link text-dark" href="{% url 'orders' %}">Приказы</a>
       {% endif %}

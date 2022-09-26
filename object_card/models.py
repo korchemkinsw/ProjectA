@@ -1,6 +1,4 @@
-from email.mime import application
-
-from clientele.models import Application
+from clientele.models import Individual, Legal
 from django.contrib.auth import get_user_model
 from django.db import models
 from enterprises.models import Enterprise, Responseteam
@@ -20,26 +18,6 @@ class Device(models.Model):
         verbose_name='Прибор',
         help_text='Прибор',
         blank=True
-    )
-    sim_first = models.CharField(
-        max_length=24,
-        verbose_name='Первая сим',
-        help_text='Первая сим',
-        blank=True
-    )
-    sim_two = models.CharField(
-        max_length=24,
-        verbose_name='Вторая сим',
-        help_text='Вторая сим',
-        blank=True
-    )
-    application = models.ForeignKey(
-        Application,
-        verbose_name='Объект',
-        help_text='Объект',
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name='controldev',
     )
     enginer_pult = models.ForeignKey(
         User,
@@ -63,28 +41,127 @@ class Device(models.Model):
     def __str__(self):
         return f'{self.account}'
 
-class Contract(models.Model):
-    enterprise = models.ForeignKey(
-        Enterprise,
-        verbose_name='Охранное предприятие',
-        on_delete=models.SET_NULL,
-        related_name='enterprise',
+class Sim(models.Model):
+    iccid = models.CharField(
+        max_length=20,
+        verbose_name='Номер SIM-карты',
+        help_text='Номер SIM-карты',
+        blank=True,
+        unique=True
+    )
+    msisdn = models.CharField(
+        max_length=11,
+        verbose_name='Абонентский номер',
+        help_text='Абонентский номер',
+        blank=True,
+        unique=True
+    )
+    device = models.ForeignKey(
+        Device,
+        verbose_name='ППК',
+        help_text='ППК',
         null=True,
+        on_delete=models.SET_NULL,
+        related_name='sim',
+    )
+
+    class Meta:
+        verbose_name = 'SIM-карта'
+        verbose_name_plural = 'SIM-карты'
+
+    def __str__(self):
+        return f'{self.device} {self.iccid} {self.msisdn}'
+
+class Card(models.Model):
+    ANDROMEDA = 'andromeda'
+    RITM = 'ritm'
+    NAVIGARD = 'navigard'
+    ELDES = 'eldes'
+    JABLOTRON = 'jablotron'
+    DX = 'dx'
+    OTHER ='other'
+
+    NEW = 'новый'
+    ACCOUNT = 'пультовой номер'
+    CONTRACT = 'договор'
+    MONTAGE = 'монтаж'
+    CHANGED = 'изменён'
+    COMPLETED = 'завершен'
+
+    SYSTEMS = (
+        (ANDROMEDA, 'Си-Норд'),
+        (RITM, 'Ритм'),
+        (NAVIGARD, 'Навигард'),
+        (ELDES, 'Eldes'),
+        (JABLOTRON, 'Jablotron'),
+        (DX, 'DX'),
+        (OTHER, 'Прочее оборудование'),
+    )
+
+    STATUS_CHOICES = (
+        (NEW, 'Новый'),
+        (ACCOUNT, 'Пультовой номер'),
+        (CONTRACT, 'Договор'),
+        (MONTAGE, 'Монтаж'),
+        (CHANGED, 'Изменён'),
+        (COMPLETED, 'Завершен'),
+    )
+
+    status = models.CharField(
+        max_length=15,
+        choices=STATUS_CHOICES,
+        default='Новый',
+        verbose_name='Статус заявки',
+    )
+    legal = models.ForeignKey(
+        Legal,
+        verbose_name='Юр.лицо',
+        help_text='Юр.лицо',
+        on_delete=models.SET_NULL,
+        related_name='legal_app',
+        blank=True,
+        null=True,
+    )
+    individual = models.ForeignKey(
+        Individual,
+        verbose_name='Физ.лицо',
+        help_text='Физ.лицо',
+        on_delete=models.SET_NULL,
+        related_name='individ_app',
+        blank=True,
+        null=True,
+    )
+    object_name = models.CharField(
+        max_length=400,
+        verbose_name='Название объекта',
+        help_text='Название объекта',
+        null=True,
+    )
+    address = models.CharField(
+        max_length=400,
+        verbose_name='Адрес',
+        help_text='Адрес',
         blank=True,
     )
-    number = models.CharField(
-        max_length=8,
-        verbose_name='Номер договора',
-        help_text='Номер договора',
+    transmission = models.CharField(
+        max_length=20,
+        choices=SYSTEMS,
+        default=OTHER,
+        verbose_name='СПИ',
+    )
+    note = models.CharField(
+        max_length=200,
+        verbose_name='Примечание',
+        help_text='Примечание',
         blank=True
     )
-    application = models.ForeignKey(
-        Application,
-        verbose_name='Объект',
-        help_text='Объект',
+    device = models.ForeignKey(
+        Device,
+        verbose_name='ППК',
+        help_text='ППК',
         null=True,
         on_delete=models.SET_NULL,
-        related_name='contract',
+        related_name='control',
     )
     qteam = models.ForeignKey(
         Responseteam,
@@ -94,64 +171,16 @@ class Contract(models.Model):
         null=True,
         blank=True,
     )
-    contract_holder = models.ForeignKey(
+    manager = models.ForeignKey(
         User,
-        verbose_name='Ответственный от предприятия',
+        verbose_name='Ответственный менеджер',
         on_delete=models.SET_NULL,
-        related_name='holder',
+        related_name='manager',
         null=True,
-        blank=True,
-    )
-    changed_ent = models.DateTimeField(
-        'Дата изменения',
-        null=True,
-        blank=True,
-        #auto_now_add=True
-    )
-
-    class Meta:
-        verbose_name = 'Реагирование'
-        verbose_name_plural = 'Реагирование'
-
-    def __str__(self):
-        return f'{self.enterprise} {self.qteam}'
-
-class Card(models.Model):
-    device = models.ForeignKey(
-        Device,
-        verbose_name='ППК',
-        help_text='ППК',
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name='control',
-    )
-    application = models.ForeignKey(
-        Application,
-        verbose_name='Объект',
-        help_text='Объект',
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name='object',
-    )
-    contract = models.ForeignKey(
-        Contract,
-        verbose_name='Договор',
-        help_text='Договор',
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name='contr',
-    )
-
-    enginer = models.ForeignKey(
-        User,
-        verbose_name='Ответственный инженер',
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name='enginer',
         blank=True,
     )
     generated = models.DateTimeField(
-        'Дата заполнения',
+        'Дата создания',
         null=True,
         blank=True,
         #auto_now_add=True
@@ -162,7 +191,11 @@ class Card(models.Model):
         verbose_name_plural = 'Карточки объектов'
 
     def __str__(self):
-        return f'{self.application}{self.enginer} {self.generated}'
+        if self.legal:
+            return f'{self.device.account} {self.legal} {self.object_name} {self.address}'
+        if self.individual:
+            return f'{self.device.account} {self.individual} {self.object_name} {self.address}'
+
 
 class Partition(models.Model):
     device = models.ForeignKey(

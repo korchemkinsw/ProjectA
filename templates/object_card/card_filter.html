@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Карточки объектов{% endblock %}
+{% block content %}
+<div class="row justify-content-centr">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5>Карточки объектов</h5>
+      </div>
+      <div class="card-body">
+        <div style="text-align: left; font-size: 12px" class="table-responsive">
+          <form method="get">
+            <p>
+              Статус: {{ filter.form.status }}&nbsp;&nbsp;
+              Account: {{ filter.form.account }}&nbsp;&nbsp;
+              Клиент ЮЛ: {{ filter.form.legal }}&nbsp;&nbsp;
+              Фамилия ФЛ: {{ filter.form.individual }}&nbsp;&nbsp;
+              Адрес: {{ filter.form.address }}&nbsp;&nbsp;
+              <input type="submit" value="Найти" />
+            </p>
+          </form>
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Статус</th>
+                <th scope="col">Account</th>
+                <th scope="col">Клиент</th>
+                <th scope="col">Объект</th>
+                <th scope="col">Адрес</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for card in page_obj %}
+                <tr>
+                  <td>
+                    {{ card.status }}
+                  </td>
+                  <td>
+                    {{ card.device }}
+                  </td>
+                  <td>
+                    {% if card.legal %}
+                      {{ card.legal }}
+                    {% endif %}
+                    {% if card.individual %}
+                      {{ card.individual }}
+                    {% endif %}
+                  </td>
+                  <td> 
+                    {{ card.object_name }}
+                  </td>
+                  <td> 
+                    {{ card.address }}
+                  </td>
+                  <td>
+                    <a class="badge badge-info" href="{% url 'card' card.pk %}" role="button">открыть</a>
+                  </td>
+                <tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <nav aria-label="...">
+            <ul class="pagination pagination-sm">
+              {% if page_obj.number > 1 %}
+                <li class="page-item"><a class="page-link" href="?page=1&{{ parameters }}">&laquo; Первая</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ parameters }}">{{ page_obj.previous_page_number }}</a></li>
+              {% else %}
+                <li class="page-item disabled"><a class="page-link" href="#">&laquo; Первая</a></li>
+              {% endif %}
+              <li class="page-item active" aria-current="page">
+                <span class="page-link">{{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+              </li>
+              {% if page_obj.number < page_obj.paginator.num_pages %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ parameters }}">{{ page_obj.next_page_number }}</a></li>
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{ parameters }}">Последняя &raquo;</a>
+              {% else %}
+                <li class="page-item disabled"><a class="page-link" href="#">Последняя &raquo;</a></li>
+              {% endif %}
+            </ul>
+          </nav>
+          <br>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

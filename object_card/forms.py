@@ -1,46 +1,54 @@
 from dataclasses import fields
-from email.mime import application
 
 import django_filters
 from betterforms.multiform import MultiModelForm
-from clientele.models import Application
 from django import forms
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
+from enterprises.models import Responseteam
 
-from .models import Card, Contract, Device, Partition, Zone
+from .models import Card, Device, Partition, Sim, Zone
 
 
 class DeviceForm(forms.ModelForm):
     class Meta:
         model = Device
         exclude = ()
-        fields = ('account', 'device', 'sim_first', 'sim_two',)
+        fields = ('account', 'device',)
+        labels ={
+            'account': 'Передаваемый номер',
+            'account': 'Тип ППК',
+        }
 
-class ContractForm(forms.ModelForm):
+class SimForm(forms.ModelForm):
     class Meta:
-        model = Contract
+        model = Sim
         exclude =()
-        fields = ('number', 'enterprise', 'qteam',)
+        fields = ('iccid', 'msisdn',)
 
-class CardForm(forms.ModelForm):
+class CardFilter(django_filters.FilterSet):
+    status = django_filters.ChoiceFilter(choices=Card.STATUS_CHOICES)
+    account = django_filters.CharFilter(field_name='device__account', lookup_expr='contains')
+    legal = django_filters.CharFilter(field_name='legal__abbreviatedname', lookup_expr='contains')
+    individual = django_filters.CharFilter(field_name='individual__name__last_name', lookup_expr='contains')
+    address = django_filters.CharFilter(field_name='address', lookup_expr='contains')
+
     class Meta:
         model = Card
-        exclude =()
-        fields = ('device', 'application', 'contract',)
+        fields = ['status', 'account', 'individual', 'legal', 'object_name', 'address',]
 
 class CardDeviceForm(forms.ModelForm):
     class Meta:
         model = Card
         exclude =()
-        fields = ('application',)
-    '''
+        fields = ('device',)
+
+class CardQteamForm(forms.ModelForm):
     class Meta:
         model = Card
-        exclude = ()
-        fields = ('application',)
-    
-    def __init__(self, *args, **kwargs):
-        super (CardDeviceForm,self ).__init__(*args,**kwargs)
-        self.fields['application'].queryset = Application.objects.filter(status=Application.NEW)
-    '''
-CardDeviceFormset=inlineformset_factory(Device, Card, form=CardDeviceForm, extra=1)
+        exclude =()
+        fields = ('qteam',)
+'''
+DeviceFormset=inlineformset_factory(Device, Sim, form=DeviceForm, extra=1)
+CardDeviceFormset=inlineformset_factory(Card, Device, form=CardDeviceForm, extra=1)
+CardQteamFormset=inlineformset_factory(Card, Responseteam, form=CardQteamForm, extra=1)
+'''

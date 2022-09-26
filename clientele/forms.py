@@ -2,9 +2,10 @@ import django_filters
 from core.widgets import FengyuanChenDatePickerInput
 from django import forms
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
+from object_card.models import Card
 from pyexpat import model
 
-from .models import Application, Contact, Individual, Legal, Responsible
+from .models import Contact, Individual, Legal, Responsible
 
 
 class ContactsForm(forms.ModelForm):
@@ -69,7 +70,7 @@ class LegalForm(forms.ModelForm):
 
 class AppIndividualForm(forms.ModelForm):
     class Meta:
-        model = Application
+        model = Card
         exclude = ()
         fields = [
             'individual',
@@ -81,7 +82,7 @@ class AppIndividualForm(forms.ModelForm):
 
 class AppLegalForm(forms.ModelForm):
     class Meta:
-        model = Application
+        model = Card
         exclude = ()
         fields = [
             'legal',

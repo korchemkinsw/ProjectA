@@ -184,7 +184,7 @@ class Individual(models.Model):
 
     def __str__(self):
         return f'{self.name}'
-
+'''
 class Application(models.Model):
     ANDROMEDA = 'andromeda'
     RITM = 'ritm'
@@ -291,3 +291,4 @@ class Application(models.Model):
             return f'{self.legal} {self.object_name} {self.address}'
         if self.individual:
             return f'{self.individual} {self.object_name} {self.address}'
+'''

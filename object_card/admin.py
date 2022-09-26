@@ -1,27 +1,33 @@
 from django.contrib import admin
 
-from .models import Card, Contract, Device, Partition, Zone
+from .models import Card, Device, Partition, Sim, Zone
 
 
 @admin.register(Device)
 class DeviceAdmin(admin.ModelAdmin):
-    list_display = ('account', 'device', 'sim_first', 'sim_two', 'application')
-    fields = ['account', 'device', 'sim_first', 'sim_two', 'application']
+    list_display = ('account', 'device', 'enginer_pult', 'changed_pult',)
+    fields = ['account', 'device', 'enginer_pult', 'changed_pult',]
     search_fields = ('account',)
     empty_value_display = '-пусто-'
 
-@admin.register(Contract)
-class ContractAdmin(admin.ModelAdmin):
-    list_display = ('enterprise', 'number', 'qteam', 'application')
-    fields = ['enterprise', 'number', 'qteam', 'application']
-    search_fields = ('enterprise', 'number', 'qteam')
+@admin.register(Sim)
+class SimAdmin(admin.ModelAdmin):
+    list_display = ('iccid', 'msisdn', 'device',)
+    fields = ['iccid', 'msisdn', 'device',]
+    search_fields = ('iccid', 'msisdn', 'device',)
     empty_value_display = '-пусто-'
 
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
-    list_display = ('device', 'application', 'contract', 'enginer', 'generated')
-    fields = ['device', 'application', 'contract', 'enginer', 'generated']
-    search_fields = ('device', 'application',)
+    list_display = (
+        'status', 'legal', 'individual', 'object_name', 'address',
+        'transmission', 'device', 'note', 'qteam', 'manager', 'generated'
+        )
+    fields = [
+        'status', 'legal', 'individual', 'object_name', 'address',
+        'transmission', 'device', 'note', 'qteam', 'manager', 'generated'
+        ]
+    search_fields = ('device', 'legal', 'individual', 'address',)
     empty_value_display = '-пусто-'
 
 @admin.register(Partition)

@@ -7,10 +7,11 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 from django_filters.views import FilterView
+from object_card.models import Card
 
 from .forms import (AppIndividualForm, AppLegalForm, ContactFilter,
                     ContactForm, ContactFormset, IndividualForm, LegalForm)
-from .models import Application, Individual, Legal, Responsible
+from .models import Individual, Legal, Responsible
 
 
 class FilterContact(FilterView):
@@ -98,11 +99,12 @@ class DetailLegal(DetailView):
     model = Legal
 
 class ListApplication(ListView):
-    model = Application
+    model = Card
 
 class CreateAppIndividual(CreateView):
-    model = Application
+    model = Card
     form_class = AppIndividualForm
+    template_name = 'form.html'
     success_url = reverse_lazy('individual')
 
     def get_context_data(self, **kwargs):
@@ -116,15 +118,16 @@ class CreateAppIndividual(CreateView):
     def form_valid(self, form):
         with transaction.atomic():
             self.object = form.save(commit=False)
-            self.object.status = Application.NEW
+            self.object.status = Card.NEW
             self.object.manager = self.request.user
             self.object.generated = datetime.datetime.today()
             self.object = form.save()
         return super(CreateAppIndividual, self).form_valid(form)
 
 class CreateAppLegal(CreateView):
-    model = Application
+    model = Card
     form_class = AppLegalForm
+    template_name = 'form.html'
     success_url = reverse_lazy('legals')
 
     def get_context_data(self, **kwargs):
@@ -138,12 +141,12 @@ class CreateAppLegal(CreateView):
     def form_valid(self, form):
         with transaction.atomic():
             self.object = form.save(commit=False)
-            self.object.status = Application.NEW
+            self.object.status = Card.NEW
             self.object.manager = self.request.user
             self.object.generated = datetime.datetime.today()
             self.object = form.save()
         return super(CreateAppLegal, self).form_valid(form)
 
 class DetailApplication(DetailView):
-    model = Application
+    model = Card
     

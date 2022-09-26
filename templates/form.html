@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Добавить объект {{ client }}{% endblock %}
+{% block title %}{{ title}}{% endblock %}
 {% block content %}
 {% load user_filters %}
 <div class="row justify-content-center">
   <div class="col-md-12">
     <div class="card">
       <div class="card-header">
-        <h3>Добавить объект {{ client }}</h3>
+        <h4>{{ header }}</h4>
       </div>
       <div class="card-body">
         <form method="post" enctype="multipart/form-data" action="">
@@ -22,14 +22,22 @@
                 {% endif %}
               </label>
               <div class="col-md-6">
+                {{ devicecardformset.management_form }}
                 {# подключаем фильтр и указываем класс #}
-                {{ field|addclass:"form-control" }}
+                {{ field|addclass:"form-control"  }}
                 {% if field.help_text %}
                   <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
                 {% endif %}
               </div>                
             </div>
           {% endfor %}
+          <!--
+          {{ control.management_form }}
+          {% for form in control.forms %}
+            {{ form }}
+          {% endfor %}
+          -->
+          <br>
           <button type="submit" class="btn btn-outline-success btn-sm">Добавить</button>
         </form>
       </div>

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Application, Contact, Individual, Legal, Responsible
+from .models import Contact, Individual, Legal, Responsible
 
 
 @admin.register(Contact)
@@ -53,7 +53,7 @@ class IndividualAdmin(admin.ModelAdmin):
     fields = ['name', 'num_pass', 'issued', 'date']
     search_fields = ('name',)
     empty_value_display = '-пусто-'
-
+'''
 @admin.register(Application)
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = (
@@ -80,3 +80,4 @@ class ApplicationAdmin(admin.ModelAdmin):
         ]
     search_fields = ('legal', 'individual', 'address',)
     empty_value_display = '-пусто-'
+'''
