@@ -6,11 +6,11 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView)
+                                  UpdateView, TemplateView)
 from django_filters.views import FilterView
 
 from .forms import (CardFilter, CardIndividualForm, CardLegalForm,
-                    CardQteamForm, DeviceForm, PartitionFormset, SimFormset)
+                    CardQteamForm, DeviceForm, PartitionFormset, SimFormset, CardDeviceForm)
 from .models import Card, Device, Partition, Zone
 
 
@@ -130,19 +130,33 @@ class CreateCardDevice(CreateView):
         else:
             return super().form_invalid(form)
 
-class UpdateCardPartition(UpdateView):
-    model = Device
-    form_class = DeviceForm
-
-    def get_success_url(self):
-        pk = self.kwargs['pk']
-        return reverse('card', kwargs={'pk': pk})
+class CreateCardPartition(CreateView):
+    model = Card
+    template_name = 'object_card\partition_form.html'
 
     def get_context_data(self, **kwargs):
-        data = super(UpdateCardPartition, self).get_context_data(**kwargs)
+        data = super(CreateCardPartition, self).get_context_data(**kwargs)
         if self.request.POST:
-            data['partition'] = PartitionFormset(self.request.POST, instance=self.object)
+            data['partition'] = PartitionFormset(self.request.POST)
         else:
             data['partition'] = PartitionFormset()
-        data['header'] = data
+        data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
         return data
+
+
+'''
+    def get(self, *args, **kwargs):
+        formset = PartitionFormset(queryset=Partition.objects.none())
+        return self.render_to_response({'partition': formset})
+
+    def post(self, *args, **kwargs):
+
+        formset = PartitionFormset(data=self.request.POST, initial={'card': get_object_or_404(Card, id=self.kwargs['pk'])})
+        if formset.is_valid():
+            formset.save()
+            pk = self.kwargs['pk']
+            return reverse('card', self.kwargs['pk'])
+
+
+        return self.render_to_response({'partition': formset})
+'''

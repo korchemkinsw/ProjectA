@@ -3,7 +3,7 @@ from dataclasses import fields
 import django_filters
 from betterforms.multiform import MultiModelForm
 from django import forms
-from django.forms.models import BaseInlineFormSet, inlineformset_factory
+from django.forms.models import BaseInlineFormSet, inlineformset_factory, modelformset_factory
 from enterprises.models import Responseteam
 
 from .models import Card, Device, Partition, Sim, Zone
@@ -72,6 +72,13 @@ class CardDeviceForm(forms.ModelForm):
         exclude =()
         fields = ('device',)
 
+class CardDeviceForm(forms.ModelForm):
+    #card_device = forms.CharField()
+    class Meta:
+        model = Card
+        exclude =()
+        #fields = ('card_device',)
+
 class CardQteamForm(forms.ModelForm):
     class Meta:
         model = Card
@@ -79,6 +86,6 @@ class CardQteamForm(forms.ModelForm):
         fields = ('qteam', 'qnote')
 
 SimFormset=inlineformset_factory(Device, Sim, form=SimForm, extra=1)
-PartitionFormset=inlineformset_factory(Device, Partition, form=PartitionForm, extra=1)
+PartitionFormset=modelformset_factory(Partition, form=PartitionForm, extra=1)
 #CardQteamFormset=inlineformset_factory(Card, Responseteam, form=CardQteamForm, extra=1)
 

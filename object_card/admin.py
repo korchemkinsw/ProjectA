@@ -32,8 +32,8 @@ class CardAdmin(admin.ModelAdmin):
 
 @admin.register(Partition)
 class PartitionAdmin(admin.ModelAdmin):
-    list_display = ('device', 'number', 'name')
-    fields = ['device', 'number', 'name']
+    list_display = ('card', 'number', 'name')
+    fields = ['card', 'number', 'name']
     search_fields = ('card',)
     empty_value_display = '-пусто-'
 

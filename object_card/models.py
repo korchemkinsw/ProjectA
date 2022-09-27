@@ -222,10 +222,10 @@ class Card(models.Model):
 
 
 class Partition(models.Model):
-    device = models.ForeignKey(
-        Device,
-        verbose_name='Оборудование',
-        help_text='Оборудование',
+    card = models.ForeignKey(
+        Card,
+        verbose_name='Карточка',
+        help_text='Карточка',
         null=True,
         on_delete=models.SET_NULL,
         related_name='partition',
