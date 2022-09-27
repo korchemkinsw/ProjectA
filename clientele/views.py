@@ -9,8 +9,8 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 from django_filters.views import FilterView
 from object_card.models import Card
 
-from .forms import (AppIndividualForm, AppLegalForm, ContactFilter,
-                    ContactForm, ContactFormset, IndividualForm, LegalForm)
+from .forms import (ContactFilter, ContactForm, ContactFormset, IndividualForm,
+                    LegalForm)
 from .models import Individual, Legal, Responsible
 
 
@@ -98,55 +98,3 @@ class CreateLegal(CreateView):
 class DetailLegal(DetailView):
     model = Legal
 
-class ListApplication(ListView):
-    model = Card
-
-class CreateAppIndividual(CreateView):
-    model = Card
-    form_class = AppIndividualForm
-    template_name = 'form.html'
-    success_url = reverse_lazy('individual')
-
-    def get_context_data(self, **kwargs):
-        if 'application' not in kwargs:
-            kwargs['application'] = get_object_or_404(Individual, id=self.kwargs['pk'])
-        context = super().get_context_data(**kwargs)
-        context['form'].fields['individual'].queryset = Individual.objects.filter(id=self.kwargs['pk'])
-        context['client']=kwargs['application'].name
-        return context
-
-    def form_valid(self, form):
-        with transaction.atomic():
-            self.object = form.save(commit=False)
-            self.object.status = Card.NEW
-            self.object.manager = self.request.user
-            self.object.generated = datetime.datetime.today()
-            self.object = form.save()
-        return super(CreateAppIndividual, self).form_valid(form)
-
-class CreateAppLegal(CreateView):
-    model = Card
-    form_class = AppLegalForm
-    template_name = 'form.html'
-    success_url = reverse_lazy('legals')
-
-    def get_context_data(self, **kwargs):
-        if 'application' not in kwargs:
-            kwargs['application'] = get_object_or_404(Legal, id=self.kwargs['pk'])
-        context = super().get_context_data(**kwargs)
-        context['form'].fields['legal'].queryset = Legal.objects.filter(id=self.kwargs['pk'])
-        context['client']=kwargs['application'].abbreviatedname
-        return context
-
-    def form_valid(self, form):
-        with transaction.atomic():
-            self.object = form.save(commit=False)
-            self.object.status = Card.NEW
-            self.object.manager = self.request.user
-            self.object.generated = datetime.datetime.today()
-            self.object = form.save()
-        return super(CreateAppLegal, self).form_valid(form)
-
-class DetailApplication(DetailView):
-    model = Card
-    

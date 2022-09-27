@@ -61,7 +61,7 @@ class Sim(models.Model):
         verbose_name='ППК',
         help_text='ППК',
         null=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name='sim',
     )
 
@@ -137,10 +137,28 @@ class Card(models.Model):
         help_text='Название объекта',
         null=True,
     )
+    phone = models.CharField(
+        max_length=50,
+        verbose_name='Телефон на объекте',
+        help_text='Телефон на объекте',
+        blank=True,
+    )
     address = models.CharField(
         max_length=400,
         verbose_name='Адрес',
         help_text='Адрес',
+        blank=True,
+    )
+    width = models.CharField(
+        max_length=9,
+        verbose_name='широта',
+        help_text='широта',
+        blank=True,
+    )
+    longitude = models.CharField(
+        max_length=9,
+        verbose_name='долгота',
+        help_text='долгота',
         blank=True,
     )
     transmission = models.CharField(
@@ -171,6 +189,12 @@ class Card(models.Model):
         null=True,
         blank=True,
     )
+    qnote = models.CharField(
+        max_length=200,
+        verbose_name='информация для ГБР',
+        help_text='информация для ГБР',
+        blank=True
+    )
     manager = models.ForeignKey(
         User,
         verbose_name='Ответственный менеджер',
@@ -192,9 +216,9 @@ class Card(models.Model):
 
     def __str__(self):
         if self.legal:
-            return f'{self.device.account} {self.legal} {self.object_name} {self.address}'
+            return f'{self.legal} {self.object_name} {self.address}'
         if self.individual:
-            return f'{self.device.account} {self.individual} {self.object_name} {self.address}'
+            return f'{self.individual} {self.object_name} {self.address}'
 
 
 class Partition(models.Model):
@@ -204,7 +228,7 @@ class Partition(models.Model):
         help_text='Оборудование',
         null=True,
         on_delete=models.SET_NULL,
-        related_name='card',
+        related_name='partition',
     )
     number = models.IntegerField(
         verbose_name='Номер раздела',

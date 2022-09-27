@@ -12,10 +12,10 @@
   <div class="col-lg-12">
     <ul class="nav nav-tabs">
       <li class="nav-item">
-        <a class="nav-link active text-dark" href="{% url 'card' card.pk %}">Карточка</a>
+        <a class="nav-link text-dark" href="{% url 'card' card.pk %}">Карточка</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-dark" href="{% url 'card_device' card.pk %}">Оборудование</a>
+        <a class="nav-link active text-dark" href="{% url 'card_device' card.pk %}">Оборудование</a>
       </li>
       <li class="nav-item">
         <a class="nav-link text-dark" href="{% url 'card_qteam' card.pk %}">Реагирование</a>
@@ -80,69 +80,31 @@
         <table class="table table-sm">
           <tbody>
             <tr>
-              <th class="col-lg-3">Клиент: </th>
-              <td class="col-lg-9">
-                {% if card.legal %}
-                  {{ card.legal.fullname }}
-                {% endif %}
-                {% if card.individual %}
-                  {{ card.individual }}
-                {% endif %}
-              </td>
+              <th class="col-lg-3">Пуредаваемый номер: </th>
+              <td class="col-lg-9">{{ card.device.account }}</td>
             </tr>
             <tr>
-              <th class="col-lg-3">Объект: </th>
-              <td class="col-lg-9">{{ card.object_name }}</td>
+              <th class="col-lg-3">Тип ППК: </th>
+              <td class="col-lg-9">{{ card.device.device }}</td>
             </tr>
-            <tr>
-              <th class="col-lg-3">Телефон на объекте: </th>
-              <td class="col-lg-9">{{ card.phone }}</td>
-            </tr>
-            <tr>
-              <th class="col-lg-3">Адрес: </th>
-              <td class="col-lg-9">{{ card.address }}</td>
-            </tr>
-            <tr>
-              <th class="col-lg-3">Координаты: </th>
-              <td class="col-lg-9">{{ card.width }} {{ card.longitude }}</td>
-            </tr>
-            {% for app in card.contract.all %}
+            {% for phones in card.device.sim.all %}
               <tr>
-                <th class="col-lg-3">Группа реагирования: </th>
-                <td class="col-lg-9">{{ app.qteam }}</td>
+                <th class="col-lg-3">SIM {{ forloop.counter }}: </th>
+                <td class="col-lg-9">
+                  <div class="row">
+                    <div class="col-lg">
+                      Аб. номер: {{ phones.msisdn }}
+                    </div>
+                    <div class="col-lg">
+                      ICCID: {{ phones.iccid }}
+                    </div>
+                  </div>
+                </td>
               </tr>
             {% endfor %}
             <tr>
-              <th class="col-lg-3">Система передачи извещений: </th>
-              <td class="col-lg-9">{{ card.transmission }}</td>
-            </tr>
-            <tr>
-              <th class="col-lg-3">Примечание: </th>
-              <td class="col-lg-9">{{ card.note }}</td>
-            </tr>
-            <tr>
-              {% if card.legal %}
-                <th class="col-lg-3">Директор: </th>
-                <td class="col-lg-9">
-                  {{ card.legal.bigboss.last_name }} {{ card.legal.bigboss.first_name }} {{ card.legal.bigboss.fathers_name }}&nbsp;&nbsp;
-                  {% for contact in card.legal.bigboss.contacts.all %}
-                    {{ contact.phone }}&nbsp;&nbsp;
-                  {% endfor %}
-                </td>
-              {% endif %}
-              {% if card.individual %}
-                <th class="col-lg-3">Собственник: </th>
-                <td class="col-lg-9">
-                  {{ card.individual.name.last_name }} {{ card.individual.name.first_name }} {{ card.individual.name.fathers_name }}&nbsp;&nbsp;
-                  {% for contact in card.individual.name.contacts.all %}
-                    {{ contact.phone }}&nbsp;&nbsp;
-                  {% endfor %}
-                {% endif %}
-              </td>
-            </tr>
-            <tr>
               <th class="col-lg-3">Подготовил: </th>
-              <td class="col-lg-9">{{ card.manager }} {{ card.generated|date:"d.m.Y" }} {{ card.generated|time:"H:i" }}</td>
+              <td class="col-lg-9">{{ card.device.enginer_pult }} {{ card.device.changed_pult|date:"d.m.Y" }} {{ card.device.changed_pult|time:"H:i" }}</td>
             </tr>
           </tbody>
         </table>
@@ -150,16 +112,11 @@
     </div>
     <br>
     <div style="text-align: left; font-size: 12px" class="col-lg-12">
-      <!--p>
-        <a class="btn btn-outline-primary btn-sm" href="{% url 'cards' %}" role="button">Карточки объектов</a>
-        {% if not card.controldev.all %}
+      <p>
+        {% if not card.device %}
           <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_device' card.id  %}" role="button">Добавить прибор</a>
-        {% else %}
-          {% if not card.contract.all %}
-            <a class="btn btn-outline-primary btn-sm" href="{% url 'add_contract' card.id  %}" role="button">Добавить реагирование</a>
-          {% endif %}
         {% endif %}
-      </p-->
+      </p>
     </div>
   </div>
 {% endblock %}

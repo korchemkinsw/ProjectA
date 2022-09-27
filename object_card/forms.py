@@ -16,7 +16,7 @@ class DeviceForm(forms.ModelForm):
         fields = ('account', 'device',)
         labels ={
             'account': 'Передаваемый номер',
-            'account': 'Тип ППК',
+            'device': 'Тип ППК',
         }
 
 class SimForm(forms.ModelForm):
@@ -24,6 +24,12 @@ class SimForm(forms.ModelForm):
         model = Sim
         exclude =()
         fields = ('iccid', 'msisdn',)
+
+class PartitionForm(forms.ModelForm):
+    class Meta:
+        model = Partition
+        exclude =()
+        fields = ('number', 'name',)
 
 class CardFilter(django_filters.FilterSet):
     status = django_filters.ChoiceFilter(choices=Card.STATUS_CHOICES)
@@ -36,6 +42,30 @@ class CardFilter(django_filters.FilterSet):
         model = Card
         fields = ['status', 'account', 'individual', 'legal', 'object_name', 'address',]
 
+class CardIndividualForm(forms.ModelForm):
+    class Meta:
+        model = Card
+        exclude = ()
+        fields = [
+            'individual',
+            'object_name',
+            'address',
+            'transmission',
+            'note',
+        ]
+
+class CardLegalForm(forms.ModelForm):
+    class Meta:
+        model = Card
+        exclude = ()
+        fields = [
+            'legal',
+            'object_name',
+            'address',
+            'transmission',
+            'note',
+        ]
+
 class CardDeviceForm(forms.ModelForm):
     class Meta:
         model = Card
@@ -46,9 +76,9 @@ class CardQteamForm(forms.ModelForm):
     class Meta:
         model = Card
         exclude =()
-        fields = ('qteam',)
-'''
-DeviceFormset=inlineformset_factory(Device, Sim, form=DeviceForm, extra=1)
-CardDeviceFormset=inlineformset_factory(Card, Device, form=CardDeviceForm, extra=1)
-CardQteamFormset=inlineformset_factory(Card, Responseteam, form=CardQteamForm, extra=1)
-'''
+        fields = ('qteam', 'qnote')
+
+SimFormset=inlineformset_factory(Device, Sim, form=SimForm, extra=1)
+PartitionFormset=inlineformset_factory(Device, Partition, form=PartitionForm, extra=1)
+#CardQteamFormset=inlineformset_factory(Card, Responseteam, form=CardQteamForm, extra=1)
+

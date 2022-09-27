@@ -2,14 +2,14 @@
 {% block title %}Физическое лицо: {{ individual }}{% endblock %}
 {% load static %}
 {% block content %}
-<div style="text-align: left; font-size: 14px" class="row justify-content-center">
+<div style="text-align: left; font-size: 12px" class="row justify-content-center">
   <div class="col-12">
     <div class="card">
       <div class="card-header">
-        <h4>{{ individual.name.last_name }} {{ individual.name.first_name }} {{ individual.name.fathers_name }}</h4>
+        <h5>{{ individual.name.last_name }} {{ individual.name.first_name }} {{ individual.name.fathers_name }}</h5>
       </div>
       <div class="card-body">
-        <div style="text-align: left; font-size: 14px" class="table-responsive">
+        <div style="text-align: left; font-size: 12px" class="table-responsive">
           <table class="table table-sm">
             <thead>
               <tr>
@@ -34,7 +34,7 @@
           </table>
           <br>
           <p>
-            <a class="btn btn-outline-primary btn-sm" href="{% url 'add_appindivid' individual.pk %}" role="button">Создать карточку объекта</a>
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_individ' individual.pk %}" role="button">Создать карточку объекта</a>
             <a class="btn btn-outline-primary btn-sm" href="{% url 'individual' %}" role="button">Список клиентов ФЛ</a>
             <a class="btn btn-outline-primary btn-sm" href="{% url 'contactlist' %}" role="button">Список контактов</a>
           </p>

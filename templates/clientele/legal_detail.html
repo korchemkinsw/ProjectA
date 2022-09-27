@@ -2,72 +2,72 @@
 {% block title %}Юридическое лицо: {{ legal }}{% endblock %}
 {% load static %}
 {% block content %}
-<div style="text-align: left; font-size: 14px" class="row justify-content-center">
+<div style="text-align: left; font-size: 12px" class="row justify-content-center">
   <div class="col-12">
     <div class="card">
       <div class="card-header">
-        <h3>{{ legal }} </h3>
+        <h5>{{ legal }} </h5>
       </div>
       <div class="card-body">
         <table style="text-align: left" class="table table-bordered">
           <tbody>
             <tr>
-              <td>Полное наименование</td>
+              <th class="col-lg-3">Полное наименование</th>
               <td>{{ legal.fullname }}</td>
             </tr>
             <tr>
-              <td>Сокращенное наименование</td>
+              <th class="col-lg-3">Сокращенное наименование</th>
               <td>{{ legal.abbreviatedname }}</td>
             </tr>
             <tr>
-              <td>Юридический адрес</td>
+              <th class="col-lg-3">Юридический адрес</th>
               <td>{{ legal.legaladdress }}</td>
             </tr>
             <tr>
-              <td>Почтовый адрес</td>
+              <th class="col-lg-3">Почтовый адрес</th>
               <td>{{ legal.postaladdress }}</td>
             </tr>
             <tr>
-              <td>Телефон/факс</td>
+              <th class="col-lg-3">Телефон/факс</th>
               <td>{{ legal.telephone }}</td>
             </tr>
             <tr>
-              <td>ИНН</td>
+              <th class="col-lg-3">ИНН</th>
               <td>{{ legal.inn }}</td>
             </tr>
             <tr>
-              <td>КПП</td>
+              <th class="col-lg-3">КПП</th>
               <td>{{ legal.kpp }}</td>
             </tr>
             <tr>
-              <td>ОГРН</td>
+              <th class="col-lg-3">ОГРН</th>
               <td>{{ legal.ogrn }}</td>
             </tr>
             <tr>
-              <td>Рассчётный счёт</td>
+              <th class="col-lg-3">Рассчётный счёт</th>
               <td>{{ legal.payment }}</td>
             </tr>
             <tr>
-              <td>Корреспондентский счёт</td>
+              <th class="col-lg-3">Корреспондентский счёт</th>
               <td>{{ legal.correspondent }}</td>
             </tr>
             <tr>
-              <td>БИК банка</td>
+              <th class="col-lg-3">БИК банка</th>
               <td>{{ legal.bic }}</td>
             </tr>
             <tr>
-              <td>Банк</td>
+              <th class="col-lg-3">Банк</th>
               <td>{{ legal.bank }}</td>
             </tr>
             <tr>
-              <td>Ген. директор</td>
+              <th class="col-lg-3">Ген. директор</th>
               <td>{{ legal.bigboss }}</td>
             </tr>
           </tbody>
         </table> 
         <br>
         <p>
-          <a class="btn btn-outline-primary btn-sm" href="{% url 'add_applegal' legal.pk %}" role="button">Создать карточку объекта</a>
+          <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_legal' legal.pk %}" role="button">Создать карточку объекта</a>
           <a class="btn btn-outline-primary btn-sm" href="{% url 'legals' %}" role="button">Список клиентов ЮЛ</a>
           <a class="btn btn-outline-primary btn-sm" href="{% url 'contactlist' %}" role="button">Список контактов</a>
         </p>

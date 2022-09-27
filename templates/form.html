@@ -31,12 +31,21 @@
               </div>                
             </div>
           {% endfor %}
-          <!--
-          {{ control.management_form }}
+          
+          {{ sim.management_form }}
           {% for form in control.forms %}
             {{ form }}
           {% endfor %}
-          -->
+          
+          <script src="{% static 'js/jquery.formset.js' %}"></script>
+          <script type="text/javascript">
+          $('.formset_row').formset({
+            addText: 'Ещё один телефон',
+            deleteText: 'Удалить',
+            prefix: 'sim',
+          });
+          </script>
+
           <br>
           <button type="submit" class="btn btn-outline-success btn-sm">Добавить</button>
         </form>

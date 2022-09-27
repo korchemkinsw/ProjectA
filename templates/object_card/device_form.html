@@ -1,14 +1,31 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Добавить оборудование{% endblock %}
+{% block title %}
+  Добавить прибор
+  {% if card.legal %}
+    {{ card.legal.fullname }}
+  {% endif %}
+  {% if card.individual %}
+    {{ card.individual }}
+  {% endif %}
+{% endblock %}
 {% block content %}
 {% load user_filters %}
-<div class="row justify-content-center">
+<div style="text-align: left; font-size: 14px" class="row justify-content-center">
+<!--div class="row justify-content-center"-->
   <div class="col-md-12">
     <div class="card">
       <div class="card-header">
-        <h3>Добавить оборудование</h3>
+        <h5>
+          Добавить прибор
+          {% if card.legal %}
+            {{ card.legal.fullname }}
+          {% endif %}
+          {% if card.individual %}
+            {{ card.individual }}
+          {% endif %}
+        </h5>
       </div>
       <div class="card-body">
         <form method="post" enctype="multipart/form-data" action="">
@@ -23,16 +40,57 @@
               </label>
               <div class="col-md-6">
                 {# подключаем фильтр и указываем класс #}
-                {{ field|addclass:"form-control"  }}
+                {{ field|addclass:"form-control" }}
                 {% if field.help_text %}
                   <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
                 {% endif %}
               </div>                
             </div>
           {% endfor %}
+
+          <table class="table">
+            {{ sim.management_form }}
+              {% for form in sim.forms %}
+                {% if forloop.first %}
+                  <thead>
+                    <tr>
+                      {% for field in form.visible_fields %}
+                        <th>
+                          {{ field.label|capfirst }}
+                        </th>
+                      {% endfor %}
+                    </tr>
+                  </thead>
+                {% endif %}
+                <tr class="{% cycle row1 row2 %} formset_row">
+                  {% for field in form.visible_fields %}
+                    <td>
+                      {# Include the hidden fields in the form #}
+                      {% if forloop.first %}
+                        {% for hidden in form.hidden_fields %}
+                          {{ hidden }}
+                        {% endfor %}
+                      {% endif %}
+                      {{ field.errors.as_ul }}
+                      {{ field|addclass:"form-control" }}
+                    </td>
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+            </table>
           <button type="submit" class="btn btn-outline-success btn-sm">Добавить</button>
         </form>
       </div>
+
+      <script src="{% static 'js/jquery.formset.js' %}"></script>
+      <script type="text/javascript">
+        $('.formset_row').formset({
+            addText: 'Добавить SIM',
+            deleteText: 'Удалить',
+            prefix: 'sim',
+          });
+      </script>
+
     </div>
   </div>
 </div>

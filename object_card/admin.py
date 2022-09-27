@@ -20,12 +20,12 @@ class SimAdmin(admin.ModelAdmin):
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
     list_display = (
-        'status', 'legal', 'individual', 'object_name', 'address',
-        'transmission', 'device', 'note', 'qteam', 'manager', 'generated'
+        'status', 'legal', 'individual', 'object_name', 'phone', 'address', 'width', 'longitude',
+        'transmission', 'device', 'note', 'qteam', 'qnote', 'manager', 'generated'
         )
     fields = [
-        'status', 'legal', 'individual', 'object_name', 'address',
-        'transmission', 'device', 'note', 'qteam', 'manager', 'generated'
+        'status', 'legal', 'individual', 'object_name', 'phone', 'address', 'width', 'longitude',
+        'transmission', 'device', 'note', 'qteam', 'qnote', 'manager', 'generated'
         ]
     search_fields = ('device', 'legal', 'individual', 'address',)
     empty_value_display = '-пусто-'

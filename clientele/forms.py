@@ -67,30 +67,6 @@ class LegalForm(forms.ModelForm):
             'bank',
             'bigboss',
         ]
-
-class AppIndividualForm(forms.ModelForm):
-    class Meta:
-        model = Card
-        exclude = ()
-        fields = [
-            'individual',
-            'object_name',
-            'address',
-            'transmission',
-            'note',
-        ]
-
-class AppLegalForm(forms.ModelForm):
-    class Meta:
-        model = Card
-        exclude = ()
-        fields = [
-            'legal',
-            'object_name',
-            'address',
-            'transmission',
-            'note',
-        ]
         
 class BaseContactFormset(BaseInlineFormSet):
     pass
