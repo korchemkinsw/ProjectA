@@ -19,6 +19,12 @@ class Device(models.Model):
         help_text='Прибор',
         blank=True
     )
+    note = models.CharField(
+        max_length=200,
+        verbose_name='Примечание',
+        help_text='Примечание',
+        blank=True
+    )
     enginer_pult = models.ForeignKey(
         User,
         verbose_name='Инженер пульта',
@@ -28,6 +34,20 @@ class Device(models.Model):
         blank=True,
     )
     changed_pult = models.DateTimeField(
+        'Дата создания',
+        null=True,
+        blank=True,
+        #auto_now_add=True
+    )
+    technican = models.ForeignKey(
+        User,
+        verbose_name='Техник',
+        on_delete=models.SET_NULL,
+        related_name='technican',
+        null=True,
+        blank=True,
+    )
+    changed_tech = models.DateTimeField(
         'Дата изменения',
         null=True,
         blank=True,
@@ -209,6 +229,20 @@ class Card(models.Model):
         blank=True,
         #auto_now_add=True
     )
+    director = models.ForeignKey(
+        User,
+        verbose_name='Ответственный за договор',
+        on_delete=models.SET_NULL,
+        related_name='director',
+        null=True,
+        blank=True,
+    )
+    chnged = models.DateTimeField(
+        'Дата изменения',
+        null=True,
+        blank=True,
+        #auto_now_add=True
+    )
 
     class Meta:
         verbose_name = 'Карточка объекта'
@@ -222,10 +256,10 @@ class Card(models.Model):
 
 
 class Partition(models.Model):
-    card = models.ForeignKey(
-        Card,
-        verbose_name='Карточка',
-        help_text='Карточка',
+    device = models.ForeignKey(
+        Device,
+        verbose_name='ППК',
+        help_text='ППК',
         null=True,
         on_delete=models.SET_NULL,
         related_name='partition',
@@ -249,13 +283,20 @@ class Partition(models.Model):
         return f'{self.number} {self.name}'
 
 class Zone(models.Model):
+    device = models.ForeignKey(
+        Device,
+        verbose_name='ППК',
+        help_text='ППК',
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='zones',
+    )
     partition = models.ForeignKey(
         Partition,
         verbose_name='Раздел',
         help_text='Раздел',
         null=True,
         on_delete=models.SET_NULL,
-        related_name='partition',
     )
     number = models.IntegerField(
         verbose_name='Номер зоны',
@@ -273,4 +314,4 @@ class Zone(models.Model):
         verbose_name_plural = 'Зоны'
 
     def __str__(self):
-        return f'{self.card} | {self.number} {self.name}'
+        return f'{self.device} | {self.partition} | {self.number} {self.name}'

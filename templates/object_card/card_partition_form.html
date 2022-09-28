@@ -12,6 +12,31 @@
 {% endblock %}
 {% block content %}
 {% load user_filters %}
+<div class="col-lg-12">
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link text-dark" href="{% url 'card' card.pk %}">Карточка</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-dark" href="{% url 'card_device' card.pk %}">Оборудование</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-dark" href="{% url 'card_qteam' card.pk %}">Реагирование</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active text-dark" href="{% url 'card_partitions' card.pk %}">Разделы</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-dark" href="#">Зоны</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-dark" href="#">Ответственные лица</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-dark" href="#">Фотографии</a>
+    </li>
+  </ul>
+
 <div style="text-align: left; font-size: 14px" class="row justify-content-center">
 <!--div class="row justify-content-center"-->
   <div class="col-md-12">
@@ -30,6 +55,7 @@
       <div class="card-body">
         <form method="post" enctype="multipart/form-data" action="">
           {% csrf_token %}
+          
           {% for field in form %}
             <div class="form-group row" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
               <label for="{{ field.id_for_label }}" class="col-md-2 col-form-label text-md-left">
@@ -47,7 +73,7 @@
               </div>                
             </div>
           {% endfor %}
-
+          
           <table class="table">
             {{ partition.management_form }}
               {% for form in partition.forms %}
@@ -96,5 +122,6 @@
 
     </div>
   </div>
+</div>
 </div>
 {% endblock %}

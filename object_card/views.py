@@ -6,11 +6,12 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView, TemplateView)
+                                  TemplateView, UpdateView)
 from django_filters.views import FilterView
 
 from .forms import (CardFilter, CardIndividualForm, CardLegalForm,
-                    CardQteamForm, DeviceForm, PartitionFormset, SimFormset, CardDeviceForm)
+                    CardQteamForm, DeviceForm, DevicePartForm,
+                    PartitionFormset, SimFormset)
 from .models import Card, Device, Partition, Zone
 
 
@@ -31,6 +32,10 @@ class DetailCardDevice(DetailView):
 class DetailCardQteam(DetailView):
     model = Card
     template_name = 'object_card\card_qteam_detail.html'
+
+class DetailCardPartitions(DetailView):
+    model = Card
+    template_name = 'object_card\card_partitions_detail.html'
 
 class CreateCardIndividual(CreateView):
     model = Card
@@ -97,6 +102,7 @@ class UpdateCardQteam(UpdateView):
 class CreateCardDevice(CreateView):
     model = Device
     form_class = DeviceForm
+    template_name = 'object_card\card_device_form.html'
         
     def get_success_url(self):
         pk = self.kwargs['pk']
@@ -130,33 +136,43 @@ class CreateCardDevice(CreateView):
         else:
             return super().form_invalid(form)
 
-class CreateCardPartition(CreateView):
-    model = Card
-    template_name = 'object_card\partition_form.html'
+class CardPartition(UpdateView):
+    model = Device
+    form_class = DevicePartForm
+    template_name = 'object_card\card_partition_form.html'
+        
+    def get_success_url(self):
+        pk = self.kwargs['pk']
+        return reverse('card_partitions', kwargs={'pk': pk})
+
+    def get_object(self, queryset=None):
+        card = get_object_or_404(Card, id=self.kwargs['pk'])
+        return get_object_or_404(Device, id=card.device.id)
 
     def get_context_data(self, **kwargs):
-        data = super(CreateCardPartition, self).get_context_data(**kwargs)
+        data = super(CardPartition, self).get_context_data(**kwargs)
         if self.request.POST:
-            data['partition'] = PartitionFormset(self.request.POST)
+            data['partition'] = PartitionFormset(self.request.POST, instance=self.object)
         else:
-            data['partition'] = PartitionFormset()
+            data['partition'] = PartitionFormset(instance=self.object)
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
         return data
 
-
-'''
-    def get(self, *args, **kwargs):
-        formset = PartitionFormset(queryset=Partition.objects.none())
-        return self.render_to_response({'partition': formset})
-
-    def post(self, *args, **kwargs):
-
-        formset = PartitionFormset(data=self.request.POST, initial={'card': get_object_or_404(Card, id=self.kwargs['pk'])})
-        if formset.is_valid():
-            formset.save()
-            pk = self.kwargs['pk']
-            return reverse('card', self.kwargs['pk'])
-
-
-        return self.render_to_response({'partition': formset})
-'''
+    def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        partitions = context['partition']
+        with transaction.atomic(): 
+            self.object = form.save(commit=False)
+            self.object.technican = self.request.user
+            self.object.changed_tech = datetime.datetime.today()
+            self.object = form.save()
+            context['card'].device = self.object
+            context['card'].status = Card.MONTAGE
+            context['card'].save()
+        if partitions.is_valid():
+            response = super(CardPartition, self).form_valid(form)
+            partitions.instance = self.object
+            partitions.save()
+            return response
+        else:
+            return super().form_invalid(form)

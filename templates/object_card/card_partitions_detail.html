@@ -15,13 +15,13 @@
         <a class="nav-link text-dark" href="{% url 'card' card.pk %}">Карточка</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link active text-dark" href="{% url 'card_device' card.pk %}">Оборудование</a>
+        <a class="nav-link text-dark" href="{% url 'card_device' card.pk %}">Оборудование</a>
       </li>
       <li class="nav-item">
         <a class="nav-link text-dark" href="{% url 'card_qteam' card.pk %}">Реагирование</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-dark" href="{% url 'card_partitions' card.pk %}">Разделы</a>
+        <a class="nav-link active text-dark" href="{% url 'card_partitions' card.pk %}">Разделы</a>
       </li>
       <li class="nav-item">
         <a class="nav-link text-dark" href="#">Зоны</a>
@@ -38,34 +38,18 @@
       <div class="col-lg-12">
       <div style="text-align: left; font-size: 12px" class="table-bordered">
         <table class="table table-sm">
+            <thead>
+          <tr>
+            <th class="col-lg-1">Номер</th>
+            <th class="col-lg-11">Описание</th>
+          </tr>
+        </thead>
           <tbody>
-            <tr>
-              <th class="col-lg-3">Пуредаваемый номер: </th>
-              <td class="col-lg-9">{{ card.device.account }}</td>
-            </tr>
-            <tr>
-              <th class="col-lg-3">Тип ППК: </th>
-              <td class="col-lg-9">{{ card.device.device }}</td>
-            </tr>
-            {% for phones in card.device.sim.all %}
+            {% for partition in card.device.partition.all %}
               <tr>
-                <th class="col-lg-3">SIM {{ forloop.counter }}: </th>
-                <td class="col-lg-9">
-                  <div class="row">
-                    <div class="col-lg">
-                      Аб. номер: {{ phones.msisdn }}
-                    </div>
-                    <div class="col-lg">
-                      ICCID: {{ phones.iccid }}
-                    </div>
-                  </div>
-                </td>
-              </tr>
+                <th>{{ partition.number }}</th>
+                <td>{{ partition.name }}</td>
             {% endfor %}
-            <tr>
-              <th class="col-lg-3">Подготовил: </th>
-              <td class="col-lg-9">{{ card.device.enginer_pult }} {{ card.device.changed_pult|date:"d.m.Y" }} {{ card.device.changed_pult|time:"H:i" }}</td>
-            </tr>
           </tbody>
         </table>
       </div>
@@ -73,9 +57,7 @@
     <br>
     <div style="text-align: left; font-size: 12px" class="col-lg-12">
       <p>
-        {% if not card.device %}
-          <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_device' card.id  %}" role="button">Добавить прибор</a>
-        {% endif %}
+        <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_partition' card.id  %}" role="button">Добавить раздел</a>
       </p>
     </div>
   </div>
