@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  Добавить зоны
+  {% if card.legal %}
+    {{ card.legal.fullname }}
+  {% endif %}
+  {% if card.individual %}
+    {{ card.individual }}
+  {% endif %}
+{% endblock %}
+{% block content %}
+{% load user_filters %}
+<div class="col-lg-12">
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link text-dark" href="{% url 'card' card.pk %}">Карточка</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-dark" href="{% url 'card_device' card.pk %}">Оборудование</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-dark" href="{% url 'card_qteam' card.pk %}">Реагирование</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-dark" href="{% url 'card_partitions' card.pk %}">Разделы</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active text-dark" href="{% url 'add_card_zone' card.pk %}">Зоны</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-dark" href="#">Ответственные лица</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-dark" href="#">Фотографии</a>
+    </li>
+  </ul>
+
+  <div style="text-align: left; font-size: 14px" class="row justify-content-center">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h5>
+            Добавить зоны
+            {% if card.legal %}
+              {{ card.legal.fullname }}
+            {% endif %}
+            {% if card.individual %}
+              {{ card.individual }}
+            {% endif %}
+          </h5>
+        </div>
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data" action="">
+            {% csrf_token %}
+              <div style="text-align: left; font-size: 12px" class="table-bordered">
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th class="col-lg-1">Номер</th>
+                    <th class="col-lg-4">Раздел</th>
+                    <th class="col-lg-7">Описание</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for zone in card.device.zones.all %}
+                    <tr>
+                      <th>{{ zone.number }}</th>
+                      <td>{{ zone.partition }}</td>
+                      <td>{{ zone.name }}</td>
+                    </tr>
+                  {% endfor %}
+                  <tr>
+                    {% for field in form %}
+                      <td>{{ field|addclass:"form-control" }}</td>
+                    {% endfor %}
+                  </tr>
+                </tbody>
+              </table>
+              <button type="submit" class="btn btn-outline-success btn-sm">Добавить</button>
+            </div>
+          </form> 
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

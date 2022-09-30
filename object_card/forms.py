@@ -37,6 +37,12 @@ class PartitionForm(forms.ModelForm):
         exclude =()
         fields = ('number', 'name',)
 
+class ZoneForm(forms.ModelForm):
+    class Meta:
+        model = Zone
+        exclude =()
+        fields = ('number', 'partition', 'name',)
+
 class CardFilter(django_filters.FilterSet):
     status = django_filters.ChoiceFilter(choices=Card.STATUS_CHOICES)
     account = django_filters.CharFilter(field_name='device__account', lookup_expr='contains')
@@ -86,5 +92,4 @@ class CardQteamForm(forms.ModelForm):
 
 SimFormset=inlineformset_factory(Device, Sim, form=SimForm, extra=1)
 PartitionFormset=inlineformset_factory(Device, Partition, form=PartitionForm, extra=1)
-#CardQteamFormset=inlineformset_factory(Card, Responseteam, form=CardQteamForm, extra=1)
-
+ZoneFormset=modelformset_factory(Zone, form=ZoneForm, extra=1)

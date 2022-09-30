@@ -11,7 +11,7 @@ from django_filters.views import FilterView
 
 from .forms import (CardFilter, CardIndividualForm, CardLegalForm,
                     CardQteamForm, DeviceForm, DevicePartForm,
-                    PartitionFormset, SimFormset)
+                    PartitionFormset, SimFormset, ZoneForm, ZoneFormset)
 from .models import Card, Device, Partition, Zone
 
 
@@ -176,3 +176,28 @@ class CardPartition(UpdateView):
             return response
         else:
             return super().form_invalid(form)
+
+class CreateCardZone(CreateView):
+    model = Zone
+    form_class = ZoneForm
+    template_name = 'object_card\card_zone_form.html'
+
+    def get_success_url(self):
+        pk = self.kwargs['pk']
+        return reverse('add_card_zone', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        data = super(CreateCardZone, self).get_context_data(**kwargs)
+        data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
+        data['device'] = get_object_or_404(Device, id=data['card'].device.id)
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        with transaction.atomic(): 
+            self.object = form.save(commit=False)
+            self.object.device = context['device']
+            self.object = form.save()
+            context['card'].status = Card.MONTAGE
+            context['card'].save()
+            return super(CreateCardZone, self).form_valid(form)
