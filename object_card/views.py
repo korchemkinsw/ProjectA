@@ -201,3 +201,41 @@ class CreateCardZone(CreateView):
             context['card'].status = Card.MONTAGE
             context['card'].save()
             return super(CreateCardZone, self).form_valid(form)
+
+
+class CreateCardZones(CreateView):
+    model = Zone
+    form_class = ZoneForm
+    template_name = 'object_card\card_zones_form.html'
+
+    def get_success_url(self):
+        pk = self.kwargs['pk']
+        return reverse('add_card_zone', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        data = super(CreateCardZones, self).get_context_data(**kwargs)
+        data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
+        data['device'] = get_object_or_404(Device, id=data['card'].device.id)
+        if self.request.POST:
+            data['zones'] = ZoneFormset(self.request.POST, initial=[{'device': data['device']}])
+        else:
+            data['zones'] = ZoneFormset()
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        zones = context['zones']
+        with transaction.atomic(): 
+            self.object = form.save(commit=False)
+            #self.object.device = context['device']
+            self.object = form.save()
+            context['card'].status = Card.MONTAGE
+            context['card'].save()
+            if zones.is_valid():
+                response = super(CreateCardZones, self).form_valid(form)
+                zones.instance = self.object
+                zones.save()
+                return response
+            else:
+                return super().form_invalid(form)
+            #return super(CreateCardZones, self).form_valid(form)

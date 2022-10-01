@@ -13,5 +13,5 @@ urlpatterns = [
     path('add_card_device/<int:pk>/', views.CreateCardDevice.as_view(), name='add_card_device'),
     path('add_card_qteam/<int:pk>/', views.UpdateCardQteam.as_view(), name='add_card_qteam'),
     path('add_card_partition/<int:pk>/', views.CardPartition.as_view(), name='add_card_partition'),
-    path('add_card_zone/<int:pk>/', views.CreateCardZone.as_view(), name='add_card_zone'),
+    path('add_card_zone/<int:pk>/', views.CreateCardZones.as_view(), name='add_card_zone'),
 ]

@@ -54,47 +54,23 @@
         <div class="card-body">
           <form method="post" enctype="multipart/form-data" action="">
             {% csrf_token %}
-              <div style="text-align: left; font-size: 12px" class="table-bordered">
+            <div style="text-align: left; font-size: 12px" class="table-bordered">
               <table class="table table-sm">
-                <thead>
-                  <tr>
-                    <th class="col-lg-1">Номер</th>
-                    <th class="col-lg-4">Раздел</th>
-                    <th class="col-lg-7">Описание</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for zone in card.device.zones.all %}
-                    <tr>
-                      <th>{{ zone.number }}</th>
-                      <td>{{ zone.partition }}</td>
-                      <td>{{ zone.name }}</td>
-                    </tr>
-                  {% endfor %}
-                  <tr>
-                    {% for field in form %}
-                      <td>{{ field|addclass:"form-control" }}</td>
-                    {% endfor %}
-                  </tr>
-                </tbody>
-              </table>
-
-              <table class="table">
                 {{ zones.management_form }}
-                  {% for form in zones.forms %}
-                    {% if forloop.first %}
-                      <thead>
-                        <tr>
-                          {% for field in form.visible_fields %}
-                            
-                            {% if field.label == 'Номер раздела' %}
-                              <th class="col-lg-2">{{ field.label }}</th>
-                            {% else %}  
-                              <th>{{ field.label }}</th>
-                            {% endif %}
-                          {% endfor %}
-                        </tr>
-                      </thead>
+                {% for form in zones.forms %}
+                  {% if forloop.first %}
+                  <thead>
+                    <tr>
+                      {% for field in form.visible_fields %}
+                        
+                        {% if field.label == 'Номер зоны' %}
+                          <th class="col-lg-1">{{ field.label }}</th>
+                        {% else %}  
+                          <th>{{ field.label }}</th>
+                        {% endif %}
+                      {% endfor %}
+                    </tr>
+                  </thead>
                     {% endif %}
                     <tr class="{% cycle row1 row2 %} formset_row">
                       {% for field in form.visible_fields %}
@@ -111,22 +87,20 @@
                       {% endfor %}
                     </tr>
                   {% endfor %}
+                </tbody>
               </table>
-
               <button type="submit" class="btn btn-outline-success btn-sm">Добавить</button>
             </div>
           </form> 
         </div>
-
         <script src="{% static 'js/jquery.formset.js' %}"></script>
       <script type="text/javascript">
         $('.formset_row').formset({
-            addText: 'Добавить раздел',
+            addText: 'Добавить зону',
             deleteText: 'Удалить',
             prefix: 'zones',
           });
       </script>
-
       </div>
     </div>
   </div>
