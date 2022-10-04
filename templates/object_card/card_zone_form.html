@@ -54,6 +54,25 @@
         <div class="card-body">
           <form method="post" enctype="multipart/form-data" action="">
             {% csrf_token %}
+
+            {% for field in form %}
+            <div class="form-group row" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+              <label for="{{ field.id_for_label }}" class="col-md-2 col-form-label text-md-left">
+                {{ field.label }}
+                {% if field.field.required %}
+                  <span class="required">*</span>
+                {% endif %}
+              </label>
+              <div class="col-md-6">
+                {# подключаем фильтр и указываем класс #}
+                {{ field|addclass:"form-control" }}
+                {% if field.help_text %}
+                  <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+                {% endif %}
+              </div>                
+            </div>
+          {% endfor %}
+
               <div style="text-align: left; font-size: 12px" class="table-bordered">
               <table class="table table-sm">
                 <thead>
@@ -86,8 +105,7 @@
                       <thead>
                         <tr>
                           {% for field in form.visible_fields %}
-                            
-                            {% if field.label == 'Номер раздела' %}
+                            {% if field.label == 'Номер зоны' %}
                               <th class="col-lg-2">{{ field.label }}</th>
                             {% else %}  
                               <th>{{ field.label }}</th>

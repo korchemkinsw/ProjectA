@@ -25,6 +25,12 @@ class Device(models.Model):
         help_text='Примечание',
         blank=True
     )
+    none = models.CharField(
+        max_length=1,
+        verbose_name='--пусто--',
+        help_text='--пусто--',
+        blank=True
+    )
     enginer_pult = models.ForeignKey(
         User,
         verbose_name='Инженер пульта',
@@ -59,7 +65,7 @@ class Device(models.Model):
         verbose_name_plural = 'Оборудование на объектах'
 
     def __str__(self):
-        return f'{self.account}'
+        return self.account
 
 class Sim(models.Model):
     iccid = models.CharField(
@@ -261,7 +267,7 @@ class Partition(models.Model):
         verbose_name='ППК',
         help_text='ППК',
         null=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name='partition',
     )
     number = models.IntegerField(
@@ -288,7 +294,7 @@ class Zone(models.Model):
         verbose_name='ППК',
         help_text='ППК',
         null=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name='zones',
     )
     partition = models.ForeignKey(
@@ -296,7 +302,7 @@ class Zone(models.Model):
         verbose_name='Раздел',
         help_text='Раздел',
         null=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
     number = models.IntegerField(
         verbose_name='Номер зоны',

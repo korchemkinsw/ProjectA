@@ -27,7 +27,7 @@
       <a class="nav-link active text-dark" href="{% url 'card_partitions' card.pk %}">Разделы</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link text-dark" href="#">Зоны</a>
+      <a class="nav-link text-dark" href="{% url 'card_zones' card.pk %}">Зоны</a>
     </li>
     <li class="nav-item">
       <a class="nav-link text-dark" href="#">Ответственные лица</a>
@@ -81,7 +81,6 @@
                   <thead>
                     <tr>
                       {% for field in form.visible_fields %}
-                        
                         {% if field.label == 'Номер раздела' %}
                           <th class="col-lg-2">{{ field.label }}</th>
                         {% else %}  

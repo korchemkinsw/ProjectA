@@ -10,7 +10,7 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 from django_filters.views import FilterView
 
 from .forms import (CardFilter, CardIndividualForm, CardLegalForm,
-                    CardQteamForm, DeviceForm, DevicePartForm,
+                    CardQteamForm, DeviceForm, DevicePartForm, DeviceZoneForm,
                     PartitionFormset, SimFormset, ZoneForm, ZoneFormset)
 from .models import Card, Device, Partition, Zone
 
@@ -36,6 +36,10 @@ class DetailCardQteam(DetailView):
 class DetailCardPartitions(DetailView):
     model = Card
     template_name = 'object_card\card_partitions_detail.html'
+
+class DetailCardZones(DetailView):
+    model = Card
+    template_name = 'object_card\card_zones_detail.html'
 
 class CreateCardIndividual(CreateView):
     model = Card
@@ -156,6 +160,7 @@ class CardPartition(UpdateView):
         else:
             data['partition'] = PartitionFormset(instance=self.object)
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
+        
         return data
 
     def form_valid(self, form):
@@ -177,49 +182,29 @@ class CardPartition(UpdateView):
         else:
             return super().form_invalid(form)
 
-class CreateCardZone(CreateView):
-    model = Zone
-    form_class = ZoneForm
-    template_name = 'object_card\card_zone_form.html'
-
-    def get_success_url(self):
-        pk = self.kwargs['pk']
-        return reverse('add_card_zone', kwargs={'pk': pk})
-
-    def get_context_data(self, **kwargs):
-        data = super(CreateCardZone, self).get_context_data(**kwargs)
-        data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
-        data['device'] = get_object_or_404(Device, id=data['card'].device.id)
-        return data
-
-    def form_valid(self, form):
-        context = self.get_context_data(form=form)
-        with transaction.atomic(): 
-            self.object = form.save(commit=False)
-            self.object.device = context['device']
-            self.object = form.save()
-            context['card'].status = Card.MONTAGE
-            context['card'].save()
-            return super(CreateCardZone, self).form_valid(form)
-
-
-class CreateCardZones(CreateView):
-    model = Zone
-    form_class = ZoneForm
+class CardZone(UpdateView):
+    model = Device
+    form_class = DeviceZoneForm
     template_name = 'object_card\card_zones_form.html'
-
+    
     def get_success_url(self):
         pk = self.kwargs['pk']
-        return reverse('add_card_zone', kwargs={'pk': pk})
+        return reverse('card_zones', kwargs={'pk': pk})
+
+    def get_object(self, queryset=None):
+        card = get_object_or_404(Card, id=self.kwargs['pk'])
+        return get_object_or_404(Device, id=card.device.id)
 
     def get_context_data(self, **kwargs):
-        data = super(CreateCardZones, self).get_context_data(**kwargs)
+        data = super(CardZone, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data['zones'] = ZoneFormset(self.request.POST, instance=self.object)
+        else:
+            data['zones'] = ZoneFormset(instance=self.object)
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
         data['device'] = get_object_or_404(Device, id=data['card'].device.id)
-        if self.request.POST:
-            data['zones'] = ZoneFormset(self.request.POST, initial=[{'device': data['device']}])
-        else:
-            data['zones'] = ZoneFormset()
+        for form in data['zones']:
+            form.fields['partition'].queryset = Partition.objects.filter(device=data['device'])
         return data
 
     def form_valid(self, form):
@@ -227,15 +212,17 @@ class CreateCardZones(CreateView):
         zones = context['zones']
         with transaction.atomic(): 
             self.object = form.save(commit=False)
-            #self.object.device = context['device']
+            self.object.technican = self.request.user
+            self.object.changed_tech = datetime.datetime.today()
             self.object = form.save()
+            context['card'].device = self.object
             context['card'].status = Card.MONTAGE
             context['card'].save()
-            if zones.is_valid():
-                response = super(CreateCardZones, self).form_valid(form)
-                zones.instance = self.object
-                zones.save()
-                return response
-            else:
-                return super().form_invalid(form)
-            #return super(CreateCardZones, self).form_valid(form)
+        if zones.is_valid():
+            response = super(CardZone, self).form_valid(form)
+            zones.instance = self.object
+            zones.save()
+            return response
+        else:
+            return super().form_invalid(form)
+
