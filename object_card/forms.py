@@ -95,7 +95,7 @@ class CardQteamForm(forms.ModelForm):
     class Meta:
         model = Card
         exclude =()
-        fields = ('qteam', 'qnote')
+        fields = ('contract', 'qteam', 'qnote')
 
 SimFormset=inlineformset_factory(Device, Sim, form=SimForm, extra=1)
 PartitionFormset=inlineformset_factory(Device, Partition, form=PartitionForm, extra=1)

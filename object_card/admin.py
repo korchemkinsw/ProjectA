@@ -28,13 +28,13 @@ class CardAdmin(admin.ModelAdmin):
     list_display = (
         'status', 'legal', 'individual', 'object_name',
         'phone', 'address', 'width', 'longitude',
-        'transmission', 'device', 'note', 'qteam', 'qnote',
+        'transmission', 'device', 'note', 'contract', 'qteam', 'qnote',
         'manager', 'generated', 'director', 'chnged'
         )
     fields = [
         'status', 'legal', 'individual', 'object_name',
         'phone', 'address', 'width', 'longitude',
-        'transmission', 'device', 'note', 'qteam', 'qnote',
+        'transmission', 'device', 'note', 'contract', 'qteam', 'qnote',
         'manager', 'generated', 'director', 'chnged'
         ]
     search_fields = ('device', 'legal', 'individual', 'address',)

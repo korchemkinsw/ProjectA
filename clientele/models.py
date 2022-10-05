@@ -1,5 +1,9 @@
+import os
+from trace import Trace
+
 from django.contrib.auth import get_user_model
 from django.db import models
+from enterprises.models import Enterprise
 
 User = get_user_model()
 
@@ -55,8 +59,8 @@ class Contact(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Контакт'
-        verbose_name_plural = 'Контакты'
+        verbose_name = 'Телефон'
+        verbose_name_plural = 'Телефоны'
     
     def __str__(self):
         return f'{self.responsible} | {self.type} {self.phone}'
@@ -175,7 +179,6 @@ class Individual(models.Model):
         verbose_name='Дата выдачи',
         help_text='Дата выдачи',
         blank=True,
-        #default=datetime.date.today()
     )
 
     class Meta:
@@ -184,111 +187,108 @@ class Individual(models.Model):
 
     def __str__(self):
         return f'{self.name}'
-'''
-class Application(models.Model):
-    ANDROMEDA = 'andromeda'
-    RITM = 'ritm'
-    NAVIGARD = 'navigard'
-    ELDES = 'eldes'
-    JABLOTRON = 'jablotron'
-    DX = 'dx'
-    OTHER ='other'
 
+class Contract(models.Model):
     NEW = 'новый'
-    ACCOUNT = 'пультовой номер'
-    CONTRACT = 'договор'
-    MONTAGE = 'монтаж'
-    CHANGED = 'изменён'
-    COMPLETED = 'завершен'
-
-    SYSTEMS = (
-        (ANDROMEDA, 'Си-Норд'),
-        (RITM, 'Ритм'),
-        (NAVIGARD, 'Навигард'),
-        (ELDES, 'Eldes'),
-        (JABLOTRON, 'Jablotron'),
-        (DX, 'DX'),
-        (OTHER, 'Прочее оборудование'),
-    )
+    CURRENT = 'действующий'
+    SUSPENDED = 'приостановлен'
+    CLOSED = 'закрыт'
 
     STATUS_CHOICES = (
-        (NEW, 'Новый'),
-        (ACCOUNT, 'Пультовой номер'),
-        (CONTRACT, 'Договор'),
-        (MONTAGE, 'Монтаж'),
-        (CHANGED, 'Изменён'),
-        (COMPLETED, 'Завершен'),
+        (NEW, 'новый'),
+        (CURRENT, 'действующий'),
+        (SUSPENDED, 'приостановлен'),
+        (CLOSED, 'закрыт'),
     )
-
     status = models.CharField(
         max_length=15,
         choices=STATUS_CHOICES,
-        default='Новый',
-        verbose_name='Статус заявки',
+        default='новый',
+        verbose_name='Статус договора',
+    )
+    number = models.CharField(
+        max_length=10,
+        verbose_name='Номер договора',
+        help_text='Номер договора',
+        unique=True
+    )
+    date = models.DateField(
+        verbose_name='Дата договора',
+        help_text='Дата договора',
+        blank=True,
+    )
+    enterprise = models.ForeignKey(
+        Enterprise,
+        verbose_name='Предприятие',
+        help_text='Предприятие',
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='enterprise',
     )
     legal = models.ForeignKey(
         Legal,
-        verbose_name='Юр.лицо',
-        help_text='Юр.лицо',
-        on_delete=models.SET_NULL,
-        related_name='legal_app',
-        blank=True,
+        verbose_name='Клиент ЮЛ',
+        help_text='Клиент ЮЛ',
         null=True,
+        on_delete=models.SET_NULL,
+        related_name='legal',
+        blank=True,
     )
     individual = models.ForeignKey(
         Individual,
-        verbose_name='Физ.лицо',
-        help_text='Физ.лицо',
+        verbose_name='Клиент ФЛ',
+        help_text='Клиент ФЛ',
+        null=True,
         on_delete=models.SET_NULL,
-        related_name='individ_app',
+        related_name='individual',
         blank=True,
-        null=True,
     )
-    object_name = models.CharField(
-        max_length=400,
-        verbose_name='Название объекта',
-        help_text='Название объекта',
-        null=True,
-    )
-    address = models.CharField(
-        max_length=400,
-        verbose_name='Адрес',
-        help_text='Адрес',
-    )
-    transmission = models.CharField(
-        max_length=20,
-        choices=SYSTEMS,
-        default=OTHER,
-        verbose_name='СПИ',
-    )
-    note = models.CharField(
-        max_length=200,
-        verbose_name='Примечание',
-        help_text='Примечание',
-        blank=True
-    )
-    manager = models.ForeignKey(
+    contractholder=models.ForeignKey(
         User,
-        verbose_name='Ответственный менеджер',
+        verbose_name='От предприятия:',
         on_delete=models.SET_NULL,
-        related_name='manager',
+        related_name='contractholder',
         null=True,
         blank=True,
-    )
-    generated = models.DateTimeField(
-        'Дата создания',
-        null=True,
-        blank=True,
-        #auto_now_add=True
     )
 
     class Meta:
-        verbose_name = 'Заявка на охрану'
-        verbose_name_plural = 'Заявки на охрану'
+        verbose_name = 'Договор'
+        verbose_name_plural = 'Договора'
 
     def __str__(self):
-        if self.legal:
-            return f'{self.legal} {self.object_name} {self.address}'
-        if self.individual:
-            return f'{self.individual} {self.object_name} {self.address}'
-'''
+        return f'{self.number} от {self.date}'
+
+class FileContract(models.Model):
+    contract=models.ForeignKey(
+        Contract,
+        verbose_name='договор',
+        null=True,
+        on_delete=models.CASCADE,
+        related_name='files'
+    )
+
+    def generate_path(instance, filename):
+        enterprise=str(instance.contract.enterprise)
+        contract=str(instance.contract.number)+'-'+str(instance.contract.date)
+        for simb, new in (" ", "-"), ("/", "-"), ('"', ""):
+            enterprise=enterprise.replace(simb, new)
+            contract=contract.replace(simb, new)
+        return os.path.join('clientele/contracts', enterprise+"/"+contract, filename)
+
+    file = models.FileField(verbose_name='Файл договора', upload_to=generate_path)
+
+    def delete(self, *args, **kwargs):
+        storage, path = self.file.storage, self.file.path
+        super(FileContract,self).delete(*args,**kwargs)
+        storage.delete(path)
+    
+    class Meta:
+        verbose_name='Файл договора'
+        verbose_name_plural = 'Файлы договоров'
+
+    def __str__(self):
+        return (
+            f'Договор №{self.contract}; '
+            f'Файл: {self.file} '
+        )

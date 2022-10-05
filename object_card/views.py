@@ -1,6 +1,6 @@
 import datetime
 
-from clientele.models import Individual, Legal
+from clientele.models import Contract, Individual, Legal
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -99,8 +99,15 @@ class UpdateCardQteam(UpdateView):
     def get_context_data(self, **kwargs):
         data = super(UpdateCardQteam, self).get_context_data(**kwargs)
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
+        if data['card'].legal:
+            data['client']=data['card'].legal
+            #data['card'].fields['contract'].queryset = Contract.objects.filter(legal=data['client'])
+        if data['card'].individual:
+            data['client']=data['card'].individual
+            #data.fields['contract'].queryset = Contract.objects.filter(individual=data['client'])
         data['title'] = 'Добавить реагирование'
         data['header'] = 'Добавить реагирование'
+        #data['card'].form.fields['contract'].queryset = Contract.objects.filter(device=data['device'])
         return data
     
 class CreateCardDevice(CreateView):

@@ -5,7 +5,8 @@ from django.forms.models import BaseInlineFormSet, inlineformset_factory
 from object_card.models import Card
 from pyexpat import model
 
-from .models import Contact, Individual, Legal, Responsible
+from .models import (Contact, Contract, FileContract, Individual, Legal,
+                     Responsible)
 
 
 class ContactsForm(forms.ModelForm):
@@ -67,7 +68,33 @@ class LegalForm(forms.ModelForm):
             'bank',
             'bigboss',
         ]
-        
+
+class ContractFilter(django_filters.FilterSet):
+    enterprise = django_filters.CharFilter(field_name='enterprise__abbreviatedname', lookup_expr='contains')
+    number = django_filters.CharFilter(field_name='number', lookup_expr='contains')
+    legal = django_filters.CharFilter(field_name='legal__abbreviatedname', lookup_expr='contains')
+    individual = django_filters.CharFilter(field_name='individual__name__last_name', lookup_expr='contains')
+
+    class Meta:
+        model = Contract
+        fields = ['enterprise', 'number', 'legal', 'individual',]
+
+class ContractForm(forms.ModelForm):
+    class Meta:
+        model = Contract
+        exclude = ()
+        fields = ('enterprise', 'number', 'date',)
+
+    def __init__(self, *args, **kwargs):
+            super(ContractForm, self).__init__(*args, **kwargs)
+            self.fields['date'].widget=FengyuanChenDatePickerInput()
+
+class FileContractForm(forms.ModelForm):
+    class Meta:
+        model = FileContract
+        exclude = ()
+        fields = ('contract', 'file',)
+
 class BaseContactFormset(BaseInlineFormSet):
     pass
 

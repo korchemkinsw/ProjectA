@@ -44,12 +44,16 @@
           <thead></thead>
           <tbody>
             <tr>
-              <th class="col-lg-3">Реагирование: </th>
-              <th class="col-lg-9"></th>
+              <th class="col-lg-3">Охрана: </th>
+              <th class="col-lg-9">
+                {{card.contract.enterprise}}
+              </th>
             </tr>
             <tr>
               <th class="col-lg-3">Договор: </th>
-              <td class="col-lg-9"></td>
+              <td class="col-lg-9">
+                № {{card.contract.number}} от {{card.contract.date|date:"d.m.Y"}}
+              </td>
             </tr>
           </tbody>
         </table>

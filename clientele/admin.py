@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Contact, Individual, Legal, Responsible
+from .models import (Contact, Contract, FileContract, Individual, Legal,
+                     Responsible)
 
 
 @admin.register(Contact)
@@ -53,31 +54,29 @@ class IndividualAdmin(admin.ModelAdmin):
     fields = ['name', 'num_pass', 'issued', 'date']
     search_fields = ('name',)
     empty_value_display = '-пусто-'
-'''
-@admin.register(Application)
-class ApplicationAdmin(admin.ModelAdmin):
+
+@admin.register(Contract)
+class ContractAdmin(admin.ModelAdmin):
     list_display = (
         'status',
+        'number',
+        'date',
+        'enterprise',
         'legal',
         'individual',
-        'object_name',
-        'address',
-        'transmission',
-        'note',
-        'manager',
-        'generated',
         )
     fields = [
         'status',
+        'number',
+        'date',
+        'enterprise',
         'legal',
         'individual',
-        'object_name',
-        'address',
-        'transmission',
-        'note',
-        'manager',
-        'generated',
+        'contractholder',
         ]
-    search_fields = ('legal', 'individual', 'address',)
-    empty_value_display = '-пусто-'
-'''
+    search_fields = ('number', 'date', 'enterprise',)
+
+@admin.register(FileContract)
+class FileContractAdmin(admin.ModelAdmin):
+    field = ['contract', 'file']
+

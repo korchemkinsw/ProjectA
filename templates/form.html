@@ -8,7 +8,7 @@
   <div class="col-md-12">
     <div class="card">
       <div class="card-header">
-        <h4>{{ header }}</h4>
+        <h5>{{ header }}</h5>
       </div>
       <div class="card-body">
         <form method="post" enctype="multipart/form-data" action="">
@@ -45,7 +45,17 @@
             prefix: 'sim',
           });
           </script>
-
+          
+          <script src="{% static 'js/datepicker.ru-RU.min.js' %}"></script>
+          <script>
+            $(function () {
+              $("#id_date").datepicker({
+                language:'ru-RU',
+                format:'dd.mm.yyyy',
+                autoPick:true,
+              });
+            });
+          </script>
           <br>
           <button type="submit" class="btn btn-outline-success btn-sm">Добавить</button>
         </form>

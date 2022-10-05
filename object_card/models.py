@@ -1,7 +1,7 @@
-from clientele.models import Individual, Legal
+from clientele.models import Contract, Individual, Legal
 from django.contrib.auth import get_user_model
 from django.db import models
-from enterprises.models import Enterprise, Responseteam
+from enterprises.models import Responseteam
 
 User = get_user_model()
 
@@ -206,6 +206,15 @@ class Card(models.Model):
         null=True,
         on_delete=models.SET_NULL,
         related_name='control',
+    )
+    contract = models.ForeignKey(
+        Contract,
+        verbose_name='Договор',
+        help_text='Договор',
+        on_delete=models.SET_NULL,
+        related_name='contract',
+        blank=True,
+        null=True,
     )
     qteam = models.ForeignKey(
         Responseteam,

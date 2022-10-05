@@ -9,9 +9,10 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 from django_filters.views import FilterView
 from object_card.models import Card
 
-from .forms import (ContactFilter, ContactForm, ContactFormset, IndividualForm,
-                    LegalForm)
-from .models import Individual, Legal, Responsible
+from .forms import (ContactFilter, ContactForm, ContactFormset, ContractForm,
+                    IndividualForm, LegalForm)
+from .models import (Contact, Contract, FileContract, Individual, Legal,
+                     Responsible)
 
 
 class FilterContact(FilterView):
@@ -97,4 +98,52 @@ class CreateLegal(CreateView):
 
 class DetailLegal(DetailView):
     model = Legal
+    #template_name = 'clientele/client_detail.html'
+    #template_object_name = 'object'
 
+class ContractFilter(FilterView):
+    pass
+
+class CreateContractLegal(CreateView):
+    model = Contract
+    form_class = ContractForm
+    template_name = 'form.html'
+
+    def get_success_url(self):
+       pk = self.kwargs['pk']
+       return reverse('legal', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        data = super(CreateContractLegal, self).get_context_data(**kwargs)
+        data['title'] = 'Добавить договор'
+        data['header'] = 'Договор с '+str(get_object_or_404(Legal, id=self.kwargs['pk']).fullname)
+        return data
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object.legal = get_object_or_404(Legal, id=self.kwargs['pk'])
+            self.object = form.save()
+        return super(CreateContractLegal, self).form_valid(form)
+
+class CreateContractIndividual(CreateView):
+    model = Contract
+    form_class = ContractForm
+    template_name = 'form.html'
+
+    def get_success_url(self):
+       pk = self.kwargs['pk']
+       return reverse('individual', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        data = super(CreateContractIndividual, self).get_context_data(**kwargs)
+        data['title'] = 'Добавить договор'
+        data['header'] = 'Договор с '+str(get_object_or_404(Legal, id=self.kwargs['pk']).fullname)
+        return data
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object.individual = get_object_or_404(Individual, id=self.kwargs['pk'])
+            self.object = form.save()
+        return super(CreateContractIndividual, self).form_valid(form)
