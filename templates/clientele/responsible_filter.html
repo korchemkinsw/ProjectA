@@ -6,15 +6,7 @@
     <h5>Контакты</h5>
   </div>
   <div class="card-body" style="text-align: left; font-size: 14px">
-    <form method="get">
-      <p>
-        Фамилия: {{ filter.form.last_name }}&nbsp;&nbsp;
-        Имя: {{ filter.form.first_name }}&nbsp;&nbsp;
-        Отчество: {{ filter.form.fathers_name }}&nbsp;&nbsp;
-        Телефон: {{ filter.form.phone }}&nbsp;&nbsp;
-        <input type="submit" value="Найти" />
-      </p>
-    </form>
+    
     <div style="text-align: center; font-size: 12px" class="table-responsive">
       <table class="table table-sm">
         <thead>
@@ -24,6 +16,14 @@
             <th scope="col">Отчество</th>
             <th scope="col">Телефоны</th>
           </tr>
+          <form method="get">
+            <tr>
+              <th>{{ filter.form.last_name }}</th>
+              <th>{{ filter.form.first_name }}</th>
+              <th>{{ filter.form.fathers_name }}</th>
+              <th>{{ filter.form.phone }}&nbsp;<input type="submit" value="Найти" /></th>
+            </tr>
+        </form>
         </thead>
         <tbody>
           {% for contact in page_obj %}
@@ -47,25 +47,7 @@
           {% endfor %}
         </tbody>
       </table>
-      <nav aria-label="...">
-        <ul class="pagination pagination-sm">
-          {% if page_obj.number > 1 %}
-            <li class="page-item"><a class="page-link" href="?page=1&{{ parameters }}">&laquo; Первая</a></li>
-            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ parameters }}">{{ page_obj.previous_page_number }}</a></li>
-          {% else %}
-            <li class="page-item disabled"><a class="page-link" href="#">&laquo; Первая</a></li>
-          {% endif %}
-          <li class="page-item active" aria-current="page">
-            <span class="page-link">{{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
-          </li>
-          {% if page_obj.number < page_obj.paginator.num_pages %}
-            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ parameters }}">{{ page_obj.next_page_number }}</a></li>
-            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{ parameters }}">Последняя &raquo;</a>
-          {% else %}
-            <li class="page-item disabled"><a class="page-link" href="#">Последняя &raquo;</a></li>
-          {% endif %}
-        </ul>
-      </nav>
+      {% include "includes/paginator.html" %}
       <br>
     </div>
     <div>

@@ -32,9 +32,39 @@
               </tr>
             </tbody>
           </table>
+          {% if individual.individual.all %}
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th ><br>Договора:</th>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <!--th class="col-lg-9"></th-->
+                </tr>
+                <tr>
+                  <th>Предприятие</th>
+                  <th>Номер</th>
+                  <th>Дата</th>
+                  <th>Статус</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for contract in individual.individual.all %}
+                  <tr>
+                    <th>{{contract.enterprise}}</th>
+                    <td>{{contract.number}}</td>
+                    <td>{{contract.date}}</td>
+                    <td>{{contract.status}}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
           <br>
           <p>
             <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_individ' individual.pk %}" role="button">Создать карточку объекта</a>
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'add_contract_individual' individual.pk %}" role="button">Создать договор</a>
             <a class="btn btn-outline-primary btn-sm" href="{% url 'individual' %}" role="button">Список клиентов ФЛ</a>
             <a class="btn btn-outline-primary btn-sm" href="{% url 'contactlist' %}" role="button">Список контактов</a>
           </p>

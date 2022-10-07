@@ -1,9 +1,10 @@
 import datetime
+from msilib.schema import Error
 
 from clientele.models import Contract, Individual, Legal
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
@@ -100,16 +101,24 @@ class UpdateCardQteam(UpdateView):
         data = super(UpdateCardQteam, self).get_context_data(**kwargs)
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
         if data['card'].legal:
-            data['client']=data['card'].legal
-            #data['card'].fields['contract'].queryset = Contract.objects.filter(legal=data['client'])
-        if data['card'].individual:
-            data['client']=data['card'].individual
-            #data.fields['contract'].queryset = Contract.objects.filter(individual=data['client'])
+            data['contracts'] = Contract.objects.filter(legal=data['card'].legal).exclude()
+        else:
+            data['contracts'] = Contract.objects.filter(individual=data['card'].individual).exclude()
         data['title'] = 'Добавить реагирование'
         data['header'] = 'Добавить реагирование'
-        #data['card'].form.fields['contract'].queryset = Contract.objects.filter(device=data['device'])
         return data
     
+    def get_queryset(self, **kwargs):
+        card = get_object_or_404(Card, id=self.kwargs['pk'])
+        if card.legal:
+            return Contract.objects.filter(legal=card.legal).exclude()
+        else:
+            return Contract.objects.filter(individual=card.individual).exclude()
+        #return self.context['contract']
+
+    #def dispatch(self, request, *args, **kwargs):
+        #return super().dispatch(request, *args, **kwargs)
+
 class CreateCardDevice(CreateView):
     model = Device
     form_class = DeviceForm

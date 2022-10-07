@@ -10,7 +10,8 @@ from django_filters.views import FilterView
 from object_card.models import Card
 
 from .forms import (ContactFilter, ContactForm, ContactFormset, ContractForm,
-                    IndividualForm, LegalForm)
+                    ContractFormset, IndividualFilter, IndividualForm,
+                    LegalFilter, LegalForm)
 from .models import (Contact, Contract, FileContract, Individual, Legal,
                      Responsible)
 
@@ -50,8 +51,12 @@ class CreateContact(CreateView):
 class DetailContact(DetailView):
     model = Responsible
 
-class ListIndividual(ListView):
+class FilterIndividual(FilterView):
     model = Individual
+    context_object_name = 'filter'
+    template_name = 'clientele/individual_filter.html'
+    filterset_class = IndividualFilter
+    paginate_by = 15
 
 class CreateIndividual(CreateView):
     model = Individual
@@ -74,8 +79,12 @@ class CreateIndividual(CreateView):
 class DetailIndividual(DetailView):
     model = Individual
 
-class ListLegal(ListView):
+class FilterLegal(FilterView):
     model = Legal
+    context_object_name = 'filter'
+    template_name = 'clientele/legal_filter.html'
+    filterset_class = LegalFilter
+    paginate_by = 15
 
 class CreateLegal(CreateView):
     model = Legal
@@ -98,8 +107,6 @@ class CreateLegal(CreateView):
 
 class DetailLegal(DetailView):
     model = Legal
-    #template_name = 'clientele/client_detail.html'
-    #template_object_name = 'object'
 
 class ContractFilter(FilterView):
     pass
@@ -129,21 +136,32 @@ class CreateContractLegal(CreateView):
 class CreateContractIndividual(CreateView):
     model = Contract
     form_class = ContractForm
-    template_name = 'form.html'
+    template_name = 'clientele\contract_form.html'
 
     def get_success_url(self):
        pk = self.kwargs['pk']
-       return reverse('individual', kwargs={'pk': pk})
+       return reverse('individ', kwargs={'pk': pk})
 
     def get_context_data(self, **kwargs):
         data = super(CreateContractIndividual, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data['files'] = ContractFormset(self.request.POST, self.request.FILES)
+            data['docs'] = FileContract(self.request.FILES.getlist('file'))
+        else:
+            data['files'] = ContractFormset(instance=self.object)
         data['title'] = 'Добавить договор'
-        data['header'] = 'Договор с '+str(get_object_or_404(Legal, id=self.kwargs['pk']).fullname)
+        data['header'] = 'Договор с '+str(get_object_or_404(Individual, id=self.kwargs['pk']).name)
         return data
 
     def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        files = context['files']
         with transaction.atomic():
             self.object = form.save(commit=False)
             self.object.individual = get_object_or_404(Individual, id=self.kwargs['pk'])
             self.object = form.save()
+            if files.is_valid():
+                #for f in context['docs']:
+                files.instance=self.object
+                files.save()
         return super(CreateContractIndividual, self).form_valid(form)

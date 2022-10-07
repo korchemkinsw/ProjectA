@@ -69,6 +69,23 @@ class LegalForm(forms.ModelForm):
             'bigboss',
         ]
 
+class IndividualFilter(django_filters.FilterSet):
+    last_name = django_filters.CharFilter(field_name='name__last_name', lookup_expr='contains')
+    first_name = django_filters.CharFilter(field_name='name__first_name', lookup_expr='contains')
+    fathers_name = django_filters.CharFilter(field_name='name__fathers_name', lookup_expr='contains')
+    
+    class Meta:
+        model = Individual
+        fields = ['last_name', 'first_name', 'fathers_name']
+
+class LegalFilter(django_filters.FilterSet):
+    fullname = django_filters.CharFilter(field_name='fullname', lookup_expr='contains')
+    inn = django_filters.CharFilter(field_name='inn', lookup_expr='contains')
+
+    class Meta:
+        model = Legal
+        fields = ['fullname', 'inn']
+
 class ContractFilter(django_filters.FilterSet):
     enterprise = django_filters.CharFilter(field_name='enterprise__abbreviatedname', lookup_expr='contains')
     number = django_filters.CharFilter(field_name='number', lookup_expr='contains')
@@ -90,12 +107,15 @@ class ContractForm(forms.ModelForm):
             self.fields['date'].widget=FengyuanChenDatePickerInput()
 
 class FileContractForm(forms.ModelForm):
+    file = forms.FileField(label='Документы', widget=forms.FileInput(attrs={'multiple': True}))
     class Meta:
         model = FileContract
         exclude = ()
-        fields = ('contract', 'file',)
+        fields = ('file',)
 
 class BaseContactFormset(BaseInlineFormSet):
     pass
 
-ContactFormset = inlineformset_factory(Responsible, Contact, form=ContactsForm,extra=1)
+ContactFormset = inlineformset_factory(Responsible, Contact, form=ContactsForm, extra=1)
+ContractFormset = inlineformset_factory(Contract, FileContract, form=FileContractForm, extra=1)
+
