@@ -11,7 +11,7 @@ from object_card.models import Card
 
 from .forms import (ContactFilter, ContactForm, ContactFormset, ContractForm,
                     ContractFormset, IndividualFilter, IndividualForm,
-                    LegalFilter, LegalForm)
+                    LegalFilter, LegalForm, ContractFilter)
 from .models import (Contact, Contract, FileContract, Individual, Legal,
                      Responsible)
 
@@ -108,8 +108,12 @@ class CreateLegal(CreateView):
 class DetailLegal(DetailView):
     model = Legal
 
-class ContractFilter(FilterView):
-    pass
+class FilterContract(FilterView):
+    model = Contract
+    context_object_name = 'filter'
+    template_name = 'clientele/contract_filter.html'
+    filterset_class = ContractFilter
+    paginate_by = 15
 
 class CreateContractLegal(CreateView):
     model = Contract
@@ -122,15 +126,26 @@ class CreateContractLegal(CreateView):
 
     def get_context_data(self, **kwargs):
         data = super(CreateContractLegal, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data['files'] = ContractFormset(self.request.POST, self.request.FILES)
+            #data['docs'] = FileContract(self.request.FILES.getlist('file'))
+        else:
+            data['files'] = ContractFormset(instance=self.object)
         data['title'] = 'Добавить договор'
         data['header'] = 'Договор с '+str(get_object_or_404(Legal, id=self.kwargs['pk']).fullname)
         return data
 
     def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        files = context['files']
         with transaction.atomic():
             self.object = form.save(commit=False)
             self.object.legal = get_object_or_404(Legal, id=self.kwargs['pk'])
             self.object = form.save()
+            if files.is_valid():
+                #for f in context['docs']:
+                files.instance=self.object
+                files.save()
         return super(CreateContractLegal, self).form_valid(form)
 
 class CreateContractIndividual(CreateView):
@@ -146,7 +161,7 @@ class CreateContractIndividual(CreateView):
         data = super(CreateContractIndividual, self).get_context_data(**kwargs)
         if self.request.POST:
             data['files'] = ContractFormset(self.request.POST, self.request.FILES)
-            data['docs'] = FileContract(self.request.FILES.getlist('file'))
+            #data['docs'] = FileContract(self.request.FILES.getlist('file'))
         else:
             data['files'] = ContractFormset(instance=self.object)
         data['title'] = 'Добавить договор'

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Договора{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5>Договора</h5>
+        <div style="text-align: left; font-size: 12px" class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                    <th class="col-lg-3">Предприятие:</th>
+                    <th class="col-lg-3">Номер договора:</th>
+                    <th class="col-lg-3">Юр. лицо:</th>
+                    <th class="col-lg-3">Физ. лицо:</th>
+                  </tr>
+              </thead>
+              <tbody>
+                <form method="get">
+                  <tr>
+                    <th>{{ filter.form.enterprise }}</th>
+                    <th>{{ filter.form.number }}</th>
+                    <th>{{ filter.form.legal }}</th>
+                    <th>{{ filter.form.individual }}&nbsp;<input type="submit" value="Найти" /></th>
+                    <th></th>
+                  </tr>
+                </form>
+              </tbody>
+            </table>
+          </div>
+      </div>
+      <div class="card-body">
+
+        <div style="text-align: left; font-size: 12px" class="table-responsive">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th class="col-lg-2">Статус:</th>
+                <th class="col-lg-4">Предприятие:</th>
+                <th class="col-lg-6">Договор:</th>
+              </tr>
+            </thead>
+            {% for contract in object_list %}
+              <tbody>
+                <tr>
+                  <td>
+                    <a href="#"> 
+                      {{ contract.status }}
+                    </a>
+                  </td>
+                  <td>{{ contract.enterprise }}</td>
+                  <td>
+                    {{ contract }}&nbsp;
+                    {% if contract.legal %}
+                      c  {{ contract.legal }}
+                    {% endif %}
+                    {% if contract.individual %}
+                      c  {{ contract.individual }}
+                    {% endif %}
+                  </td>
+                </tr>
+              </tbody>
+
+            {% endfor %}
+          </table>
+          {% include "includes/paginator.html" %}
+        </div>
+        <br>
+        <a class="btn btn-outline-primary btn-sm" href="{% url 'contactlist' %}" role="button">Контакты</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

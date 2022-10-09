@@ -19,6 +19,7 @@
                 <th class="col-lg-3">Имя:</th>
                 <th class="col-lg-3">Отчество:</th>
                 <th class="col-lg-2">Договоров:</th>
+                <th class="col-lg-2">Объектов:</th>
               </tr>
               <form method="get">
                 <tr>
@@ -42,6 +43,11 @@
                   <td>
                     <a href="#"> 
                       {{ individual.individual.all|length }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="#"> 
+                      {{ individual.individ_card.all|length }}
                     </a>
                   </td>
                 </tr>

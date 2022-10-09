@@ -60,6 +60,8 @@
       <p>
         {% if not card.qteam %}
           <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_qteam' card.id  %}" role="button">Добавить группу</a>
+        {% else %}
+        <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_qteam' card.id  %}" role="button">Изменить группу</a>
         {% endif %}
       </p>
     </div>

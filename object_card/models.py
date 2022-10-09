@@ -144,7 +144,7 @@ class Card(models.Model):
         verbose_name='Юр.лицо',
         help_text='Юр.лицо',
         on_delete=models.SET_NULL,
-        related_name='legal_app',
+        related_name='legal_card',
         blank=True,
         null=True,
     )
@@ -153,7 +153,7 @@ class Card(models.Model):
         verbose_name='Физ.лицо',
         help_text='Физ.лицо',
         on_delete=models.SET_NULL,
-        related_name='individ_app',
+        related_name='individ_card',
         blank=True,
         null=True,
     )
@@ -203,6 +203,7 @@ class Card(models.Model):
         Device,
         verbose_name='ППК',
         help_text='ППК',
+        blank=True,
         null=True,
         on_delete=models.SET_NULL,
         related_name='control',

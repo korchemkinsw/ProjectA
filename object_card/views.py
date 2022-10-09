@@ -49,10 +49,8 @@ class CreateCardIndividual(CreateView):
     success_url = reverse_lazy('individual')
 
     def get_context_data(self, **kwargs):
-        if 'application' not in kwargs:
-            kwargs['application'] = get_object_or_404(Individual, id=self.kwargs['pk'])
         context = super().get_context_data(**kwargs)
-        context['form'].fields['individual'].queryset = Individual.objects.filter(id=self.kwargs['pk'])
+        context['form'].fields['individual'].queryset = Individual.objects.filter(id=self.kwargs['pk']).exclude()
         context['client']=kwargs['application'].name
         return context
 
@@ -72,10 +70,8 @@ class CreateCardLegal(CreateView):
     success_url = reverse_lazy('legals')
 
     def get_context_data(self, **kwargs):
-        if 'application' not in kwargs:
-            kwargs['application'] = get_object_or_404(Legal, id=self.kwargs['pk'])
         context = super().get_context_data(**kwargs)
-        context['form'].fields['legal'].queryset = Legal.objects.filter(id=self.kwargs['pk'])
+        context['form'].fields['legal'].queryset = Legal.objects.filter(id=self.kwargs['pk']).exclude()
         context['client']=kwargs['application'].abbreviatedname
         return context
 
@@ -101,23 +97,12 @@ class UpdateCardQteam(UpdateView):
         data = super(UpdateCardQteam, self).get_context_data(**kwargs)
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
         if data['card'].legal:
-            data['contracts'] = Contract.objects.filter(legal=data['card'].legal).exclude()
+            data['form'].fields['contract'].queryset = Contract.objects.filter(legal=data['card'].legal).exclude()
         else:
-            data['contracts'] = Contract.objects.filter(individual=data['card'].individual).exclude()
+            data['form'].fields['contract'].queryset = Contract.objects.filter(individual=data['card'].individual).exclude()
         data['title'] = 'Добавить реагирование'
         data['header'] = 'Добавить реагирование'
         return data
-    
-    def get_queryset(self, **kwargs):
-        card = get_object_or_404(Card, id=self.kwargs['pk'])
-        if card.legal:
-            return Contract.objects.filter(legal=card.legal).exclude()
-        else:
-            return Contract.objects.filter(individual=card.individual).exclude()
-        #return self.context['contract']
-
-    #def dispatch(self, request, *args, **kwargs):
-        #return super().dispatch(request, *args, **kwargs)
 
 class CreateCardDevice(CreateView):
     model = Device

@@ -14,9 +14,10 @@
           <table class="table table-sm">
             <thead>
               <tr>
-                <th class="col-lg-7">Юр. лицо:</th>
+                <th class="col-lg-5">Юр. лицо:</th>
                 <th class="col-lg-3">ИНН:</th>
                 <th class="col-lg-2">Договоров:</th>
+                <th class="col-lg-2">Объектов:</th>
               </tr>
               <form method="get">
                 <tr>
@@ -38,6 +39,11 @@
                   <td>
                     <a href="{% url 'legal' legal.pk  %}"> 
                       {{ legal.legal.all|length }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="#"> 
+                      {{ legal.legal_card.all|length }}
                     </a>
                   </td>
                 </tr>

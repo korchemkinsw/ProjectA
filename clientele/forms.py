@@ -3,6 +3,7 @@ from core.widgets import FengyuanChenDatePickerInput
 from django import forms
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
 from object_card.models import Card
+from enterprises.models import Enterprise
 from pyexpat import model
 
 from .models import (Contact, Contract, FileContract, Individual, Legal,
@@ -87,9 +88,9 @@ class LegalFilter(django_filters.FilterSet):
         fields = ['fullname', 'inn']
 
 class ContractFilter(django_filters.FilterSet):
-    enterprise = django_filters.CharFilter(field_name='enterprise__abbreviatedname', lookup_expr='contains')
+    enterprise = django_filters.CharFilter(field_name='enterprise__abbreviatedname', lookup_expr='contains')#django_filters.ChoiceFilter(choices=Enterprise.objects.all())
     number = django_filters.CharFilter(field_name='number', lookup_expr='contains')
-    legal = django_filters.CharFilter(field_name='legal__abbreviatedname', lookup_expr='contains')
+    legal = django_filters.CharFilter(field_name='legal__fullname', lookup_expr='contains')
     individual = django_filters.CharFilter(field_name='individual__name__last_name', lookup_expr='contains')
 
     class Meta:
