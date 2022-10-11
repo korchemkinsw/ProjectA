@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Договор: {{ contract }}{% endblock %}
+{% load static %}
+{% block content %}
+<div style="text-align: left; font-size: 12px" class="row justify-content-center">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5>{{ contract }}</h5>
+      </div>
+      <div class="card-body">
+        <div style="text-align: left; font-size: 12px">
+          <table class="table table-sm">
+            <tbody>
+              <tr>
+                <th class="col-lg-2">Статус:</th>
+                <td class="col-lg-10">{{ contract.status }}</td>
+              </tr>
+              <tr>
+                <th class="col-lg-2">Предприятие:</th>
+                <td class="col-lg-10">{{ contract.enterprise }}</td>
+              </tr>
+              <tr>
+                <th class="col-lg-2">Номер:</th>
+                <td class="col-lg-10">{{ contract }}</td>
+              </tr>
+              <tr>
+                <th class="col-lg-2">Клиент:</th>
+                <td>
+                  {% if contract.legal %}
+                    {{ contract.legal.fullname }}
+                  {% endif %}
+                  {% if contract.individual %}
+                    {{ contract.individual.name.last_name }} 
+                    {{ contract.individual.name.first_name }} 
+                    {{ contract.individual.name.fathers_name }}
+                  {% endif %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Файлы:</th>
+              </tr>
+            </thead>
+            <tbody>
+              <td>
+                {% for file in contract.files.all %}
+                  <p>
+                    <div class="row">
+                      <div><a href="{{ file.file.url }}">{{ file.title }}</a></div>
+                    </div>
+                  </p>
+                {% endfor %}
+              </td>
+            </tbody>
+          </table>
+          <p>
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'contracts' %}" role="button">Договора</a>
+            {% if contract.legal %}
+              <a class="btn btn-outline-primary btn-sm" href="{% url 'upd_contract_legal' contract.pk %}" role="button">Изменить</a>
+            {% endif %}
+            {% if contract.individual %}
+              <a class="btn btn-outline-primary btn-sm" href="{% url 'upd_contract_individual' contract.pk %}" role="button">Изменить</a>
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

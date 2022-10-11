@@ -9,9 +9,9 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 from django_filters.views import FilterView
 from object_card.models import Card
 
-from .forms import (ContactFilter, ContactForm, ContactFormset, ContractForm,
-                    ContractFormset, IndividualFilter, IndividualForm,
-                    LegalFilter, LegalForm, ContractFilter)
+from .forms import (ContactFilter, ContactForm, ContactFormset, ContractFilter,
+                    ContractForm, ContractFormset, IndividualFilter,
+                    IndividualForm, LegalFilter, LegalForm)
 from .models import (Contact, Contract, FileContract, Individual, Legal,
                      Responsible)
 
@@ -101,7 +101,6 @@ class CreateLegal(CreateView):
     def form_valid(self, form):
         with transaction.atomic():
             self.object = form.save(commit=False)
-            #self.object.bigboss = get_object_or_404(Responsible, id=self.kwargs['pk'])
             self.object = form.save()
         return super(CreateLegal, self).form_valid(form)
 
@@ -115,10 +114,13 @@ class FilterContract(FilterView):
     filterset_class = ContractFilter
     paginate_by = 15
 
+class DetailContract(DetailView):
+    model = Contract
+
 class CreateContractLegal(CreateView):
     model = Contract
     form_class = ContractForm
-    template_name = 'form.html'
+    template_name = 'clientele\contract_form.html'
 
     def get_success_url(self):
        pk = self.kwargs['pk']
@@ -128,11 +130,10 @@ class CreateContractLegal(CreateView):
         data = super(CreateContractLegal, self).get_context_data(**kwargs)
         if self.request.POST:
             data['files'] = ContractFormset(self.request.POST, self.request.FILES)
-            #data['docs'] = FileContract(self.request.FILES.getlist('file'))
         else:
-            data['files'] = ContractFormset(instance=self.object)
+            data['files'] = ContractFormset()
         data['title'] = 'Добавить договор'
-        data['header'] = 'Договор с '+str(get_object_or_404(Legal, id=self.kwargs['pk']).fullname)
+        data['header'] = 'Добавить договор с '+str(get_object_or_404(Legal, id=self.kwargs['pk']).fullname)
         return data
 
     def form_valid(self, form):
@@ -143,10 +144,40 @@ class CreateContractLegal(CreateView):
             self.object.legal = get_object_or_404(Legal, id=self.kwargs['pk'])
             self.object = form.save()
             if files.is_valid():
-                #for f in context['docs']:
                 files.instance=self.object
                 files.save()
         return super(CreateContractLegal, self).form_valid(form)
+
+class UpdateContractLegal(UpdateView):
+    model = Contract
+    form_class = ContractForm
+    template_name = 'clientele\contract_form.html'
+
+    def get_success_url(self):
+       pk = self.kwargs['pk']
+       return reverse('legal', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        data = super(UpdateContractLegal, self).get_context_data(**kwargs)
+        contract = get_object_or_404(Contract, id=self.kwargs['pk'])
+        if self.request.POST:
+            data['files'] = ContractFormset(self.request.POST, self.request.FILES, instance=self.object)
+        else:
+            data['files'] = ContractFormset(instance=self.object)
+        data['title'] = 'Изменить договор'
+        data['header'] = 'Изменить договор с '+str(contract.legal.fullname)
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        files = context['files']
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object = form.save()
+            if files.is_valid():
+                files.instance=self.object
+                files.save()
+        return super(UpdateContractLegal, self).form_valid(form)
 
 class CreateContractIndividual(CreateView):
     model = Contract
@@ -161,11 +192,10 @@ class CreateContractIndividual(CreateView):
         data = super(CreateContractIndividual, self).get_context_data(**kwargs)
         if self.request.POST:
             data['files'] = ContractFormset(self.request.POST, self.request.FILES)
-            #data['docs'] = FileContract(self.request.FILES.getlist('file'))
         else:
-            data['files'] = ContractFormset(instance=self.object)
+            data['files'] = ContractFormset()
         data['title'] = 'Добавить договор'
-        data['header'] = 'Договор с '+str(get_object_or_404(Individual, id=self.kwargs['pk']).name)
+        data['header'] = 'Добавить договор с '+str(get_object_or_404(Individual, id=self.kwargs['pk']).name)
         return data
 
     def form_valid(self, form):
@@ -176,7 +206,37 @@ class CreateContractIndividual(CreateView):
             self.object.individual = get_object_or_404(Individual, id=self.kwargs['pk'])
             self.object = form.save()
             if files.is_valid():
-                #for f in context['docs']:
                 files.instance=self.object
                 files.save()
         return super(CreateContractIndividual, self).form_valid(form)
+
+class UpdateContractIndividual(UpdateView):
+    model = Contract
+    form_class = ContractForm
+    template_name = 'clientele\contract_form.html'
+
+    def get_success_url(self):
+       pk = self.kwargs['pk']
+       return reverse('contract', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        data = super(UpdateContractIndividual, self).get_context_data(**kwargs)
+        contract = get_object_or_404(Contract, id=self.kwargs['pk'])
+        if self.request.POST:
+            data['files'] = ContractFormset(self.request.POST, self.request.FILES, instance=self.object)
+        else:
+            data['files'] = ContractFormset(instance=self.object)
+        data['title'] = 'Изменить договор'
+        data['header'] = 'Изменить договор с '+str(contract.individual)
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        files = context['files']
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object = form.save()
+            if files.is_valid():
+                files.instance=self.object
+                files.save()
+        return super(UpdateContractIndividual, self).form_valid(form)

@@ -2,8 +2,8 @@ import django_filters
 from core.widgets import FengyuanChenDatePickerInput
 from django import forms
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
-from object_card.models import Card
 from enterprises.models import Enterprise
+from object_card.models import Card
 from pyexpat import model
 
 from .models import (Contact, Contract, FileContract, Individual, Legal,
@@ -88,7 +88,7 @@ class LegalFilter(django_filters.FilterSet):
         fields = ['fullname', 'inn']
 
 class ContractFilter(django_filters.FilterSet):
-    enterprise = django_filters.CharFilter(field_name='enterprise__abbreviatedname', lookup_expr='contains')#django_filters.ChoiceFilter(choices=Enterprise.objects.all())
+    enterprise = django_filters.ModelChoiceFilter(queryset=Enterprise.objects.all())
     number = django_filters.CharFilter(field_name='number', lookup_expr='contains')
     legal = django_filters.CharFilter(field_name='legal__fullname', lookup_expr='contains')
     individual = django_filters.CharFilter(field_name='individual__name__last_name', lookup_expr='contains')
@@ -108,11 +108,11 @@ class ContractForm(forms.ModelForm):
             self.fields['date'].widget=FengyuanChenDatePickerInput()
 
 class FileContractForm(forms.ModelForm):
-    file = forms.FileField(label='Документы', widget=forms.FileInput(attrs={'multiple': True}))
+    file = forms.FileField(label='Добавить/изменить', widget=forms.FileInput(attrs={'multiple': True}))
     class Meta:
         model = FileContract
         exclude = ()
-        fields = ('file',)
+        fields = ('title', 'file',)
 
 class BaseContactFormset(BaseInlineFormSet):
     pass

@@ -35,12 +35,16 @@
           <table class="table">
             {{ files.management_form }}
             {% for form in files.forms %}
+              {{ form.instance.file }}
               {% if forloop.first %}
                 <thead>
                   <tr>
                     {% for field in form.visible_fields %}
                       <th>
                         {{ field.label|capfirst }}
+                        {% if field.field.required %}
+                          <span class="required">*</span>
+                        {% endif %}
                       </th>
                     {% endfor %}
                   </tr>
@@ -56,7 +60,12 @@
                       {% endfor %}
                     {% endif %}
                     {{ field.errors.as_ul }}
-                    {{ field }}
+                    {% if field.label == 'Добавить/изменить' and form.instance.file %}
+                      {{ form.instance.file.name }}
+                    {% else %}
+                      {{ field }}
+                    {% endif %}
+                    
                   </td>
                 {% endfor %}
               </tr>
@@ -83,7 +92,7 @@
             });
           </script>
           <br>
-          <button type="submit" class="btn btn-outline-success btn-sm">Добавить</button>
+          <button type="submit" class="btn btn-outline-success btn-sm">{{ title }}</button>
         </form>
       </div>
     </div>

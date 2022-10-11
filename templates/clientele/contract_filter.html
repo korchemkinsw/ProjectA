@@ -9,31 +9,29 @@
       <div class="card-header">
         <h5>Договора</h5>
         <div style="text-align: left; font-size: 12px" class="table-responsive">
-            <table class="table table-sm">
-              <thead>
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th class="col-lg-3">Предприятие:</th>
+                <th class="col-lg-3">Номер договора:</th>
+                <th class="col-lg-3">Юр. лицо:</th>
+                <th class="col-lg-3">Физ. лицо:</th>
+              </tr>
+            </thead>
+            <tbody>
+              <form method="get">
                 <tr>
-                    <th class="col-lg-3">Предприятие:</th>
-                    <th class="col-lg-3">Номер договора:</th>
-                    <th class="col-lg-3">Юр. лицо:</th>
-                    <th class="col-lg-3">Физ. лицо:</th>
-                  </tr>
-              </thead>
-              <tbody>
-                <form method="get">
-                  <tr>
-                    <th>{{ filter.form.enterprise }}</th>
-                    <th>{{ filter.form.number }}</th>
-                    <th>{{ filter.form.legal }}</th>
-                    <th>{{ filter.form.individual }}&nbsp;<input type="submit" value="Найти" /></th>
-                    <th></th>
-                  </tr>
-                </form>
-              </tbody>
-            </table>
-          </div>
+                  <th>{{ filter.form.enterprise }}</th>
+                  <th>{{ filter.form.number }}</th>
+                  <th>{{ filter.form.legal }}</th>
+                  <th>{{ filter.form.individual }}&nbsp;<input type="submit" value="Найти" /></th>
+                </tr>
+              </form>
+            </tbody>
+          </table>
+        </div>
       </div>
       <div class="card-body">
-
         <div style="text-align: left; font-size: 12px" class="table-responsive">
           <table class="table table-sm">
             <thead>
@@ -47,13 +45,14 @@
               <tbody>
                 <tr>
                   <td>
-                    <a href="#"> 
                       {{ contract.status }}
-                    </a>
                   </td>
                   <td>{{ contract.enterprise }}</td>
                   <td>
-                    {{ contract }}&nbsp;
+                    <a href="{% url 'contract' contract.pk  %}"> 
+                      {{ contract }}
+                    </a>
+                    &nbsp;
                     {% if contract.legal %}
                       c  {{ contract.legal }}
                     {% endif %}

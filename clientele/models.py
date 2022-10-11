@@ -1,4 +1,6 @@
+import datetime
 import os
+from email.policy import default
 from trace import Trace
 
 from django.contrib.auth import get_user_model
@@ -260,12 +262,25 @@ class Contract(models.Model):
         return f'{self.number} от {self.date}'
 
 class FileContract(models.Model):
-    contract=models.ForeignKey(
+    contract = models.ForeignKey(
         Contract,
         verbose_name='договор',
         null=True,
         on_delete=models.CASCADE,
         related_name='files'
+    )
+    title = models.CharField(
+        max_length=30,
+        verbose_name='Документ:',
+        help_text='Документ:',
+        #blank=True
+    )
+    generated = models.DateTimeField(
+        'Дата создания',
+        null=True,
+        blank=True,
+        default=datetime.datetime.today()
+        #auto_now_add=True
     )
 
     def generate_path(instance, filename):

@@ -78,5 +78,6 @@ class ContractAdmin(admin.ModelAdmin):
 
 @admin.register(FileContract)
 class FileContractAdmin(admin.ModelAdmin):
-    field = ['contract', 'file']
+    list_display = ('contract', 'title', 'file', 'generated')
+    field = ['contract', 'title', 'file', 'generated']
 
