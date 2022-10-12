@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Card, Device, Partition, Sim, Zone
+from .models import Card, CardPhoto, Device, ImageSim, Partition, Sim, Zone
 
 
 @admin.register(Device)
@@ -19,8 +19,15 @@ class DeviceAdmin(admin.ModelAdmin):
 @admin.register(Sim)
 class SimAdmin(admin.ModelAdmin):
     list_display = ('iccid', 'msisdn', 'device',)
-    fields = ['iccid', 'msisdn', 'device',]
+    fields = ['iccid', 'msisdn', 'device', ]
     search_fields = ('iccid', 'msisdn', 'device',)
+    empty_value_display = '-пусто-'
+
+@admin.register(ImageSim)
+class ImageSimAdmin(admin.ModelAdmin):
+    list_display = ('device', 'part_sim', 'image')
+    fields = ['device', 'part_sim', 'image']
+    search_fields = ('device', 'part_sim',)
     empty_value_display = '-пусто-'
 
 @admin.register(Card)
@@ -29,13 +36,13 @@ class CardAdmin(admin.ModelAdmin):
         'status', 'legal', 'individual', 'object_name',
         'phone', 'address', 'width', 'longitude',
         'transmission', 'device', 'note', 'contract', 'qteam', 'qnote',
-        'manager', 'generated', 'director', 'chnged'
+        'manager', 'generated', 'director', 'changed'
         )
     fields = [
         'status', 'legal', 'individual', 'object_name',
         'phone', 'address', 'width', 'longitude',
         'transmission', 'device', 'note', 'contract', 'qteam', 'qnote',
-        'manager', 'generated', 'director', 'chnged'
+        'manager', 'generated', 'director', 'changed'
         ]
     search_fields = ('device', 'legal', 'individual', 'address',)
     empty_value_display = '-пусто-'
@@ -52,4 +59,11 @@ class ZoneAdmin(admin.ModelAdmin):
     list_display = ('device', 'partition', 'number', 'name')
     fields = ['device', 'partition', 'number', 'name']
     search_fields = ('device', 'partition',)
+    empty_value_display = '-пусто-'
+
+@admin.register(CardPhoto)
+class CardPhotoAdmin(admin.ModelAdmin):
+    list_display = ('card', 'title', 'image',)
+    fields = ['card', 'title', 'image',]
+    search_fields = ('card', 'title',)
     empty_value_display = '-пусто-'

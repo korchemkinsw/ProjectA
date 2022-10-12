@@ -12,33 +12,13 @@
 {% endblock %}
 {% block content %}
 {% load user_filters %}
-<div class="col-lg-12">
-  <ul class="nav nav-tabs">
-    <li class="nav-item">
-      <a class="nav-link text-dark" href="{% url 'card' card.pk %}">Карточка</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-dark" href="{% url 'card_device' card.pk %}">Оборудование</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-dark" href="{% url 'card_qteam' card.pk %}">Реагирование</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-dark" href="{% url 'card_partitions' card.pk %}">Разделы</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link active text-dark" href="{% url 'card_zones' card.pk %}">Зоны</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-dark" href="#">Ответственные лица</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-dark" href="#">Фотографии</a>
-    </li>
-  </ul>
 
+
+<div class="col-lg-12">
+  {% include "includes/card_nav.html" %}
   <div style="text-align: left; font-size: 14px" class="row justify-content-center">
     <div class="col-md-12">
+      
       <div class="card">
         <div class="card-header">
           <h5>

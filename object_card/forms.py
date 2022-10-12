@@ -2,9 +2,10 @@ from dataclasses import fields
 
 import django_filters
 from django import forms
-from django.forms.models import inlineformset_factory, modelformset_factory
+from django.forms.models import (BaseInlineFormSet, inlineformset_factory,
+                                 modelformset_factory)
 
-from .models import Card, Device, Partition, Sim, Zone
+from .models import Card, Device, ImageSim, Partition, Sim, Zone
 
 
 class DeviceForm(forms.ModelForm):
@@ -36,6 +37,13 @@ class SimForm(forms.ModelForm):
         model = Sim
         exclude =()
         fields = ('iccid', 'msisdn',)
+
+class ImageSimForm(forms.ModelForm):
+    image = forms.ImageField(label='Фото sim', widget=forms.FileInput(attrs={'multiple': True}))
+    class Meta:
+        model = ImageSim
+        exclude =()
+        fields = ('part_sim', 'image',)
 
 class PartitionForm(forms.ModelForm):
     class Meta:
@@ -97,6 +105,7 @@ class CardQteamForm(forms.ModelForm):
         exclude =()
         fields = ('contract', 'qteam', 'qnote')
 
-SimFormset=inlineformset_factory(Device, Sim, form=SimForm, extra=1)
+SimFormset=inlineformset_factory(Device, Sim, form=SimForm, extra=1,)
+ImageSimFormset=inlineformset_factory(Device, ImageSim, form=ImageSimForm, extra=1,)
 PartitionFormset=inlineformset_factory(Device, Partition, form=PartitionForm, extra=1)
 ZoneFormset=inlineformset_factory(Device, Zone, form=ZoneForm, extra=1)

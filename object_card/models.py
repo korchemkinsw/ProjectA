@@ -1,3 +1,6 @@
+import os
+from enum import unique
+
 from clientele.models import Contract, Individual, Legal
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -43,7 +46,6 @@ class Device(models.Model):
         'Дата создания',
         null=True,
         blank=True,
-        #auto_now_add=True
     )
     technican = models.ForeignKey(
         User,
@@ -57,7 +59,6 @@ class Device(models.Model):
         'Дата изменения',
         null=True,
         blank=True,
-        #auto_now_add=True
     )
 
     class Meta:
@@ -90,13 +91,51 @@ class Sim(models.Model):
         on_delete=models.CASCADE,
         related_name='sim',
     )
-
+    
+    
     class Meta:
         verbose_name = 'SIM-карта'
         verbose_name_plural = 'SIM-карты'
 
     def __str__(self):
         return f'{self.device} {self.iccid} {self.msisdn}'
+
+class ImageSim(models.Model):
+    SIM1 = 'sim 1'
+    SIM2 = 'sim 2'
+    SIM_CHOICES = (
+        (SIM1, 'sim 1'),
+        (SIM2, 'sim 2'),
+    )
+    device = models.ForeignKey(
+        Device,
+        verbose_name='ППК',
+        help_text='ППК',
+        null=True,
+        on_delete=models.CASCADE,
+        related_name='image_sim',
+    )
+    part_sim = models.CharField(
+        max_length=5,
+        choices=SIM_CHOICES,
+        unique=True,
+        verbose_name='sim #',
+    )
+ 
+    def generate_path(instance, filename):
+        return os.path.join('object_card', str(instance.device.account)+"/sim", filename)
+
+    image = models.ImageField(verbose_name='Фото sim-карты', upload_to=generate_path, blank=True)
+
+    def delete(self, *args, **kwargs):
+        storage, path = self.image.storage, self.image.path
+        super(ImageSim,self).delete(*args,**kwargs)
+        storage.delete(path)
+
+    class Meta:
+        verbose_name = 'Фотография sim-карты'
+        verbose_name_plural = 'Фотографии sim-карт'
+
 
 class Card(models.Model):
     ANDROMEDA = 'andromeda'
@@ -243,7 +282,6 @@ class Card(models.Model):
         'Дата создания',
         null=True,
         blank=True,
-        #auto_now_add=True
     )
     director = models.ForeignKey(
         User,
@@ -253,11 +291,10 @@ class Card(models.Model):
         null=True,
         blank=True,
     )
-    chnged = models.DateTimeField(
+    changed = models.DateTimeField(
         'Дата изменения',
         null=True,
         blank=True,
-        #auto_now_add=True
     )
 
     class Meta:
@@ -331,3 +368,32 @@ class Zone(models.Model):
 
     def __str__(self):
         return f'{self.device} | {self.partition} | {self.number} {self.name}'
+
+class CardPhoto(models.Model):
+    card = models.ForeignKey(
+        Card,
+        verbose_name='Объект',
+        help_text='Объект',
+        null=True,
+        on_delete=models.CASCADE,
+        related_name='card_photo',
+    )
+    title = models.CharField(
+        max_length=30,
+        verbose_name='Описание',
+        help_text='Описание',
+    )
+    
+    def generate_path(instance, filename):
+        return os.path.join('object_card', str(instance.card.device.account), filename)
+
+    image = models.ImageField(verbose_name='Фотография объекта', upload_to=generate_path, blank=True)
+
+    def delete(self, *args, **kwargs):
+        storage, path = self.image.storage, self.image.path
+        super(CardPhoto,self).delete(*args,**kwargs)
+        storage.delete(path)
+
+    class Meta:
+        verbose_name = 'Фотография объекта'
+        verbose_name_plural = 'Фотографии объектов'

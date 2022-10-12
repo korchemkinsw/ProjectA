@@ -10,29 +10,7 @@
 {% load static %}
 {% block content %}
   <div class="col-lg-12">
-    <ul class="nav nav-tabs">
-      <li class="nav-item">
-        <a class="nav-link text-dark" href="{% url 'card' card.pk %}">Карточка</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active text-dark" href="{% url 'card_device' card.pk %}">Оборудование</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-dark" href="{% url 'card_qteam' card.pk %}">Реагирование</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-dark" href="{% url 'card_partitions' card.pk %}">Разделы</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-dark" href="{% url 'card_zones' card.pk %}">Зоны</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-dark" href="#">Ответственные лица</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-dark" href="#">Фотографии</a>
-      </li>
-    </ul>
+    {% include "includes/card_nav.html" %}
     <div style="text-align: left; font-size: 12px" class="row justify-content-center">
       {% include "includes/card_head.html" %}
       <div class="col-lg-12">

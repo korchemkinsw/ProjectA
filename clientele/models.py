@@ -273,14 +273,12 @@ class FileContract(models.Model):
         max_length=30,
         verbose_name='Документ:',
         help_text='Документ:',
-        #blank=True
     )
     generated = models.DateTimeField(
         'Дата создания',
         null=True,
         blank=True,
         default=datetime.datetime.today()
-        #auto_now_add=True
     )
 
     def generate_path(instance, filename):

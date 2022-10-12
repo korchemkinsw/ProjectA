@@ -12,7 +12,8 @@ from django_filters.views import FilterView
 
 from .forms import (CardFilter, CardIndividualForm, CardLegalForm,
                     CardQteamForm, DeviceForm, DevicePartForm, DeviceZoneForm,
-                    PartitionFormset, SimFormset, ZoneForm, ZoneFormset)
+                    ImageSimFormset, PartitionFormset, SimFormset, ZoneForm,
+                    ZoneFormset)
 from .models import Card, Device, Partition, Zone
 
 
@@ -26,21 +27,46 @@ class FilterCard(FilterView):
 class DetailCard(DetailView):
     model = Card
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cards']='active'
+        return context
+
 class DetailCardDevice(DetailView):
     model = Card
     template_name = 'object_card\card_device_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['device']='active'
+        return context
 
 class DetailCardQteam(DetailView):
     model = Card
     template_name = 'object_card\card_qteam_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['qteam']='active'
+        return context
+
 class DetailCardPartitions(DetailView):
     model = Card
     template_name = 'object_card\card_partitions_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['partitions']='active'
+        return context
+
 class DetailCardZones(DetailView):
     model = Card
     template_name = 'object_card\card_zones_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['zone']='active'
+        return context
 
 class CreateCardIndividual(CreateView):
     model = Card
@@ -102,6 +128,7 @@ class UpdateCardQteam(UpdateView):
             data['form'].fields['contract'].queryset = Contract.objects.filter(individual=data['card'].individual).exclude()
         data['title'] = 'Добавить реагирование'
         data['header'] = 'Добавить реагирование'
+        data['qteam'] = 'active'
         return data
 
 class CreateCardDevice(CreateView):
@@ -157,16 +184,19 @@ class CardPartition(UpdateView):
     def get_context_data(self, **kwargs):
         data = super(CardPartition, self).get_context_data(**kwargs)
         if self.request.POST:
+            data['image_sim'] = ImageSimFormset(self.request.POST, self.request.FILES, instance=self.object,)
             data['partition'] = PartitionFormset(self.request.POST, instance=self.object)
         else:
+            data['image_sim'] = ImageSimFormset(instance=self.object)
             data['partition'] = PartitionFormset(instance=self.object)
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
-        
+        data['partitions'] = 'active'
         return data
 
     def form_valid(self, form):
         context = self.get_context_data(form=form)
         partitions = context['partition']
+        images_sim = context['image_sim']
         with transaction.atomic(): 
             self.object = form.save(commit=False)
             self.object.technican = self.request.user
@@ -175,10 +205,12 @@ class CardPartition(UpdateView):
             context['card'].device = self.object
             context['card'].status = Card.MONTAGE
             context['card'].save()
-        if partitions.is_valid():
+        if partitions.is_valid() and images_sim.is_valid():
             response = super(CardPartition, self).form_valid(form)
             partitions.instance = self.object
             partitions.save()
+            images_sim.instance = self.object
+            images_sim.save()
             return response
         else:
             return super().form_invalid(form)
@@ -206,6 +238,7 @@ class CardZone(UpdateView):
         data['device'] = get_object_or_404(Device, id=data['card'].device.id)
         for form in data['zones']:
             form.fields['partition'].queryset = Partition.objects.filter(device=data['device'])
+        data['zone'] = 'active'
         return data
 
     def form_valid(self, form):

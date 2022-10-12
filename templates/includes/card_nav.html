@@ -1,0 +1,23 @@
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link {{cards}} text-dark" href="{% url 'card' card.pk %}">Карточка</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {{device}} text-dark" href="{% url 'card_device' card.pk %}">Оборудование</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {{qteam}} text-dark" href="{% url 'card_qteam' card.pk %}">Реагирование</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {{partitions}} text-dark" href="{% url 'card_partitions' card.pk %}">Разделы</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {{zone}} text-dark" href="{% url 'card_zones' card.pk %}">Зоны</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {{responsibles}} text-dark" href="#">Ответственные лица</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link  {{photos}} text-dark" href="#">Фотографии</a>
+    </li>
+  </ul>
