@@ -34,7 +34,7 @@
           
           <table class="table">
             {{ files.management_form }}
-            {% for form in files.forms %}
+            {% for form in forms.forms %}
               {% if forloop.first %}
                 <thead>
                   <tr>
@@ -66,9 +66,9 @@
           <script src="{% static 'js/jquery.formset.js' %}"></script>
           <script type="text/javascript">
             $('.formset_row').formset({
-              addText: 'Ещё один документ',
+              addText: '{button}',
               deleteText: 'Удалить',
-              prefix: 'files',
+              prefix: 'forms',
             });
           </script>
           

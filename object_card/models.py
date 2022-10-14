@@ -118,7 +118,7 @@ class ImageSim(models.Model):
     part_sim = models.CharField(
         max_length=5,
         choices=SIM_CHOICES,
-        unique=True,
+        #unique=True,
         verbose_name='sim #',
     )
  

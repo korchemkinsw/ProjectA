@@ -53,6 +53,8 @@
       <p>
         {% if not card.device %}
           <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_device' card.id  %}" role="button">Добавить прибор</a>
+        {% else %}
+          <a class="btn btn-outline-primary btn-sm" href="{% url 'upd_card_device' card.id  %}" role="button">Добавить информацию</a>
         {% endif %}
       </p>
     </div>

@@ -17,16 +17,17 @@ class DeviceForm(forms.ModelForm):
             'account': 'Передаваемый номер',
         }
 
-class DevicePartForm(forms.ModelForm):
+class DeviceUpdateForm(forms.ModelForm):
     class Meta:
         model = Device
         exclude = ()
-        fields = ('device',)
+        fields = ('device', 'note',)
         labels ={
             'device': 'Тип ППК',
+            'note': 'примечание',
         }
 
-class DeviceZoneForm(forms.ModelForm):
+class DeviceNoneForm(forms.ModelForm):
     class Meta:
         model = Device
         exclude = ()

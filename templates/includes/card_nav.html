@@ -9,10 +9,18 @@
       <a class="nav-link {{qteam}} text-dark" href="{% url 'card_qteam' card.pk %}">Реагирование</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link {{partitions}} text-dark" href="{% url 'card_partitions' card.pk %}">Разделы</a>
+      {% if card.device %}
+        <a class="nav-link {{partitions}} text-dark" href="{% url 'card_partitions' card.pk %}">Разделы</a>
+      {% else %}
+        <a class="nav-link disabled text-dark" href="#">Разделы</a>
+      {% endif %}
     </li>
     <li class="nav-item">
-      <a class="nav-link {{zone}} text-dark" href="{% url 'card_zones' card.pk %}">Зоны</a>
+      {% if card.device and card.device.partition.all %}
+        <a class="nav-link {{zone}} text-dark" href="{% url 'card_zones' card.pk %}">Зоны</a>
+      {% else %}
+        <a class="nav-link disabled text-dark" href="#">Зоны</a>
+      {% endif %}
     </li>
     <li class="nav-item">
       <a class="nav-link {{responsibles}} text-dark" href="#">Ответственные лица</a>

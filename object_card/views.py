@@ -11,9 +11,9 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 from django_filters.views import FilterView
 
 from .forms import (CardFilter, CardIndividualForm, CardLegalForm,
-                    CardQteamForm, DeviceForm, DevicePartForm, DeviceZoneForm,
-                    ImageSimFormset, PartitionFormset, SimFormset, ZoneForm,
-                    ZoneFormset)
+                    CardQteamForm, DeviceForm, DeviceNoneForm,
+                    DeviceUpdateForm, ImageSimFormset, PartitionFormset,
+                    SimFormset, ZoneFormset)
 from .models import Card, Device, Partition, Zone
 
 
@@ -34,7 +34,7 @@ class DetailCard(DetailView):
 
 class DetailCardDevice(DetailView):
     model = Card
-    template_name = 'object_card\card_device_detail.html'
+    template_name = 'object_card/card_device_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -43,7 +43,7 @@ class DetailCardDevice(DetailView):
 
 class DetailCardQteam(DetailView):
     model = Card
-    template_name = 'object_card\card_qteam_detail.html'
+    template_name = 'object_card/card_qteam_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -52,7 +52,7 @@ class DetailCardQteam(DetailView):
 
 class DetailCardPartitions(DetailView):
     model = Card
-    template_name = 'object_card\card_partitions_detail.html'
+    template_name = 'object_card/card_partitions_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -61,7 +61,7 @@ class DetailCardPartitions(DetailView):
 
 class DetailCardZones(DetailView):
     model = Card
-    template_name = 'object_card\card_zones_detail.html'
+    template_name = 'object_card/card_zones_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -76,8 +76,10 @@ class CreateCardIndividual(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        individ = get_object_or_404(Individual, id=self.kwargs['pk'])
         context['form'].fields['individual'].queryset = Individual.objects.filter(id=self.kwargs['pk']).exclude()
-        context['client']=kwargs['application'].name
+        context['title'] = 'Добавить карточку'
+        context['header'] = f'Добавить карточку {individ}'
         return context
 
     def form_valid(self, form):
@@ -97,8 +99,10 @@ class CreateCardLegal(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        legal = get_object_or_404(Legal, id=self.kwargs['pk'])
         context['form'].fields['legal'].queryset = Legal.objects.filter(id=self.kwargs['pk']).exclude()
-        context['client']=kwargs['application'].abbreviatedname
+        context['title'] = 'Добавить карточку'
+        context['header'] = f'Добавить карточку {legal.fullname}'
         return context
 
     def form_valid(self, form):
@@ -113,7 +117,7 @@ class CreateCardLegal(CreateView):
 class UpdateCardQteam(UpdateView):
     model = Card
     form_class = CardQteamForm
-    template_name = 'form.html'
+    template_name = 'object_card/form.html'
 
     def get_success_url(self):
        pk = self.kwargs['pk']
@@ -127,14 +131,13 @@ class UpdateCardQteam(UpdateView):
         else:
             data['form'].fields['contract'].queryset = Contract.objects.filter(individual=data['card'].individual).exclude()
         data['title'] = 'Добавить реагирование'
-        data['header'] = 'Добавить реагирование'
         data['qteam'] = 'active'
         return data
 
 class CreateCardDevice(CreateView):
     model = Device
     form_class = DeviceForm
-    template_name = 'object_card\card_device_form.html'
+    template_name = 'object_card/form.html'
         
     def get_success_url(self):
         pk = self.kwargs['pk']
@@ -147,6 +150,10 @@ class CreateCardDevice(CreateView):
         else:
             data['sim'] = SimFormset()
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
+        data['forms'] = data['sim']
+        data['title'] = 'Добавить прибор'
+        data['button'] = 'Добавить sim'
+        data['device'] = 'active'
         return data
 
     def form_valid(self, form):
@@ -168,10 +175,52 @@ class CreateCardDevice(CreateView):
         else:
             return super().form_invalid(form)
 
+class UpdateCardDevice(UpdateView):
+    model = Device
+    form_class = DeviceUpdateForm
+    template_name = 'object_card/form.html'
+        
+    def get_success_url(self):
+        pk = self.kwargs['pk']
+        return reverse('card_device', kwargs={'pk': pk})
+
+    def get_object(self, queryset=None):
+        card = get_object_or_404(Card, id=self.kwargs['pk'])
+        return get_object_or_404(Device, id=card.device.id)
+
+    def get_context_data(self, **kwargs):
+        data = super(UpdateCardDevice, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data['image_sim'] = ImageSimFormset(self.request.POST, self.request.FILES, instance=self.object)
+        else:
+            data['image_sim'] = ImageSimFormset(instance=self.object)
+        data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
+        data['forms'] = data['image_sim']
+        data['title'] = 'Добавить информацию о приборе'
+        data['button'] = 'Добавить фото sim'
+        data['device'] = 'active'
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        images = context['image_sim']
+        with transaction.atomic(): 
+            self.object = form.save(commit=False)
+            self.object.enginer_pult = self.request.user
+            self.object.changed_pult = datetime.datetime.today()
+            self.object = form.save()
+            context['card'].device = self.object
+            context['card'].status = Card.ACCOUNT
+            context['card'].save()
+        if images.is_valid():
+            images.instance = self.object
+            images.save()
+            return super(UpdateCardDevice, self).form_valid(form)
+
 class CardPartition(UpdateView):
     model = Device
-    form_class = DevicePartForm
-    template_name = 'object_card\card_partition_form.html'
+    form_class = DeviceNoneForm
+    template_name = 'object_card/form.html'
         
     def get_success_url(self):
         pk = self.kwargs['pk']
@@ -184,19 +233,19 @@ class CardPartition(UpdateView):
     def get_context_data(self, **kwargs):
         data = super(CardPartition, self).get_context_data(**kwargs)
         if self.request.POST:
-            data['image_sim'] = ImageSimFormset(self.request.POST, self.request.FILES, instance=self.object,)
             data['partition'] = PartitionFormset(self.request.POST, instance=self.object)
         else:
-            data['image_sim'] = ImageSimFormset(instance=self.object)
             data['partition'] = PartitionFormset(instance=self.object)
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
+        data['forms'] = data['partition']
+        data['title'] = 'Добавить разделы'
+        data['button'] = 'Добавить раздел'
         data['partitions'] = 'active'
         return data
 
     def form_valid(self, form):
         context = self.get_context_data(form=form)
-        partitions = context['partition']
-        images_sim = context['image_sim']
+        partitions = context['forms']
         with transaction.atomic(): 
             self.object = form.save(commit=False)
             self.object.technican = self.request.user
@@ -205,20 +254,18 @@ class CardPartition(UpdateView):
             context['card'].device = self.object
             context['card'].status = Card.MONTAGE
             context['card'].save()
-        if partitions.is_valid() and images_sim.is_valid():
+        if partitions.is_valid():
             response = super(CardPartition, self).form_valid(form)
             partitions.instance = self.object
             partitions.save()
-            images_sim.instance = self.object
-            images_sim.save()
             return response
         else:
             return super().form_invalid(form)
 
 class CardZone(UpdateView):
     model = Device
-    form_class = DeviceZoneForm
-    template_name = 'object_card\card_zones_form.html'
+    form_class = DeviceNoneForm
+    template_name = 'object_card/form.html'
     
     def get_success_url(self):
         pk = self.kwargs['pk']
@@ -236,8 +283,12 @@ class CardZone(UpdateView):
             data['zones'] = ZoneFormset(instance=self.object)
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
         data['device'] = get_object_or_404(Device, id=data['card'].device.id)
-        for form in data['zones']:
+        data['forms'] = data['zones']
+        for form in data['forms']:
             form.fields['partition'].queryset = Partition.objects.filter(device=data['device'])
+        
+        data['title'] = 'Добавить зоны'
+        data['button'] = 'Добавить зону'
         data['zone'] = 'active'
         return data
 
