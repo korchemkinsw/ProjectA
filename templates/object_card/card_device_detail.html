@@ -40,6 +40,14 @@
                 </td>
               </tr>
             {% endfor %}
+            {% for image in card.device.image_sim.all %}
+            <tr>
+              <th></th>
+              <td>
+                {{ image }}
+              </td>
+            </tr>
+            {% endfor %}
             <tr>
               <th class="col-lg-3">Подготовил: </th>
               <td class="col-lg-9">{{ card.device.enginer_pult }} {{ card.device.changed_pult|date:"d.m.Y" }} {{ card.device.changed_pult|time:"H:i" }}</td>

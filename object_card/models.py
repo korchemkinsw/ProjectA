@@ -74,14 +74,14 @@ class Sim(models.Model):
         verbose_name='Номер SIM-карты',
         help_text='Номер SIM-карты',
         blank=True,
-        unique=True
+        #unique=True
     )
     msisdn = models.CharField(
         max_length=11,
         verbose_name='Абонентский номер',
         help_text='Абонентский номер',
         blank=True,
-        unique=True
+        #unique=True
     )
     device = models.ForeignKey(
         Device,
@@ -91,7 +91,6 @@ class Sim(models.Model):
         on_delete=models.CASCADE,
         related_name='sim',
     )
-    
     
     class Meta:
         verbose_name = 'SIM-карта'
@@ -135,6 +134,9 @@ class ImageSim(models.Model):
     class Meta:
         verbose_name = 'Фотография sim-карты'
         verbose_name_plural = 'Фотографии sim-карт'
+
+    def __str__(self):
+        return f'{self.device.account} {self.part_sim} {self.image}'
 
 
 class Card(models.Model):
@@ -385,7 +387,7 @@ class CardPhoto(models.Model):
     )
     
     def generate_path(instance, filename):
-        return os.path.join('object_card', str(instance.card.device.account), filename)
+        return os.path.join('object_card', str(instance.card.device.account)+'_'+str(instance.card.object_name), filename)
 
     image = models.ImageField(verbose_name='Фотография объекта', upload_to=generate_path, blank=True)
 

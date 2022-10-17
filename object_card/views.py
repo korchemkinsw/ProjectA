@@ -13,8 +13,8 @@ from django_filters.views import FilterView
 from .forms import (CardFilter, CardIndividualForm, CardLegalForm,
                     CardQteamForm, DeviceForm, DeviceNoneForm,
                     DeviceUpdateForm, ImageSimFormset, PartitionFormset,
-                    SimFormset, ZoneFormset)
-from .models import Card, Device, Partition, Zone
+                    SimFormset, ZoneFormset, CardPhotoForm)
+from .models import Card, Device, Partition, CardPhoto
 
 
 class FilterCard(FilterView):
@@ -150,7 +150,7 @@ class CreateCardDevice(CreateView):
         else:
             data['sim'] = SimFormset()
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
-        data['forms'] = data['sim']
+        data['prefix'] ='sim'
         data['title'] = 'Добавить прибор'
         data['button'] = 'Добавить sim'
         data['device'] = 'active'
@@ -167,13 +167,13 @@ class CreateCardDevice(CreateView):
             context['card'].device = self.object
             context['card'].status = Card.ACCOUNT
             context['card'].save()
-        if phones.is_valid():
-            response = super(CreateCardDevice, self).form_valid(form)
-            phones.instance = self.object
-            phones.save()
-            return response
-        else:
-            return super().form_invalid(form)
+            if phones.is_valid():
+                response = super(CreateCardDevice, self).form_valid(form)
+                phones.instance = self.object
+                phones.save()
+                return response
+            else:
+                return super().form_invalid(form)
 
 class UpdateCardDevice(UpdateView):
     model = Device
@@ -195,9 +195,9 @@ class UpdateCardDevice(UpdateView):
         else:
             data['image_sim'] = ImageSimFormset(instance=self.object)
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
-        data['forms'] = data['image_sim']
         data['title'] = 'Добавить информацию о приборе'
         data['button'] = 'Добавить фото sim'
+        data['prefix'] = 'image_sim'
         data['device'] = 'active'
         return data
 
@@ -212,10 +212,12 @@ class UpdateCardDevice(UpdateView):
             context['card'].device = self.object
             context['card'].status = Card.ACCOUNT
             context['card'].save()
-        if images.is_valid():
-            images.instance = self.object
-            images.save()
-            return super(UpdateCardDevice, self).form_valid(form)
+            if images.is_valid():
+                images.instance = self.object
+                images.save()
+                return super(UpdateCardDevice, self).form_valid(form)
+            else:
+                return super().form_invalid(form)
 
 class CardPartition(UpdateView):
     model = Device
@@ -237,15 +239,15 @@ class CardPartition(UpdateView):
         else:
             data['partition'] = PartitionFormset(instance=self.object)
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
-        data['forms'] = data['partition']
         data['title'] = 'Добавить разделы'
         data['button'] = 'Добавить раздел'
+        data['prefix'] = 'partition'
         data['partitions'] = 'active'
         return data
 
     def form_valid(self, form):
         context = self.get_context_data(form=form)
-        partitions = context['forms']
+        partitions = context['partition']
         with transaction.atomic(): 
             self.object = form.save(commit=False)
             self.object.technican = self.request.user
@@ -254,13 +256,13 @@ class CardPartition(UpdateView):
             context['card'].device = self.object
             context['card'].status = Card.MONTAGE
             context['card'].save()
-        if partitions.is_valid():
-            response = super(CardPartition, self).form_valid(form)
-            partitions.instance = self.object
-            partitions.save()
-            return response
-        else:
-            return super().form_invalid(form)
+            if partitions.is_valid():
+                response = super(CardPartition, self).form_valid(form)
+                partitions.instance = self.object
+                partitions.save()
+                return response
+            else:
+                return super().form_invalid(form)
 
 class CardZone(UpdateView):
     model = Device
@@ -283,12 +285,11 @@ class CardZone(UpdateView):
             data['zones'] = ZoneFormset(instance=self.object)
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
         data['device'] = get_object_or_404(Device, id=data['card'].device.id)
-        data['forms'] = data['zones']
-        for form in data['forms']:
+        for form in data['zones']:
             form.fields['partition'].queryset = Partition.objects.filter(device=data['device'])
-        
         data['title'] = 'Добавить зоны'
         data['button'] = 'Добавить зону'
+        data['prefix'] = 'zones'
         data['zone'] = 'active'
         return data
 
@@ -303,11 +304,11 @@ class CardZone(UpdateView):
             context['card'].device = self.object
             context['card'].status = Card.MONTAGE
             context['card'].save()
-        if zones.is_valid():
-            response = super(CardZone, self).form_valid(form)
-            zones.instance = self.object
-            zones.save()
-            return response
-        else:
-            return super().form_invalid(form)
+            if zones.is_valid():
+                response = super(CardZone, self).form_valid(form)
+                zones.instance = self.object
+                zones.save()
+                return response
+            else:
+                return super().form_invalid(form)
 
