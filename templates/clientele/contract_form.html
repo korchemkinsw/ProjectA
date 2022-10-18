@@ -35,7 +35,6 @@
           <table class="table">
             {{ files.management_form }}
             {% for form in files.forms %}
-              {{ form.instance.file }}
               {% if forloop.first %}
                 <thead>
                   <tr>
@@ -60,12 +59,7 @@
                       {% endfor %}
                     {% endif %}
                     {{ field.errors.as_ul }}
-                    {% if field.label == 'Добавить/изменить' and form.instance.file %}
-                      {{ form.instance.file.name }}
-                    {% else %}
-                      {{ field }}
-                    {% endif %}
-                    
+                    {{ field|addclass:"form-control"  }}
                   </td>
                 {% endfor %}
               </tr>

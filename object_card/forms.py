@@ -33,17 +33,11 @@ class DeviceNoneForm(forms.ModelForm):
         fields = ('none',)
 
 class SimForm(forms.ModelForm):
+    
     class Meta:
         model = Sim
         exclude =()
-        fields = ('iccid', 'msisdn',)
-
-class ImageSimForm(forms.ModelForm):
-    image = forms.ImageField(label='Фото sim', widget=forms.FileInput(attrs={'multiple': True}))
-    class Meta:
-        model = ImageSim
-        exclude =()
-        fields = ('part_sim', 'image',)
+        fields = ('part_sim', 'iccid', 'msisdn', 'image')
 
 class PartitionForm(forms.ModelForm):
     class Meta:
@@ -112,6 +106,5 @@ class CardPhotoForm(forms.ModelForm):
         fields = ('title', 'image')
 
 SimFormset=inlineformset_factory(Device, Sim, form=SimForm, extra=1)
-ImageSimFormset=inlineformset_factory(Device, ImageSim, form=ImageSimForm, extra=1)
 PartitionFormset=inlineformset_factory(Device, Partition, form=PartitionForm, extra=1)
 ZoneFormset=inlineformset_factory(Device, Zone, form=ZoneForm, extra=1)

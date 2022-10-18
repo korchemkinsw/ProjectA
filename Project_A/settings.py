@@ -25,6 +25,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
+    "192.168.0.0",
     "[::1]",
     "testserver",
 ]
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     #'bootstrap_datepicker_plus',
     'betterforms',
     'django_filters',
+    'sorl.thumbnail',
     'core',
     'Project_A',
     'users',

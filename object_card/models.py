@@ -69,6 +69,23 @@ class Device(models.Model):
         return self.account
 
 class Sim(models.Model):
+    SIM1 = 'sim 1'
+    SIM2 = 'sim 2'
+    REP = 'зам.'
+    BLOCK = 'блок'
+    SIM_CHOICES = (
+        (SIM1, 'sim 1'),
+        (SIM2, 'sim 2'),
+        (REP, 'зам.'),
+        (BLOCK, 'блок')
+    )
+    part_sim = models.CharField(
+        max_length=5,
+        choices=SIM_CHOICES,
+        blank=True,
+        null=True,
+        verbose_name='sim #',
+    )
     iccid = models.CharField(
         max_length=20,
         verbose_name='Номер SIM-карты',
@@ -91,6 +108,16 @@ class Sim(models.Model):
         on_delete=models.CASCADE,
         related_name='sim',
     )
+
+    def generate_path(instance, filename):
+        return os.path.join('object_card', str(instance.device.account)+"/sim", filename)
+
+    image = models.ImageField(verbose_name='Фото sim-карты', upload_to=generate_path, blank=True)
+
+    def delete(self, *args, **kwargs):
+        storage, path = self.image.storage, self.image.path
+        super(ImageSim,self).delete(*args,**kwargs)
+        storage.delete(path)
     
     class Meta:
         verbose_name = 'SIM-карта'

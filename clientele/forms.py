@@ -108,7 +108,7 @@ class ContractForm(forms.ModelForm):
             self.fields['date'].widget=FengyuanChenDatePickerInput()
 
 class FileContractForm(forms.ModelForm):
-    file = forms.FileField(label='Добавить/изменить', widget=forms.FileInput(attrs={'multiple': True}))
+    file = forms.FileField(label='Добавить/изменить', widget=forms.ClearableFileInput(attrs={'multiple': True}))
     class Meta:
         model = FileContract
         exclude = ()
