@@ -4,7 +4,7 @@ import django_filters
 from django import forms
 from django.forms.models import inlineformset_factory
 
-from .models import Card, CardPhoto, Device, ImageSim, Partition, Sim, Zone
+from .models import Card, CardPhoto, Device, Partition, Sim, Zone
 
 
 class DeviceForm(forms.ModelForm):
@@ -99,6 +99,12 @@ class CardQteamForm(forms.ModelForm):
         exclude = ()
         fields = ('contract', 'qteam', 'qnote')
 
+class CardGPSForm(forms.ModelForm):
+    class Meta:
+        model = Card
+        exclude = ()
+        fields = ('address', 'width', 'longitude')
+
 class CardPhotoForm(forms.ModelForm):
     class Meta:
         model = CardPhoto
@@ -108,3 +114,4 @@ class CardPhotoForm(forms.ModelForm):
 SimFormset=inlineformset_factory(Device, Sim, form=SimForm, extra=1)
 PartitionFormset=inlineformset_factory(Device, Partition, form=PartitionForm, extra=1)
 ZoneFormset=inlineformset_factory(Device, Zone, form=ZoneForm, extra=1)
+PhotoFormset=inlineformset_factory(Card, CardPhoto, form=CardPhotoForm, extra=1)

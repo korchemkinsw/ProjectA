@@ -13,22 +13,27 @@
     {% include "includes/card_nav.html" %}
     <div style="text-align: left; font-size: 12px" class="row justify-content-center">
       {% include "includes/card_head.html" %}
-      <div class="col-lg-12">   
-        {% for photo in card.card_photo.all %}
+      <div class="col-lg-12">
+        <div class="card text-center">
           <div class="row">
-            <div class="col-sm-6">
-              <div class="card" style="width: 12rem;">
-                <a href="{{ photo.image.url }}"><img src="{{ photo.image.url }}" class="card-img-top" alt="..."></a>
-                <div class="card-body">
-                  <h5 class="card-text">{{ photo.title }}</h5>
+            {% for photo in card.card_photo.all %}
+              <div class="col-lg-3">
+                <div class="card text-left" style="width: 15rem;">
+                  <a href="{{ photo.image.url }}"><img src="{{ photo.image.url }}" class="card-img-top" alt="..."></a>
+                  <div class="card-body">
+                    <p class="card-text">{{ photo.title }}</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            {% endfor %}
           </div>
-        {% endfor %}
+          <div style="text-align: left; font-size: 12px" class="col-lg-12">
+            <p>
+              <a class="btn btn-outline-primary btn-sm" href="{% url 'upd_card_photos' card.id  %}" role="button">Изменить фотографии</a>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
-    <br>
-
   </div>
 {% endblock %}

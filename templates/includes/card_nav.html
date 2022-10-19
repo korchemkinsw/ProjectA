@@ -3,21 +3,37 @@
       <a class="nav-link {{cards}} text-dark" href="{% url 'card' card.pk %}">Карточка</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link {{device}} text-dark" href="{% url 'card_device' card.pk %}">Оборудование</a>
+      {% if card.device  %}
+        <a class="nav-link {{device}} text-dark" href="{% url 'card_device' card.pk %}">Оборудование</a>
+      {% else %}
+        <a class="nav-link {{device}} text-danger" href="{% url 'card_device' card.pk %}">Оборудование</a>
+      {% endif %}
     </li>
     <li class="nav-item">
-      <a class="nav-link {{qteam}} text-dark" href="{% url 'card_qteam' card.pk %}">Реагирование</a>
+      {% if card.qteam  %}
+        <a class="nav-link {{qteam}} text-dark" href="{% url 'card_qteam' card.pk %}">Реагирование</a>
+      {% else  %}
+        <a class="nav-link {{qteam}} text-danger" href="{% url 'card_qteam' card.pk %}">Реагирование</a>
+      {% endif %}
     </li>
     <li class="nav-item">
       {% if card.device %}
-        <a class="nav-link {{partitions}} text-dark" href="{% url 'card_partitions' card.pk %}">Разделы</a>
+        {% if card.device.partition.all %}
+          <a class="nav-link {{partitions}} text-dark" href="{% url 'card_partitions' card.pk %}">Разделы</a>
+        {% else %}
+          <a class="nav-link {{partitions}} text-danger" href="{% url 'card_partitions' card.pk %}">Разделы</a>
+        {% endif %}
       {% else %}
         <a class="nav-link disabled text-dark" href="#">Разделы</a>
       {% endif %}
     </li>
     <li class="nav-item">
       {% if card.device and card.device.partition.all %}
-        <a class="nav-link {{zone}} text-dark" href="{% url 'card_zones' card.pk %}">Зоны</a>
+        {% if card.device.zones.all %}
+          <a class="nav-link {{zone}} text-dark" href="{% url 'card_zones' card.pk %}">Зоны</a>
+        {% else %}
+          <a class="nav-link {{zone}} text-danger" href="{% url 'card_zones' card.pk %}">Зоны</a>
+        {% endif %}
       {% else %}
         <a class="nav-link disabled text-dark" href="#">Зоны</a>
       {% endif %}
@@ -27,7 +43,11 @@
     </li>
     <li class="nav-item">
       {% if card.device %}
-        <a class="nav-link  {{photos}} text-dark" href="{% url 'card_photos' card.pk %}">Фотографии</a>
+        {% if card.card_photo.all %}
+          <a class="nav-link  {{photos}} text-dark" href="{% url 'card_photos' card.pk %}">Фотографии</a>
+        {% else %}
+          <a class="nav-link  {{photos}} text-dark" href="{% url 'card_photos' card.pk %}">Фотографии</a>
+        {% endif %}
       {% else %}
         <a class="nav-link  {{photos}} text-dark" href="#">Фотографии</a>
       {% endif %}

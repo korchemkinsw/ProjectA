@@ -10,10 +10,10 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
 from django_filters.views import FilterView
 
-from .forms import (CardFilter, CardIndividualForm, CardLegalForm,
+from .forms import (CardFilter, CardGPSForm, CardIndividualForm, CardLegalForm,
                     CardPhotoForm, CardQteamForm, DeviceForm, DeviceNoneForm,
-                    DeviceUpdateForm, PartitionFormset, SimFormset,
-                    ZoneFormset)
+                    DeviceUpdateForm, PartitionFormset, PhotoFormset,
+                    SimFormset, ZoneFormset)
 from .models import Card, CardPhoto, Device, Partition
 
 
@@ -322,3 +322,38 @@ class CardZone(UpdateView):
             else:
                 return super().form_invalid(form)
 
+class UpdateCardPhotos(UpdateView):
+    model = Card
+    form_class = CardGPSForm
+    template_name = 'object_card/form.html'
+
+    def get_success_url(self):
+        pk = self.kwargs['pk']
+        return reverse('card_photos', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        data = super(UpdateCardPhotos, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data['forms'] = PhotoFormset(self.request.POST, self.request.FILES, instance=self.object)
+        else:
+            data['forms'] = PhotoFormset(instance=self.object)
+        data['title'] = 'Добавить фото обьекта'
+        data['button'] = 'Добавить фото обьекта'
+        data['prefix'] = 'card_photo'
+        data['photos'] = 'active'
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        photos = context['forms']
+        with transaction.atomic(): 
+            self.object = form.save(commit=False)
+            self.object.status = Card.CHANGED
+            self.object = form.save()
+            if photos.is_valid():
+                response = super(UpdateCardPhotos, self).form_valid(form)
+                photos.instance = self.object
+                photos.save()
+                return response
+            else:
+                return super().form_invalid(form)
