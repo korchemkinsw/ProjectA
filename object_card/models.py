@@ -5,6 +5,7 @@ from clientele.models import Contract, Individual, Legal
 from django.contrib.auth import get_user_model
 from django.db import models
 from enterprises.models import Responseteam
+from simple_history.models import HistoricalRecords
 
 User = get_user_model()
 
@@ -60,6 +61,7 @@ class Device(models.Model):
         null=True,
         blank=True,
     )
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Оборудование на объекте'
@@ -91,14 +93,12 @@ class Sim(models.Model):
         verbose_name='Номер SIM-карты',
         help_text='Номер SIM-карты',
         blank=True,
-        #unique=True
     )
     msisdn = models.CharField(
         max_length=11,
         verbose_name='Абонентский номер',
         help_text='Абонентский номер',
         blank=True,
-        #unique=True
     )
     device = models.ForeignKey(
         Device,
@@ -112,13 +112,15 @@ class Sim(models.Model):
     def generate_path(instance, filename):
         return os.path.join('object_card', str(instance.device.account)+"/sim", filename)
 
-    image = models.ImageField(verbose_name='Фото sim-карты', upload_to=generate_path, blank=True)
+    image = models.ImageField(verbose_name='Фото sim-карты', upload_to=generate_path, blank=True, null=True)
 
     def delete(self, *args, **kwargs):
         storage, path = self.image.storage, self.image.path
         super(ImageSim,self).delete(*args,**kwargs)
         storage.delete(path)
-    
+
+    history = HistoricalRecords()
+
     class Meta:
         verbose_name = 'SIM-карта'
         verbose_name_plural = 'SIM-карты'
@@ -151,7 +153,7 @@ class ImageSim(models.Model):
     def generate_path(instance, filename):
         return os.path.join('object_card', str(instance.device.account)+"/sim", filename)
 
-    image = models.ImageField(verbose_name='Фото sim-карты', upload_to=generate_path, blank=True)
+    image = models.ImageField(verbose_name='Фото sim-карты', upload_to=generate_path, blank=True, null=True)
 
     def delete(self, *args, **kwargs):
         storage, path = self.image.storage, self.image.path
@@ -258,7 +260,7 @@ class Card(models.Model):
     transmission = models.CharField(
         max_length=20,
         choices=SYSTEMS,
-        default=OTHER,
+        #default=OTHER,
         verbose_name='СПИ',
     )
     note = models.CharField(
@@ -325,6 +327,7 @@ class Card(models.Model):
         null=True,
         blank=True,
     )
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Карточка объекта'
@@ -356,6 +359,7 @@ class Partition(models.Model):
         help_text='Название раздела',
         blank=True
     )
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Раздел'
@@ -390,6 +394,7 @@ class Zone(models.Model):
         help_text='Название зоны',
         blank=True
     )
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Зона'

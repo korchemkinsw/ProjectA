@@ -19,9 +19,9 @@
             {% for photo in card.card_photo.all %}
               <div class="col-lg-3">
                 <div class="card text-left" style="width: 15rem;">
-                  <a href="{{ photo.image.url }}"><img src="{{ photo.image.url }}" class="card-img-top" alt="..."></a>
+                  <img src="{{ photo.image.url }}" class="card-img-top" alt="...">
                   <div class="card-body">
-                    <p class="card-text">{{ photo.title }}</p>
+                    <a href="{{ photo.image.url }}">{{ photo.title }}</a>
                   </div>
                 </div>
               </div>

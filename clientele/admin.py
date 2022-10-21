@@ -1,4 +1,5 @@
 from django.contrib import admin
+from simple_history.admin import SimpleHistoryAdmin
 
 from .models import (Contact, Contract, FileContract, Individual, Legal,
                      Responsible)
@@ -18,7 +19,7 @@ class ResponsibleAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 @admin.register(Legal)
-class LegalAdmin(admin.ModelAdmin):
+class LegalAdmin(SimpleHistoryAdmin):
     list_display = (
         'fullname',
         'abbreviatedname',
@@ -49,14 +50,14 @@ class LegalAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 @admin.register(Individual)
-class IndividualAdmin(admin.ModelAdmin):
+class IndividualAdmin(SimpleHistoryAdmin):
     list_display = ('name', 'num_pass', 'issued', 'date')
     fields = ['name', 'num_pass', 'issued', 'date']
     search_fields = ('name',)
     empty_value_display = '-пусто-'
 
 @admin.register(Contract)
-class ContractAdmin(admin.ModelAdmin):
+class ContractAdmin(SimpleHistoryAdmin):
     list_display = (
         'status',
         'number',

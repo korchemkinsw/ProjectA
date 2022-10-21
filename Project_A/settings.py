@@ -26,14 +26,23 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "192.168.1.10",
+    "192.168.1.80",
+    "178.16.152.70",
+    "91.122.69.235",
     "[::1]",
     "testserver",
 ]
 
-
 # Application definition
 
 INSTALLED_APPS = [
+    'core',
+    'Project_A',
+    'users',
+    'enterprises',
+    'orders',
+    'clientele',
+    'object_card',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,15 +53,8 @@ INSTALLED_APPS = [
     #'bootstrap_datepicker_plus',
     'betterforms',
     'django_filters',
+    'simple_history',
     'sorl.thumbnail',
-    'core',
-    'Project_A',
-    'users',
-    'enterprises',
-    'orders',
-    'clientele',
-    'object_card',
-    
 ]
 
 MIDDLEWARE = [
@@ -63,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
 ROOT_URLCONF = 'Project_A.urls'
@@ -137,5 +140,9 @@ USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
+
+SIMPLE_HISTORY_HISTORY_ID_USE_UUID = True
+SIMPLE_HISTORY_HISTORY_CHANGE_REASON_USE_TEXT_FIELD=True
+SIMPLE_HISTORY_FILEFIELD_TO_CHARFIELD = True
 
 MYCOMPANY = 'Double Yat'

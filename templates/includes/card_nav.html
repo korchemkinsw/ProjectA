@@ -1,39 +1,23 @@
-<ul class="nav nav-tabs">
+  <ul class="nav nav-tabs">
     <li class="nav-item">
       <a class="nav-link {{cards}} text-dark" href="{% url 'card' card.pk %}">Карточка</a>
     </li>
     <li class="nav-item">
-      {% if card.device  %}
-        <a class="nav-link {{device}} text-dark" href="{% url 'card_device' card.pk %}">Оборудование</a>
-      {% else %}
-        <a class="nav-link {{device}} text-danger" href="{% url 'card_device' card.pk %}">Оборудование</a>
-      {% endif %}
+      <a class="nav-link {{device}} text-dark" href="{% url 'card_device' card.pk %}">Оборудование</a>
     </li>
     <li class="nav-item">
-      {% if card.qteam  %}
-        <a class="nav-link {{qteam}} text-dark" href="{% url 'card_qteam' card.pk %}">Реагирование</a>
-      {% else  %}
-        <a class="nav-link {{qteam}} text-danger" href="{% url 'card_qteam' card.pk %}">Реагирование</a>
-      {% endif %}
+      <a class="nav-link {{qteam}} text-dark" href="{% url 'card_qteam' card.pk %}">Реагирование</a>
     </li>
     <li class="nav-item">
       {% if card.device %}
-        {% if card.device.partition.all %}
-          <a class="nav-link {{partitions}} text-dark" href="{% url 'card_partitions' card.pk %}">Разделы</a>
-        {% else %}
-          <a class="nav-link {{partitions}} text-danger" href="{% url 'card_partitions' card.pk %}">Разделы</a>
-        {% endif %}
+        <a class="nav-link {{partitions}} text-dark" href="{% url 'card_partitions' card.pk %}">Разделы</a>
       {% else %}
         <a class="nav-link disabled text-dark" href="#">Разделы</a>
       {% endif %}
     </li>
     <li class="nav-item">
       {% if card.device and card.device.partition.all %}
-        {% if card.device.zones.all %}
-          <a class="nav-link {{zone}} text-dark" href="{% url 'card_zones' card.pk %}">Зоны</a>
-        {% else %}
-          <a class="nav-link {{zone}} text-danger" href="{% url 'card_zones' card.pk %}">Зоны</a>
-        {% endif %}
+        <a class="nav-link {{zone}} text-dark" href="{% url 'card_zones' card.pk %}">Зоны</a>
       {% else %}
         <a class="nav-link disabled text-dark" href="#">Зоны</a>
       {% endif %}
@@ -43,13 +27,54 @@
     </li>
     <li class="nav-item">
       {% if card.device %}
-        {% if card.card_photo.all %}
-          <a class="nav-link  {{photos}} text-dark" href="{% url 'card_photos' card.pk %}">Фотографии</a>
-        {% else %}
-          <a class="nav-link  {{photos}} text-dark" href="{% url 'card_photos' card.pk %}">Фотографии</a>
-        {% endif %}
+        <a class="nav-link  {{photos}} text-dark" href="{% url 'card_photos' card.pk %}">Фотографии</a>
       {% else %}
         <a class="nav-link  {{photos}} text-dark" href="#">Фотографии</a>
       {% endif %}
     </li>
   </ul>
+
+  <div style="text-align: left; font-size: 12px" class="table-bordered">
+    <table class="table table-sm">
+      <tbody>
+        <tr>
+          <td class="col-lg-9">
+            {% if not card.contract  %}
+              <p>Отсутствует договор!!!</p>
+            {% endif %}
+            {% if not card.qteam  %}
+              <p>Реагирование: Необходимо назначить группу реагирования</p>
+            {% endif %}
+            {% if not card.address  %}
+              <p>Карточка: Необходимо указать адрес объекта</p>
+            {% endif %}
+            {% if not card.width or not card.longitude %}
+              <p>Карточка: Необходимо указать GPS-координаты объекта</p>
+            {% endif %}
+            {% if card.device  %}
+              {% if not card.device.device %}
+                <p>Оборудование: Необходимо указать тип прибора</p>
+              {% endif %}
+              {% for phone in card.device.sim.all %}
+                {% if not phone.image %}
+                  <p>Оборудование: Необходимо добавить фото sim карты</p>
+                {% endif %}
+              {% endfor %}
+              {% if not card.device.partition.all %}
+                <p>Разделы: Необходимо добавить раздел</p>
+              {% else %}
+                {% if not card.device.zones.all %}
+                  <p>Зоны: Необходимо добавить описание зон</p>
+                {% endif %}
+              {% endif %}
+            {% else %}
+              <p>Оборудование: Необходимо добавить оборудование</p>
+            {% endif %}
+            {% if not card.card_photo.all %}
+              <p>Фотографии: Необходимо добавить фотографии объекта</p>
+            {% endif %}
+          </td>
+        </tr>
+      </tbody>
+   </table>
+  </div>

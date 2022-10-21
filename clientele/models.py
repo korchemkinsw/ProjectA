@@ -6,6 +6,7 @@ from trace import Trace
 from django.contrib.auth import get_user_model
 from django.db import models
 from enterprises.models import Enterprise
+from simple_history.models import HistoricalRecords
 
 User = get_user_model()
 
@@ -149,6 +150,7 @@ class Legal(models.Model):
         related_name='bigboss',
         blank=True
     )
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Юридическое лицо'
@@ -182,6 +184,7 @@ class Individual(models.Model):
         help_text='Дата выдачи',
         blank=True,
     )
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Физическое лицо'
@@ -253,6 +256,7 @@ class Contract(models.Model):
         null=True,
         blank=True,
     )
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Договор'
