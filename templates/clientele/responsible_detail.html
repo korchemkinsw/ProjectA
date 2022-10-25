@@ -70,9 +70,11 @@
             </table>
           {% endif %} 
           <p>
-            <a class="btn btn-outline-primary btn-sm" href="{% url 'add_legal' responsible.id  %}" role="button">Создать клиента ЮЛ</a>
-            {% if not responsible.individual.all %}
-              <a class="btn btn-outline-primary btn-sm" href="{% url 'add_individ' responsible.id  %}" role="button">Создать клиента ФЛ</a>
+            {% if user.role == 'manager' or user.role == 'director' or user.role == 'admin' and user.is_authenticated %}
+              <a class="btn btn-outline-primary btn-sm" href="{% url 'add_legal' responsible.id  %}" role="button">Создать клиента ЮЛ</a>
+              {% if not responsible.individual.all %}
+                <a class="btn btn-outline-primary btn-sm" href="{% url 'add_individ' responsible.id  %}" role="button">Создать клиента ФЛ</a>
+              {% endif %}
             {% endif %}
             <a class="btn btn-outline-primary btn-sm" href="{% url 'contactlist' %}" role="button">Список контактов</a>
           </p>

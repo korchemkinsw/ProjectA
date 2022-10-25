@@ -42,7 +42,7 @@
             {% if not card.contract  %}
               <p>Отсутствует договор!!!</p>
             {% endif %}
-            {% if not card.qteam  %}
+            {% if not card.card_qtem.all  %}
               <p>Реагирование: Необходимо назначить группу реагирования</p>
             {% endif %}
             {% if not card.address  %}

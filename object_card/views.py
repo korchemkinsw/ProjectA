@@ -13,7 +13,7 @@ from django_filters.views import FilterView
 from .forms import (CardFilter, CardGPSForm, CardIndividualForm, CardLegalForm,
                     CardPhotoForm, CardQteamForm, DeviceForm, DeviceNoneForm,
                     DeviceUpdateForm, PartitionFormset, PhotoFormset,
-                    SimFormset, ZoneFormset)
+                    QteamFormset, SimFormset, ZoneFormset)
 from .models import Card, CardPhoto, Device, Partition
 
 
@@ -139,9 +139,31 @@ class UpdateCardQteam(UpdateView):
             data['form'].fields['contract'].queryset = Contract.objects.filter(legal=data['card'].legal).exclude()
         else:
             data['form'].fields['contract'].queryset = Contract.objects.filter(individual=data['card'].individual).exclude()
+        if self.request.POST:
+            data['forms'] = QteamFormset(self.request.POST, instance=self.object)
+        else:
+            data['forms'] = QteamFormset(instance=self.object)
         data['title'] = 'Добавить реагирование'
+        data['prefix'] ='card_qtem'
+        data['button'] = 'Добавить группу'
         data['qteam'] = 'active'
         return data
+
+    def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        qteams = context['forms']
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object = form.save()
+            self.object.status = Card.RESPONSE
+            self.object.save()
+            if qteams.is_valid():
+                response = super(UpdateCardQteam, self).form_valid(form)
+                qteams.instance = self.object
+                qteams.save()
+                return response
+            else:
+                return super().form_invalid(form)
 
 class CreateCardDevice(CreateView):
     model = Device

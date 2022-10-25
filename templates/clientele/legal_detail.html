@@ -104,8 +104,12 @@
         </div> 
         <br>
         <p>
-          <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_legal' legal.pk %}" role="button">Создать карточку объекта</a>
-          <a class="btn btn-outline-primary btn-sm" href="{% url 'add_contract_legal' legal.pk %}" role="button">Создать договор</a>
+          {% if user.role == 'manager' or user.role == 'admin' and user.is_authenticated %}
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_legal' legal.pk %}" role="button">Создать карточку объекта</a>
+          {% endif %}
+          {% if user.role == 'director' or user.role == 'admin' and user.is_authenticated %}
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'add_contract_legal' legal.pk %}" role="button">Создать договор</a>
+          {% endif %}
           <a class="btn btn-outline-primary btn-sm" href="{% url 'legals' %}" role="button">Список клиентов ЮЛ</a>
           <a class="btn btn-outline-primary btn-sm" href="{% url 'contactlist' %}" role="button">Список контактов</a>
         </p>

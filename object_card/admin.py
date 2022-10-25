@@ -1,7 +1,7 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
-from .models import Card, CardPhoto, Device, Partition, Sim, Zone
+from .models import Card, CardPhoto, Device, Partition, Qteam, Sim, Zone
 
 
 @admin.register(Device)
@@ -29,16 +29,23 @@ class CardAdmin(SimpleHistoryAdmin):
     list_display = (
         'status', 'legal', 'individual', 'object_name',
         'phone', 'address', 'width', 'longitude',
-        'transmission', 'device', 'note', 'contract', 'qteam', 'qnote',
+        'transmission', 'device', 'note', 'contract', 'qnote',
         'manager', 'generated', 'director', 'changed',
         )
     fields = [
         'status', 'legal', 'individual', 'object_name',
         'phone', 'address', 'width', 'longitude',
-        'transmission', 'device', 'note', 'contract', 'qteam', 'qnote',
+        'transmission', 'device', 'note', 'contract', 'qnote',
         'manager', 'generated', 'director', 'changed',
         ]
     search_fields = ('device', 'legal', 'individual', 'address',)
+    empty_value_display = '-пусто-'
+
+@admin.register(Qteam)
+class QteamAdmin(SimpleHistoryAdmin):
+    list_display = ('card', 'type', 'qteam')
+    fields = ['card', 'type', 'qteam']
+    search_fields = ('card',)
     empty_value_display = '-пусто-'
 
 @admin.register(Partition)

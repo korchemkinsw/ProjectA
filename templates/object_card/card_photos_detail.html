@@ -29,7 +29,9 @@
           </div>
           <div style="text-align: left; font-size: 12px" class="col-lg-12">
             <p>
-              <a class="btn btn-outline-primary btn-sm" href="{% url 'upd_card_photos' card.id  %}" role="button">Изменить фотографии</a>
+              {% if user.role == 'technican' or user.role == 'admin' and user.is_authenticated %}
+                <a class="btn btn-outline-primary btn-sm" href="{% url 'upd_card_photos' card.id  %}" role="button">Изменить фотографии</a>
+              {% endif %}
             </p>
           </div>
         </div>

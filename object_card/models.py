@@ -180,6 +180,7 @@ class Card(models.Model):
     NEW = 'новый'
     ACCOUNT = 'пультовой номер'
     CONTRACT = 'договор'
+    RESPONSE = 'реагирование'
     MONTAGE = 'монтаж'
     CHANGED = 'изменён'
     COMPLETED = 'завершен'
@@ -198,6 +199,7 @@ class Card(models.Model):
         (NEW, 'Новый'),
         (ACCOUNT, 'Пультовой номер'),
         (CONTRACT, 'Договор'),
+        (RESPONSE, 'Реагирование'),
         (MONTAGE, 'Монтаж'),
         (CHANGED, 'Изменён'),
         (COMPLETED, 'Завершен'),
@@ -291,7 +293,7 @@ class Card(models.Model):
         Responseteam,
         verbose_name='Группа реагирования',
         on_delete=models.SET_NULL,
-        related_name='qteam',
+        related_name='responseteam',
         null=True,
         blank=True,
     )
@@ -339,6 +341,42 @@ class Card(models.Model):
         if self.individual:
             return f'{self.individual} {self.object_name} {self.address}'
 
+class Qteam(models.Model):
+    BASIC = 'основная'
+    RESERVE = 'резервная'
+    TYPE = (
+        (BASIC, 'основная'),
+        (RESERVE, 'резервная'),
+    )
+    card = models.ForeignKey(
+        Card,
+        verbose_name='Объект',
+        help_text='Объект',
+        null=True,
+        on_delete=models.CASCADE,
+        related_name='card_qtem',
+    )
+    type = models.CharField(
+        max_length=15,
+        choices=TYPE,
+        default='основная',
+        verbose_name='тип группы',
+    )
+    qteam = models.ForeignKey(
+        Responseteam,
+        verbose_name='Группа реагирования',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    history = HistoricalRecords()
+
+    class Meta:
+        verbose_name = 'Группа реагирования'
+        verbose_name_plural = 'Группы реагирования'
+
+    def __str__(self):
+        return f'{self.card} {self.type} {self.qteam}'
 
 class Partition(models.Model):
     device = models.ForeignKey(

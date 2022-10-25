@@ -61,9 +61,13 @@
     <div style="text-align: left; font-size: 12px" class="col-lg-12">
       <p>
         {% if not card.device %}
-          <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_device' card.id  %}" role="button">Добавить прибор</a>
+          {% if user.role == 'engineer' or user.role == 'admin' and user.is_authenticated %}
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_device' card.id  %}" role="button">Добавить прибор</a>
+          {% endif %}
         {% else %}
-          <a class="btn btn-outline-primary btn-sm" href="{% url 'upd_card_device' card.id  %}" role="button">Добавить информацию</a>
+          {% if user.role == 'technican' or user.role == 'admin' and user.is_authenticated %}
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'upd_card_device' card.id  %}" role="button">Добавить информацию</a>
+          {% endif %}
         {% endif %}
       </p>
     </div>

@@ -1,9 +1,9 @@
 {% load static %}
-<nav class="navbar navbar-light" style="background-color: #c4671c;">
+<nav class="navbar navbar-light" style="background-color: #df8943;">
   <nav class="my-2 my-md-0 mr-md-1">
       <a class="navbar-brand" href="{% url 'index' %}">
         <img src="{% static 'img/logo.png' %}" alt="" width="30" height="30" class="d-inline-block align-text-top">
-        Double<span style="color:red"> Yat </span> <!--mycompany-->
+        <span style="color:rgb(72, 255, 0)">Double</span><span style="color:rgb(251, 255, 0)"> Yat </span> <!--mycompany-->
       </a>
   </nav>
   <ul class="nav">
@@ -26,7 +26,7 @@
         <a class="nav-link text-dark" href="{% url 'orders' %}">Приказы</a>
       {% endif %}
       {% if user.role == 'admin' %}
-        <a class="nav-link text-dark" href="{% url 'users:new_user' %}">Регистрация</a>
+        <!--a class="nav-link text-dark" href="{% url 'users:new_user' %}">Регистрация</a-->
       {% endif %}
       <a class="nav-link text-dark" >
         Пользователь: {{ user.last_name }} {{ user.first_name|first }}.{{ user.fathers_name|first }}.
