@@ -457,7 +457,10 @@ class CardPhoto(models.Model):
     )
     
     def generate_path(instance, filename):
-        return os.path.join('object_card', str(instance.card.device.account)+'_'+str(instance.card.object_name), filename)
+        object_name=str(instance.card.object_name)
+        for simb, new in (" ", "-"), ("/", "-"), ('"', ""):
+            object_name=object_name.replace(simb, new)
+        return os.path.join('object_card', str(instance.card.device.account)+'_'+object_name, filename)
 
     image = models.ImageField(verbose_name='Фотография объекта', upload_to=generate_path, blank=True)
 

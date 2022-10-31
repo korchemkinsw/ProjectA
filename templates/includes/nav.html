@@ -8,7 +8,7 @@
   </nav>
   <ul class="nav">
     {% if user.is_authenticated %}
-      {% if user.role == 'manager' or user.role == 'admin'  %}
+      {% if user.role == 'manager' or user.role == 'director' or user.role == 'admin'  %}
         <a class="nav-link text-dark" href="{% url 'contactlist' %}">Контакты</a>
         <div class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Клиенты</a>
@@ -19,8 +19,8 @@
             <a class="dropdown-item" href="#">Может и пошлю...</a>
           </div>
         </div>
+        <a class="nav-link text-dark" href="{% url 'contracts' %}">Договора</a>
       {% endif %}
-      <a class="nav-link text-dark" href="{% url 'contracts' %}">Договора</a>
       <a class="nav-link text-dark" href="{% url 'cards' %}">Карточки</a>
       {% if user.role == 'secretary' or user.role == 'engineer' or user.role == 'admin'  %}
         <a class="nav-link text-dark" href="{% url 'orders' %}">Приказы</a>
