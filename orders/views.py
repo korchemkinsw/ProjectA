@@ -21,7 +21,7 @@ class ListOrders(LoginRequiredMixin, FilterView):
     paginate_by = 5
 
     def get_queryset(self):
-        expireds = Order.objects.filter(perday__lt=datetime.date.today()).exclude(status='завершен')
+        expireds = Order.objects.filter(perday__gt=datetime.date.today()).exclude(status='завершен')
         for expired in expireds:
             expired.status = 'Просрочен!'
             expired.save()

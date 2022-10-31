@@ -106,7 +106,7 @@ class Order(models.Model):
         ordering = ('-generated',)
 
     def __str__(self):
-        return f'{self.number} от {self.generated.date()} по {self.firm}'
+        return f'{self.number} от {self.generated} по {self.firm}'
 
 class ContractorsOrder(models.Model):
     order = models.ForeignKey(
