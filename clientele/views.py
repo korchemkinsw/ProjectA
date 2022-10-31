@@ -213,7 +213,7 @@ class CreateContractIndividual(CreateView):
 class UpdateContractIndividual(UpdateView):
     model = Contract
     form_class = ContractForm
-    template_name = 'clientele\contract_form.html'
+    template_name = 'clientele/contract_form.html'
 
     def get_success_url(self):
        pk = self.kwargs['pk']
