@@ -55,6 +55,9 @@ INSTALLED_APPS = [
     'django_filters',
     'simple_history',
     'sorl.thumbnail',
+    'ajax_select',
+    'dal',
+    'dal_select2',
 ]
 
 MIDDLEWARE = [

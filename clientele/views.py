@@ -8,13 +8,24 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 from django_filters.views import FilterView
 from object_card.models import Card
+from dal import autocomplete
 
 from .forms import (ContactFilter, ContactForm, ContactFormset, ContractFilter,
                     ContractForm, ContractFormset, IndividualFilter,
                     IndividualForm, LegalFilter, LegalForm)
 from .models import (Contact, Contract, FileContract, Individual, Legal,
                      Responsible)
+from enterprises.models import Enterprise
 
+
+class EnterpriseAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Enterprise.objects.none()
+        qs = Enterprise.objects.all()
+        if self.q:
+            qs = qs.filter(fullname__istartswith=self.q)
+        return qs
 
 class FilterContact(FilterView):
     model = Responsible

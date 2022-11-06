@@ -1,8 +1,11 @@
 from django.urls import path
+from django.conf.urls import url
+from .views import EnterpriseAutocomplete
 
 from . import views
 
 urlpatterns = [
+    url(r'^enterprise-autocomplete/$', EnterpriseAutocomplete.as_view(), name='enterprise-autocomplete'),
     path('contactlist/', views.FilterContact.as_view(), name='contactlist'),
     path('contactlist/<int:pk>/',views.DetailContact.as_view(), name='contact'),
     path('add_contact/', views.CreateContact.as_view(), name='add_contact'),

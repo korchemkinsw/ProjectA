@@ -1,10 +1,12 @@
 import django_filters
 from core.widgets import FengyuanChenDatePickerInput
+from dal import autocomplete
 from django import forms
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
 from enterprises.models import Enterprise
 from object_card.models import Card
-from pyexpat import model
+from ajax_select.fields import AutoCompleteSelectField
+from ajax_select import make_ajax_field
 
 from .models import (Contact, Contract, FileContract, Individual, Legal,
                      Responsible)
@@ -98,10 +100,19 @@ class ContractFilter(django_filters.FilterSet):
         fields = ['enterprise', 'number', 'legal', 'individual',]
 
 class ContractForm(forms.ModelForm):
+    #enterprise = AutoCompleteSelectField('enterprises', required=False,)
+    #enterprise = forms.ModelChoiceField(
+    #    queryset=Enterprise.objects.all(),
+    #    widget=autocomplete.ModelSelect2(url='enterprise-autocomplete')
+    #    )
+    
     class Meta:
         model = Contract
         exclude = ()
         fields = ('enterprise', 'number', 'date',)
+        widgets = {'enterprise': autocomplete.ModelSelect2(url='enterprise-autocomplete')}
+
+    #enterprise = make_ajax_field(Contract, 'enterprise', 'enterprises')
 
     def __init__(self, *args, **kwargs):
             super(ContractForm, self).__init__(*args, **kwargs)

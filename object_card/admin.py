@@ -1,5 +1,7 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
+from ajax_select.admin import AjaxSelectAdmin
+from ajax_select import make_ajax_form
 
 from .models import Card, CardPhoto, Device, Partition, Qteam, Sim, Zone
 
@@ -42,7 +44,10 @@ class CardAdmin(SimpleHistoryAdmin):
     empty_value_display = '-пусто-'
 
 @admin.register(Qteam)
-class QteamAdmin(SimpleHistoryAdmin):
+class QteamAdmin(SimpleHistoryAdmin, AjaxSelectAdmin):
+    form = make_ajax_form(Qteam, {
+        'qteam': 'qteams'
+    })
     list_display = ('card', 'type', 'qteam')
     fields = ['card', 'type', 'qteam']
     search_fields = ('card',)
