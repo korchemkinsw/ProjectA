@@ -1,6 +1,7 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
+from .forms import ContractForm
 from .models import (Contact, Contract, FileContract, Individual, Legal,
                      Responsible)
 
@@ -58,6 +59,7 @@ class IndividualAdmin(SimpleHistoryAdmin):
 
 @admin.register(Contract)
 class ContractAdmin(SimpleHistoryAdmin):
+    form = ContractForm
     list_display = (
         'status',
         'number',

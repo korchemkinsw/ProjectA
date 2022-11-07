@@ -1,5 +1,6 @@
 import datetime
 
+from dal import autocomplete
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -7,15 +8,14 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 from django_filters.views import FilterView
+from enterprises.models import Enterprise
 from object_card.models import Card
-from dal import autocomplete
 
 from .forms import (ContactFilter, ContactForm, ContactFormset, ContractFilter,
                     ContractForm, ContractFormset, IndividualFilter,
                     IndividualForm, LegalFilter, LegalForm)
 from .models import (Contact, Contract, FileContract, Individual, Legal,
                      Responsible)
-from enterprises.models import Enterprise
 
 
 class EnterpriseAutocomplete(autocomplete.Select2QuerySetView):
@@ -24,7 +24,7 @@ class EnterpriseAutocomplete(autocomplete.Select2QuerySetView):
             return Enterprise.objects.none()
         qs = Enterprise.objects.all()
         if self.q:
-            qs = qs.filter(fullname__istartswith=self.q)
+            qs = qs.filter(fullname__icontains=self.q)
         return qs
 
 class FilterContact(FilterView):
