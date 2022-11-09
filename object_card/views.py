@@ -2,6 +2,7 @@ import datetime
 from msilib.schema import Error
 
 from clientele.models import Contract, Individual, Legal
+from dal import autocomplete
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
@@ -9,6 +10,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
 from django_filters.views import FilterView
+from enterprises.models import Responseteam
 
 from .forms import (CardFilter, CardGPSForm, CardIndividualForm, CardLegalForm,
                     CardPhotoForm, CardQteamForm, DeviceForm, DeviceNoneForm,
@@ -16,6 +18,15 @@ from .forms import (CardFilter, CardGPSForm, CardIndividualForm, CardLegalForm,
                     QteamFormset, SimFormset, ZoneFormset)
 from .models import Card, CardPhoto, Device, Partition
 
+
+class QteamAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Responseteam.objects.none()
+        qs = Responseteam.objects.all()
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+        return qs
 
 class FilterCard(FilterView):
     model = Card

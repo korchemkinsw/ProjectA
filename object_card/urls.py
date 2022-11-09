@@ -1,8 +1,12 @@
-from django.urls import path
+from dal import autocomplete
+from django.urls import include, path
+from django.urls import re_path as url
 
 from . import views
 
 urlpatterns = [
+    url(r'^select2/', include('django_select2.urls')),
+    url(r'^qteam-autocomplete/$', views.QteamAutocomplete.as_view(), name='qteam-autocomplete'),
     path('cards/', views.FilterCard.as_view(), name='cards'),
     path('card/<int:pk>/', views.DetailCard.as_view(), name='card'),
     path('card_device/<int:pk>/', views.DetailCardDevice.as_view(), name='card_device'),

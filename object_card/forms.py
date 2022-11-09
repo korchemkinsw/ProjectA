@@ -1,13 +1,13 @@
 from dataclasses import fields
 
 import django_filters
+from dal import autocomplete
 from django import forms
-from ajax_select.fields import AutoCompleteSelectMultipleField, AutoCompleteSelectField
-from ajax_select import make_ajax_field
 from django.forms.models import inlineformset_factory
+from django_select2.forms import ModelSelect2Widget
+from enterprises.models import Responseteam
 
 from .models import Card, CardPhoto, Device, Partition, Qteam, Sim, Zone
-from enterprises.models import Responseteam
 
 
 class DeviceForm(forms.ModelForm):
@@ -42,13 +42,10 @@ class SimForm(forms.ModelForm):
         fields = ('part_sim', 'iccid', 'msisdn', 'image')
 
 class QteamForm(forms.ModelForm):
-    #qteam = AutoCompleteSelectField('qteams', required=False)
     class Meta:
         model = Qteam
         exclude =()
-        #fields = ('type', 'qteam',)
-    qteam = make_ajax_field(Qteam, 'qteam', 'qteams')
-
+        widgets = {'qteam': autocomplete.ModelSelect2(url='qteam-autocomplete'),}
 
 class PartitionForm(forms.ModelForm):
     class Meta:

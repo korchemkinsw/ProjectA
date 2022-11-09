@@ -1,14 +1,12 @@
 from dal import autocomplete
-from django.urls import path
+from django.urls import include, path
 from django.urls import re_path as url
-from enterprises.models import Enterprise
 
 from . import views
-from .models import Contract
 
 urlpatterns = [
     url(r'^enterprise-autocomplete/$', views.EnterpriseAutocomplete.as_view(), name='enterprise-autocomplete'),
-    #url('enterprise-autocomplete/$', autocomplete.Select2QuerySetView.as_view(model=Enterprise), name='enterprise-autocomplete'),
+    path("select2/", include("django_select2.urls")),
     path('contactlist/', views.FilterContact.as_view(), name='contactlist'),
     path('contactlist/<int:pk>/',views.DetailContact.as_view(), name='contact'),
     path('add_contact/', views.CreateContact.as_view(), name='add_contact'),

@@ -6,8 +6,8 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
 
 STATIC_URL = '/static/'
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+#STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 MEDIA_URL = '/media/'
 #MEDIAFILES_DIRS = [os.path.join(BASE_DIR, 'media')]
@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'django_filters',
     'simple_history',
     'sorl.thumbnail',
-    'ajax_select',
+    'django_select2',
     'dal',
     'dal_select2',
 ]

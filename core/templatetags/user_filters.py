@@ -5,7 +5,7 @@ register = template.Library()
 
 @register.filter
 def addclass(field, css):
-    return field.as_widget(attrs={'class': css, 'style': 'font-size: 12px'})
+    return field.as_widget(attrs={'class': css, 'style': 'font-size: 12px',})
 
 @register.filter
 def readonly(field, css):

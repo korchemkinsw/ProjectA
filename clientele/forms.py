@@ -1,10 +1,9 @@
 import django_filters
-from ajax_select import make_ajax_field
-from ajax_select.fields import AutoCompleteSelectField
 from core.widgets import FengyuanChenDatePickerInput
 from dal import autocomplete
 from django import forms, template
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
+from django_select2 import forms as s2forms
 from enterprises.models import Enterprise
 from object_card.models import Card
 
@@ -98,6 +97,11 @@ class ContractFilter(django_filters.FilterSet):
     class Meta:
         model = Contract
         fields = ['enterprise', 'number', 'legal', 'individual',]
+
+class EnterpriseWidget(s2forms.ModelSelect2Widget):
+    search_fields = [
+        "fullname__icontains",
+    ]
 
 class ContractForm(forms.ModelForm):
     class Meta:
