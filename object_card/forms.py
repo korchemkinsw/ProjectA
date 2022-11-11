@@ -45,6 +45,7 @@ class QteamForm(forms.ModelForm):
     class Meta:
         model = Qteam
         exclude =()
+        fields = ('qteam', 'type')
         widgets = {'qteam': autocomplete.ModelSelect2(url='qteam-autocomplete'),}
 
 class PartitionForm(forms.ModelForm):

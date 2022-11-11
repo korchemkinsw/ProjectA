@@ -13,11 +13,14 @@ from django_filters.views import FilterView
 from enterprises.models import Responseteam
 
 from .forms import (CardFilter, CardGPSForm, CardIndividualForm, CardLegalForm,
-                    CardPhotoForm, CardQteamForm, DeviceForm, DeviceNoneForm,
+                    CardQteamForm, DeviceForm, DeviceNoneForm,
                     DeviceUpdateForm, PartitionFormset, PhotoFormset,
-                    QteamFormset, SimFormset, ZoneFormset)
-from .models import Card, CardPhoto, Device, Partition
+                    QteamForm, QteamFormset, SimFormset, ZoneFormset)
+from .models import Card, Device, Partition, Qteam
 
+
+def delete_qteam (card, qteam_name):
+    pass
 
 class QteamAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -175,6 +178,33 @@ class UpdateCardQteam(UpdateView):
                 return response
             else:
                 return super().form_invalid(form)
+
+class CreateQteam(CreateView):
+    model = Qteam
+    form_class = QteamForm
+    template_name = 'object_card/card_qteam_detail.html'
+
+    def get_success_url(self):
+       pk = self.kwargs['pk']
+       return reverse('card_qteam', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        data = super(CreateQteam, self).get_context_data(**kwargs)
+        data['action'] = 'create'
+        data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object = form.save()
+            self.object.card = context['card']
+            self.object = form.save()
+            return super(CreateQteam, self).form_valid(form)
+
+class DetailQteam(DeleteView):
+    model = Qteam
 
 class CreateCardDevice(CreateView):
     model = Device

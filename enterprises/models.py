@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.text import slugify
 
 
 class Position(models.Model):
@@ -138,14 +139,15 @@ class Enterprise (models.Model):
 
 class Responseteam(models.Model):
     name = models.CharField(
-        max_length=50,
-        verbose_name='Название',
-        help_text='Название',
+        max_length=30,
+        unique=True,
+        verbose_name='Название ГБР',
+        help_text='Название ГБР',
     )
     phone = models.CharField(
         max_length=50,
-        verbose_name='Телефон',
-        help_text='Телефон',
+        verbose_name='Телефон ГБР',
+        help_text='Телефон ГБР',
     )
 
     class Meta:
