@@ -5,7 +5,7 @@ from clientele.models import Contract, Individual, Legal
 from dal import autocomplete
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
@@ -19,8 +19,15 @@ from .forms import (CardFilter, CardGPSForm, CardIndividualForm, CardLegalForm,
 from .models import Card, Device, Partition, Qteam
 
 
-def delete_qteam (card, qteam_name):
-    pass
+def delete_qteam (request, pk):
+    qteam = get_object_or_404(
+        Qteam,
+        id=pk,
+    )
+    card = qteam.card
+    if request.method=='POST':
+        qteam.delete()
+    return render (request, 'card_qteam', {'card': card} )
 
 class QteamAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):

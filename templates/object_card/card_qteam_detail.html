@@ -29,7 +29,13 @@
                   <th>{{ qteam.qteam.name }}</th>
                   <td>{{ qteam.qteam.phone }}</td>
                   <td>{{ qteam.type }}</td>
-                  <td></td>
+                  <td>
+                    <!--form action="{% url 'del_card_qteam' qteam.pk %}" method="post">
+                      {% csrf_token %}
+                      <input type="submit" value='Delete'>
+                    </form-->
+                    <a class="badge badge-info" href="{% url 'del_card_qteam' qteam.pk %}" role="button">удалить</a>
+                  </td>
                 </tr>
               {% endfor %}
               {% if action == 'create' %}
