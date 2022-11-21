@@ -19,16 +19,6 @@ from .forms import (CardFilter, CardGPSForm, CardIndividualForm, CardLegalForm,
 from .models import Card, Device, Partition, Qteam
 
 
-def delete_qteam (request, pk):
-    qteam = get_object_or_404(
-        Qteam,
-        id=pk,
-    )
-    card = qteam.card
-    if request.method=='POST':
-        qteam.delete()
-    return render (request, 'card_qteam', {'card': card} )
-
 class QteamAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         if not self.request.user.is_authenticated:
@@ -210,8 +200,19 @@ class CreateQteam(CreateView):
             self.object = form.save()
             return super(CreateQteam, self).form_valid(form)
 
-class DetailQteam(DeleteView):
+class DeleteQteam(DeleteView):
     model = Qteam
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        qteam = get_object_or_404(
+        Qteam,
+        id=self.kwargs['pk'],
+        )
+        pk = qteam.card.pk
+        return reverse('card_qteam', kwargs={'pk': pk})
 
 class CreateCardDevice(CreateView):
     model = Device

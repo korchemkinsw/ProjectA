@@ -45,7 +45,7 @@ class CardAdmin(SimpleHistoryAdmin):
 @admin.register(Qteam)
 class QteamAdmin(SimpleHistoryAdmin,):
     form = QteamForm
-    list_display = ('card', 'type', 'qteam')
+    list_display = ('id', 'card', 'type', 'qteam')
     fields = ['card', 'type', 'qteam']
     search_fields = ('card',)
     empty_value_display = '-пусто-'
