@@ -25,18 +25,31 @@
             </thead>
             <tbody>
               {% for qteam in card.card_qtem.all %}
-                <tr>
-                  <th>{{ qteam.qteam.name }}</th>
-                  <td>{{ qteam.qteam.phone }}</td>
-                  <td>{{ qteam.type }}</td>
-                  <td>
-                    <!--form action="{% url 'del_card_qteam' qteam.pk %}" method="post">
-                      {% csrf_token %}
-                      <input type="submit" value='Delete'>
-                    </form-->
-                    <a class="badge badge-info" href="{% url 'del_card_qteam' qteam.pk %}" role="button">удалить</a>
-                  </td>
-                </tr>
+                {% if qteam.id == form.instance.id %}
+                  <form method="post" enctype="multipart/form-data" action="">
+                    {% csrf_token %}
+                    <tr>
+                      <th>{{ form.qteam }}</th>
+                      <td></td>
+                      <td>{{ form.type }}</td>
+                      <td>
+                        <button type="submit" class="badge badge-outline">Изменить</button>
+                        <a class="badge badge-danger" href="{% url 'del_card_qteam' qteam.pk %}" role="button">Удалить</a>
+                      </td>
+                    </tr>
+                  </form>
+                {% else %}
+                  <tr>
+                    <th>{{ qteam.qteam.name }}</th>
+                    <td>{{ qteam.qteam.phone }}</td>
+                    <td>{{ qteam.type }}</td>
+                    <td>
+                      {% if user.role == 'director' or user.role == 'admin' and user.is_authenticated %}
+                        <a class="badge badge-info" href="{% url 'upd_card_qteam' qteam.pk %}" role="button">редактировать</a>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endif %}
               {% endfor %}
               {% if action == 'create' %}
                 <form method="post" enctype="multipart/form-data" action="">
@@ -58,7 +71,20 @@
             <th class="col-lg-3">Инструкции для группы: </th>
           </thead>
           <tbody> 
-            <td class="col-lg-9">{{ card.qnote }}</td>
+            <td class="col-lg-9">
+              {% if action == 'qnote' %}
+                <form method="post" enctype="multipart/form-data" action="">
+                  {% csrf_token %}
+                  <p>{{ form.qnote }}</p>
+                  <p><button type="submit" class="badge badge-outline">Изменить</button></p>
+                </form>
+              {% else %}
+                <p>{{ card.qnote }}</p>
+                {% if user.role == 'director' or user.role == 'admin' and user.is_authenticated %}
+                  <p><a class="badge badge-info" href="{% url 'upd_card_qnote' card.pk %}" role="button">редактировать</a></p>
+                {% endif %}
+              {% endif %}
+            </td>
           </tbody>
         </table>
       </div>

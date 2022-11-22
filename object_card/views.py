@@ -5,17 +5,18 @@ from clientele.models import Contract, Individual, Legal
 from dal import autocomplete
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
 from django_filters.views import FilterView
 from enterprises.models import Responseteam
 
-from .forms import (CardFilter, CardGPSForm, CardIndividualForm, CardLegalForm,
-                    CardQteamForm, DeviceForm, DeviceNoneForm,
-                    DeviceUpdateForm, PartitionFormset, PhotoFormset,
-                    QteamForm, QteamFormset, SimFormset, ZoneFormset)
+from .forms import (CardContractForm, CardFilter, CardGPSForm,
+                    CardIndividualForm, CardLegalForm, CardQnoteForm,
+                    DeviceForm, DeviceNoneForm, DeviceUpdateForm,
+                    PartitionFormset, PhotoFormset, QteamForm, SimFormset,
+                    ZoneFormset)
 from .models import Card, Device, Partition, Qteam
 
 
@@ -134,45 +135,34 @@ class CreateCardLegal(CreateView):
             self.object = form.save()
         return super(CreateCardLegal, self).form_valid(form)
 
-class UpdateCardQteam(UpdateView):
+class UpdateCardContract(UpdateView):
     model = Card
-    form_class = CardQteamForm
-    template_name = 'object_card/form.html'
+    form_class = CardContractForm
+    template_name = 'object_card/card_qteam_detail.html'
 
     def get_success_url(self):
        pk = self.kwargs['pk']
        return reverse('card_qteam', kwargs={'pk': pk})
 
     def get_context_data(self, **kwargs):
-        data = super(UpdateCardQteam, self).get_context_data(**kwargs)
+        data = super(UpdateCardContract, self).get_context_data(**kwargs)
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
         if data['card'].legal:
             data['form'].fields['contract'].queryset = Contract.objects.filter(legal=data['card'].legal).exclude()
         else:
             data['form'].fields['contract'].queryset = Contract.objects.filter(individual=data['card'].individual).exclude()
-        if self.request.POST:
-            data['forms'] = QteamFormset(self.request.POST, instance=self.object)
-        else:
-            data['forms'] = QteamFormset(instance=self.object)
-        data['title'] = 'Добавить реагирование'
-        data['prefix'] ='card_qtem'
-        data['button'] = 'Добавить группу'
         data['qteam'] = 'active'
+        data['action'] = 'contract'
         return data
 
     def form_valid(self, form):
-        context = self.get_context_data(form=form)
-        qteams = context['forms']
         with transaction.atomic():
             self.object = form.save(commit=False)
             self.object = form.save()
-            self.object.status = Card.RESPONSE
-            self.object.save()
-            if qteams.is_valid():
-                response = super(UpdateCardQteam, self).form_valid(form)
-                qteams.instance = self.object
-                qteams.save()
-                return response
+            self.object.status = Card.CONTRACT
+            if self.object.contract:
+                self.object.save()
+                return super(UpdateCardContract, self).form_valid(form)
             else:
                 return super().form_invalid(form)
 
@@ -188,6 +178,7 @@ class CreateQteam(CreateView):
     def get_context_data(self, **kwargs):
         data = super(CreateQteam, self).get_context_data(**kwargs)
         data['action'] = 'create'
+        data['qteam'] = 'active'
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
         return data
 
@@ -200,6 +191,31 @@ class CreateQteam(CreateView):
             self.object = form.save()
             return super(CreateQteam, self).form_valid(form)
 
+class UpdateQteam(UpdateView):
+    model = Qteam
+    form_class = QteamForm
+    template_name = 'object_card/card_qteam_detail.html'
+
+    def get_success_url(self):
+        qteam = get_object_or_404(Qteam, id=self.kwargs['pk'],)
+        pk = qteam.card.pk
+        return reverse('card_qteam', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        data = super(UpdateQteam, self).get_context_data(**kwargs)
+        data['qteam'] = 'active'
+        data['card'] = get_object_or_404(Qteam, id=self.kwargs['pk']).card
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object = form.save()
+            self.object.card = context['card']
+            self.object = form.save()
+            return super(UpdateQteam, self).form_valid(form)
+
 class DeleteQteam(DeleteView):
     model = Qteam
 
@@ -207,12 +223,25 @@ class DeleteQteam(DeleteView):
         return self.post(request, *args, **kwargs)
 
     def get_success_url(self):
-        qteam = get_object_or_404(
-        Qteam,
-        id=self.kwargs['pk'],
-        )
+        qteam = get_object_or_404(Qteam, id=self.kwargs['pk'],)
         pk = qteam.card.pk
         return reverse('card_qteam', kwargs={'pk': pk})
+
+class UpdateCardQnote(UpdateView):
+    model = Card
+    form_class = CardQnoteForm
+    template_name = 'object_card/card_qteam_detail.html'
+
+    def get_success_url(self):
+       pk = self.kwargs['pk']
+       return reverse('card_qteam', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        data = super(UpdateCardQnote, self).get_context_data(**kwargs)
+        data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
+        data['action'] = 'qnote'
+        data['qteam'] = 'active'
+        return data
 
 class CreateCardDevice(CreateView):
     model = Device

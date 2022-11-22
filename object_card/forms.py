@@ -4,8 +4,6 @@ import django_filters
 from dal import autocomplete
 from django import forms
 from django.forms.models import inlineformset_factory
-from django_select2.forms import ModelSelect2Widget
-from enterprises.models import Responseteam
 
 from .models import Card, CardPhoto, Device, Partition, Qteam, Sim, Zone
 
@@ -102,11 +100,17 @@ class CardDeviceForm(forms.ModelForm):
         exclude = ()
         fields = ('device',)
 
-class CardQteamForm(forms.ModelForm):
+class CardQnoteForm(forms.ModelForm):
     class Meta:
         model = Card
         exclude = ()
-        fields = ('contract', 'qnote')
+        fields = ('qnote',)
+
+class CardContractForm(forms.ModelForm):
+    class Meta:
+        model = Card
+        exclude = ()
+        fields = ('contract',)
 
 class CardGPSForm(forms.ModelForm):
     class Meta:
@@ -121,7 +125,6 @@ class CardPhotoForm(forms.ModelForm):
         fields = ('title', 'image')
 
 SimFormset=inlineformset_factory(Device, Sim, form=SimForm, extra=1)
-QteamFormset=inlineformset_factory(Card, Qteam, form=QteamForm, extra=1)
 PartitionFormset=inlineformset_factory(Device, Partition, form=PartitionForm, extra=1)
 ZoneFormset=inlineformset_factory(Device, Zone, form=ZoneForm, extra=1)
 PhotoFormset=inlineformset_factory(Card, CardPhoto, form=CardPhotoForm, extra=1)

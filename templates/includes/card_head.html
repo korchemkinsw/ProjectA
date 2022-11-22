@@ -52,7 +52,19 @@
             <tr>
               <th class="col-lg-3">Договор: </th>
               <td class="col-lg-9">
+                {% if action == 'contract' %}
+                <form method="post" enctype="multipart/form-data" action="">
+                  {% csrf_token %}
+                  {{ form.contract }}
+                  <button type="submit" class="badge badge-outline">Изменить</button>
+                </form>
+              {% else %}
                 № {{card.contract.number}} от {{card.contract.date|date:"d.m.Y"}}
+                {% if user.role == 'director' or user.role == 'admin' and user.is_authenticated %}
+                  <a class="badge badge-info" href="{% url 'upd_card_contract' card.pk %}" role="button">Изменить</a>
+                {% endif %}
+              {% endif %}
+                
               </td>
             </tr>
           </tbody>
