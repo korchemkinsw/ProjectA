@@ -3,12 +3,11 @@ from msilib.schema import Error
 
 from clientele.models import Contract, Individual, Legal
 from dal import autocomplete
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  TemplateView, UpdateView)
+from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from django_filters.views import FilterView
 from enterprises.models import Responseteam
 
@@ -89,11 +88,16 @@ class DetailCardPhotos(DetailView):
         context['photos']='active'
         return context
 
-class CreateCardIndividual(CreateView):
+class CreateCardIndividual(UserPassesTestMixin, CreateView):
     model = Card
     form_class = CardIndividualForm
     template_name = 'form.html'
     success_url = reverse_lazy('individual')
+
+    def test_func(self):
+        if self.request.user.role == 'manager':
+            return self.request.user.role == 'manager'
+        return self.request.user.role == 'admin'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -112,11 +116,16 @@ class CreateCardIndividual(CreateView):
             self.object = form.save()
         return super(CreateCardIndividual, self).form_valid(form)
 
-class CreateCardLegal(CreateView):
+class CreateCardLegal(UserPassesTestMixin, CreateView):
     model = Card
     form_class = CardLegalForm
     template_name = 'form.html'
     success_url = reverse_lazy('legals')
+
+    def test_func(self):
+        if self.request.user.role == 'manager':
+            return self.request.user.role == 'manager'
+        return self.request.user.role == 'admin'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -135,10 +144,15 @@ class CreateCardLegal(CreateView):
             self.object = form.save()
         return super(CreateCardLegal, self).form_valid(form)
 
-class UpdateCardContract(UpdateView):
+class UpdateCardContract(UserPassesTestMixin, UpdateView):
     model = Card
     form_class = CardContractForm
     template_name = 'object_card/card_qteam_detail.html'
+
+    def test_func(self):
+        if self.request.user.role == 'director':
+            return self.request.user.role == 'director'
+        return self.request.user.role == 'admin'
 
     def get_success_url(self):
        pk = self.kwargs['pk']
@@ -166,10 +180,15 @@ class UpdateCardContract(UpdateView):
             else:
                 return super().form_invalid(form)
 
-class CreateQteam(CreateView):
+class CreateQteam(UserPassesTestMixin, CreateView):
     model = Qteam
     form_class = QteamForm
     template_name = 'object_card/card_qteam_detail.html'
+    
+    def test_func(self):
+        if self.request.user.role == 'director':
+            return self.request.user.role == 'director'
+        return self.request.user.role == 'admin'
 
     def get_success_url(self):
        pk = self.kwargs['pk']
@@ -191,10 +210,15 @@ class CreateQteam(CreateView):
             self.object = form.save()
             return super(CreateQteam, self).form_valid(form)
 
-class UpdateQteam(UpdateView):
+class UpdateQteam(UserPassesTestMixin, UpdateView):
     model = Qteam
     form_class = QteamForm
     template_name = 'object_card/card_qteam_detail.html'
+    
+    def test_func(self):
+        if self.request.user.role == 'director':
+            return self.request.user.role == 'director'
+        return self.request.user.role == 'admin'
 
     def get_success_url(self):
         qteam = get_object_or_404(Qteam, id=self.kwargs['pk'],)
@@ -216,8 +240,13 @@ class UpdateQteam(UpdateView):
             self.object = form.save()
             return super(UpdateQteam, self).form_valid(form)
 
-class DeleteQteam(DeleteView):
+class DeleteQteam(UserPassesTestMixin, DeleteView):
     model = Qteam
+
+    def test_func(self):
+        if self.request.user.role == 'director':
+            return self.request.user.role == 'director'
+        return self.request.user.role == 'admin'
 
     def get(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
@@ -227,10 +256,15 @@ class DeleteQteam(DeleteView):
         pk = qteam.card.pk
         return reverse('card_qteam', kwargs={'pk': pk})
 
-class UpdateCardQnote(UpdateView):
+class UpdateCardQnote(UserPassesTestMixin, UpdateView):
     model = Card
     form_class = CardQnoteForm
     template_name = 'object_card/card_qteam_detail.html'
+    
+    def test_func(self):
+        if self.request.user.role == 'director':
+            return self.request.user.role == 'director'
+        return self.request.user.role == 'admin'
 
     def get_success_url(self):
        pk = self.kwargs['pk']
@@ -243,10 +277,15 @@ class UpdateCardQnote(UpdateView):
         data['qteam'] = 'active'
         return data
 
-class CreateCardDevice(CreateView):
+class CreateCardDevice(UserPassesTestMixin, CreateView):
     model = Device
     form_class = DeviceForm
     template_name = 'object_card/form.html'
+
+    def test_func(self):
+        if self.request.user.role == 'engineer':
+            return self.request.user.role == 'engineer'
+        return self.request.user.role == 'admin'
         
     def get_success_url(self):
         pk = self.kwargs['pk']
@@ -284,10 +323,17 @@ class CreateCardDevice(CreateView):
             else:
                 return super().form_invalid(form)
 
-class UpdateCardDevice(UpdateView):
+class UpdateCardDevice(UserPassesTestMixin, UpdateView):
     model = Device
     form_class = DeviceUpdateForm
     template_name = 'object_card/form.html'
+
+    def test_func(self):
+        if self.request.user.role == 'engineer':
+            return self.request.user.role == 'engineer'
+        if self.request.user.role == 'technican':
+            return self.request.user.role == 'technican'
+        return self.request.user.role == 'admin'
         
     def get_success_url(self):
         pk = self.kwargs['pk']
@@ -329,10 +375,17 @@ class UpdateCardDevice(UpdateView):
             else:
                 return super().form_invalid(form)
 
-class CardPartition(UpdateView):
+class CardPartition(UserPassesTestMixin, UpdateView):
     model = Device
     form_class = DeviceNoneForm
     template_name = 'object_card/form.html'
+
+    def test_func(self):
+        if self.request.user.role == 'engineer':
+            return self.request.user.role == 'engineer'
+        if self.request.user.role == 'technican':
+            return self.request.user.role == 'technican'
+        return self.request.user.role == 'admin'
         
     def get_success_url(self):
         pk = self.kwargs['pk']
@@ -374,10 +427,17 @@ class CardPartition(UpdateView):
             else:
                 return super().form_invalid(form)
 
-class CardZone(UpdateView):
+class CardZone(UserPassesTestMixin, UpdateView):
     model = Device
     form_class = DeviceNoneForm
     template_name = 'object_card/form.html'
+
+    def test_func(self):
+        if self.request.user.role == 'engineer':
+            return self.request.user.role == 'engineer'
+        if self.request.user.role == 'technican':
+            return self.request.user.role == 'technican'
+        return self.request.user.role == 'admin'
     
     def get_success_url(self):
         pk = self.kwargs['pk']
@@ -422,10 +482,17 @@ class CardZone(UpdateView):
             else:
                 return super().form_invalid(form)
 
-class UpdateCardPhotos(UpdateView):
+class UpdateCardPhotos(UserPassesTestMixin, UpdateView):
     model = Card
     form_class = CardGPSForm
     template_name = 'object_card/form.html'
+
+    def test_func(self):
+        if self.request.user.role == 'engineer':
+            return self.request.user.role == 'engineer'
+        if self.request.user.role == 'technican':
+            return self.request.user.role == 'technican'
+        return self.request.user.role == 'admin'
 
     def get_success_url(self):
         pk = self.kwargs['pk']

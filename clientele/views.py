@@ -1,21 +1,18 @@
 import datetime
 
 from dal import autocomplete
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView)
+from django.views.generic import CreateView, DetailView, UpdateView
 from django_filters.views import FilterView
 from enterprises.models import Enterprise
-from object_card.models import Card
 
 from .forms import (ContactFilter, ContactForm, ContactFormset, ContractFilter,
                     ContractForm, ContractFormset, IndividualFilter,
                     IndividualForm, LegalFilter, LegalForm)
-from .models import (Contact, Contract, FileContract, Individual, Legal,
-                     Responsible)
+from .models import Contract, Individual, Legal, Responsible
 
 
 class EnterpriseAutocomplete(autocomplete.Select2QuerySetView):
@@ -34,11 +31,16 @@ class FilterContact(FilterView):
     filterset_class = ContactFilter
     paginate_by = 5
 
-class CreateContact(CreateView):
+class CreateContact(UserPassesTestMixin, CreateView):
     model = Responsible
     form_class = ContactForm
     template_name = 'clientele/contacts_form.html'
     success_url = reverse_lazy('contactlist')
+
+    def test_func(self):
+        if self.request.user.role == 'manager':
+            return self.request.user.role == 'manager'
+        return self.request.user.role == 'admin'
 
     def get_context_data(self, **kwargs):
         data = super(CreateContact, self).get_context_data(**kwargs)
@@ -69,10 +71,15 @@ class FilterIndividual(FilterView):
     filterset_class = IndividualFilter
     paginate_by = 15
 
-class CreateIndividual(CreateView):
+class CreateIndividual(UserPassesTestMixin, CreateView):
     model = Individual
     form_class = IndividualForm
     success_url = reverse_lazy('individual')
+
+    def test_func(self):
+        if self.request.user.role == 'manager':
+            return self.request.user.role == 'manager'
+        return self.request.user.role == 'admin'
 
     def get_context_data(self, **kwargs):
         if 'individual' not in kwargs:
@@ -97,10 +104,15 @@ class FilterLegal(FilterView):
     filterset_class = LegalFilter
     paginate_by = 15
 
-class CreateLegal(CreateView):
+class CreateLegal(UserPassesTestMixin, CreateView):
     model = Legal
     form_class = LegalForm
     success_url = reverse_lazy('legals')
+
+    def test_func(self):
+        if self.request.user.role == 'manager':
+            return self.request.user.role == 'manager'
+        return self.request.user.role == 'admin'
 
     def get_context_data(self, **kwargs):
         if 'legal' not in kwargs:
@@ -128,10 +140,15 @@ class FilterContract(FilterView):
 class DetailContract(DetailView):
     model = Contract
 
-class CreateContractLegal(CreateView):
+class CreateContractLegal(UserPassesTestMixin, CreateView):
     model = Contract
     form_class = ContractForm
     template_name = 'clientele\contract_form.html'
+
+    def test_func(self):
+        if self.request.user.role == 'director':
+            return self.request.user.role == 'director'
+        return self.request.user.role == 'admin'
 
     def get_success_url(self):
        pk = self.kwargs['pk']
@@ -159,10 +176,15 @@ class CreateContractLegal(CreateView):
                 files.save()
         return super(CreateContractLegal, self).form_valid(form)
 
-class UpdateContractLegal(UpdateView):
+class UpdateContractLegal(UserPassesTestMixin, UpdateView):
     model = Contract
     form_class = ContractForm
     template_name = 'clientele\contract_form.html'
+
+    def test_func(self):
+        if self.request.user.role == 'director':
+            return self.request.user.role == 'director'
+        return self.request.user.role == 'admin'
 
     def get_success_url(self):
        pk = self.kwargs['pk']
@@ -190,10 +212,15 @@ class UpdateContractLegal(UpdateView):
                 files.save()
         return super(UpdateContractLegal, self).form_valid(form)
 
-class CreateContractIndividual(CreateView):
+class CreateContractIndividual(UserPassesTestMixin, CreateView):
     model = Contract
     form_class = ContractForm
     template_name = 'clientele\contract_form.html'
+
+    def test_func(self):
+        if self.request.user.role == 'director':
+            return self.request.user.role == 'director'
+        return self.request.user.role == 'admin'
 
     def get_success_url(self):
        pk = self.kwargs['pk']
@@ -221,10 +248,15 @@ class CreateContractIndividual(CreateView):
                 files.save()
         return super(CreateContractIndividual, self).form_valid(form)
 
-class UpdateContractIndividual(UpdateView):
+class UpdateContractIndividual(UserPassesTestMixin, UpdateView):
     model = Contract
     form_class = ContractForm
     template_name = 'clientele/contract_form.html'
+
+    def test_func(self):
+        if self.request.user.role == 'director':
+            return self.request.user.role == 'director'
+        return self.request.user.role == 'admin'
 
     def get_success_url(self):
        pk = self.kwargs['pk']

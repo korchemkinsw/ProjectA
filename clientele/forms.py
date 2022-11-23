@@ -1,17 +1,24 @@
+import re
+
 import django_filters
 from core.widgets import FengyuanChenDatePickerInput
 from dal import autocomplete
-from django import forms, template
+from django import forms
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
 from django_select2 import forms as s2forms
 from enterprises.models import Enterprise
-from object_card.models import Card
 
 from .models import (Contact, Contract, FileContract, Individual, Legal,
                      Responsible)
 
 
 class ContactsForm(forms.ModelForm):
+    def clean_phone(self):
+        data = self.cleaned_data['phone']
+        if not re.fullmatch(r'7\d{10}', str(data)):
+            raise forms.ValidationError("Введен неверный номер телефона")
+        return data
+
     class Meta:
         model = Contact
         exclude = ()
@@ -42,6 +49,12 @@ class ContactFilter(django_filters.FilterSet):
         fields = ['last_name', 'first_name', 'fathers_name', 'phone',]
 
 class IndividualForm(forms.ModelForm):
+    def clean_phone(self):
+        data = self.cleaned_data['num_pass']
+        if not re.fullmatch(r'[0-9]{4}[ ][0-9]{6}', str(data)):
+            raise forms.ValidationError("Серия и номер паспорта в формате: ХХХХ ХХХХХХ")
+        return data
+
     class Meta:
         model = Individual
         exclude = ()
@@ -49,7 +62,7 @@ class IndividualForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(IndividualForm, self).__init__(*args, **kwargs)
-        self.fields['date'].widget=FengyuanChenDatePickerInput()
+        self.fields['date'].widget=DateInput(attrs={'type': 'date'})#FengyuanChenDatePickerInput()
 
 class LegalForm(forms.ModelForm):
     class Meta:
