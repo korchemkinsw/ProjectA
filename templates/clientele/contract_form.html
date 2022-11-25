@@ -24,7 +24,7 @@
               <div class="col-md-6">
                 {{ devicecardformset.management_form }}
                 {# подключаем фильтр и указываем класс #}
-                {{ field|addclass:"form-control" }}
+                {{ field }}
                 {% if field.help_text %}
                   <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
                 {% endif %}
@@ -79,12 +79,24 @@
           <script>
             $(function () {
               $("#id_date").datepicker({
-                language:'ru-RU',
-                format:'dd.mm.yyyy',
-                autoPick:true,
+
               });
             });
           </script>
+          
+          <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+          <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+          <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+          <script>
+
+            $(function(){
+	            $('#date').daterangepicker({
+		            singleDatePicker: true,
+	            });
+            });
+          </script>
+
+
           <br>
           <button type="submit" class="btn btn-outline-success btn-sm">{{ title }}</button>
         </form>

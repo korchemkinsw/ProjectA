@@ -95,9 +95,9 @@ class CreateCardIndividual(UserPassesTestMixin, CreateView):
     success_url = reverse_lazy('individual')
 
     def test_func(self):
-        if self.request.user.role == 'manager':
-            return self.request.user.role == 'manager'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('manager', 'admin'):
+            return True
+        return False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -123,9 +123,9 @@ class CreateCardLegal(UserPassesTestMixin, CreateView):
     success_url = reverse_lazy('legals')
 
     def test_func(self):
-        if self.request.user.role == 'manager':
-            return self.request.user.role == 'manager'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('manager', 'admin'):
+            return True
+        return False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -150,9 +150,9 @@ class UpdateCardContract(UserPassesTestMixin, UpdateView):
     template_name = 'object_card/card_qteam_detail.html'
 
     def test_func(self):
-        if self.request.user.role == 'director':
-            return self.request.user.role == 'director'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('director', 'admin'):
+            return True
+        return False
 
     def get_success_url(self):
        pk = self.kwargs['pk']
@@ -186,9 +186,9 @@ class CreateQteam(UserPassesTestMixin, CreateView):
     template_name = 'object_card/card_qteam_detail.html'
     
     def test_func(self):
-        if self.request.user.role == 'director':
-            return self.request.user.role == 'director'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('director', 'admin'):
+            return True
+        return False
 
     def get_success_url(self):
        pk = self.kwargs['pk']
@@ -216,9 +216,9 @@ class UpdateQteam(UserPassesTestMixin, UpdateView):
     template_name = 'object_card/card_qteam_detail.html'
     
     def test_func(self):
-        if self.request.user.role == 'director':
-            return self.request.user.role == 'director'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('director', 'admin'):
+            return True
+        return False
 
     def get_success_url(self):
         qteam = get_object_or_404(Qteam, id=self.kwargs['pk'],)
@@ -244,9 +244,9 @@ class DeleteQteam(UserPassesTestMixin, DeleteView):
     model = Qteam
 
     def test_func(self):
-        if self.request.user.role == 'director':
-            return self.request.user.role == 'director'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('director', 'admin'):
+            return True
+        return False
 
     def get(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
@@ -262,9 +262,9 @@ class UpdateCardQnote(UserPassesTestMixin, UpdateView):
     template_name = 'object_card/card_qteam_detail.html'
     
     def test_func(self):
-        if self.request.user.role == 'director':
-            return self.request.user.role == 'director'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('director', 'admin'):
+            return True
+        return False
 
     def get_success_url(self):
        pk = self.kwargs['pk']
@@ -283,9 +283,9 @@ class CreateCardDevice(UserPassesTestMixin, CreateView):
     template_name = 'object_card/form.html'
 
     def test_func(self):
-        if self.request.user.role == 'engineer':
-            return self.request.user.role == 'engineer'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('engineer', 'admin'):
+            return True
+        return False
         
     def get_success_url(self):
         pk = self.kwargs['pk']
@@ -329,11 +329,9 @@ class UpdateCardDevice(UserPassesTestMixin, UpdateView):
     template_name = 'object_card/form.html'
 
     def test_func(self):
-        if self.request.user.role == 'engineer':
-            return self.request.user.role == 'engineer'
-        if self.request.user.role == 'technican':
-            return self.request.user.role == 'technican'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('engineer', 'technican', 'admin'):
+            return True
+        return False
         
     def get_success_url(self):
         pk = self.kwargs['pk']
@@ -381,11 +379,9 @@ class CardPartition(UserPassesTestMixin, UpdateView):
     template_name = 'object_card/form.html'
 
     def test_func(self):
-        if self.request.user.role == 'engineer':
-            return self.request.user.role == 'engineer'
-        if self.request.user.role == 'technican':
-            return self.request.user.role == 'technican'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('engineer', 'technican', 'admin'):
+            return True
+        return False
         
     def get_success_url(self):
         pk = self.kwargs['pk']
@@ -433,11 +429,9 @@ class CardZone(UserPassesTestMixin, UpdateView):
     template_name = 'object_card/form.html'
 
     def test_func(self):
-        if self.request.user.role == 'engineer':
-            return self.request.user.role == 'engineer'
-        if self.request.user.role == 'technican':
-            return self.request.user.role == 'technican'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('engineer', 'technican', 'admin'):
+            return True
+        return False
     
     def get_success_url(self):
         pk = self.kwargs['pk']
@@ -488,11 +482,9 @@ class UpdateCardPhotos(UserPassesTestMixin, UpdateView):
     template_name = 'object_card/form.html'
 
     def test_func(self):
-        if self.request.user.role == 'engineer':
-            return self.request.user.role == 'engineer'
-        if self.request.user.role == 'technican':
-            return self.request.user.role == 'technican'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('engineer', 'technican', 'admin'):
+            return True
+        return False
 
     def get_success_url(self):
         pk = self.kwargs['pk']

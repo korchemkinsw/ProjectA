@@ -77,9 +77,9 @@ class CreateIndividual(UserPassesTestMixin, CreateView):
     success_url = reverse_lazy('individual')
 
     def test_func(self):
-        if self.request.user.role == 'manager':
-            return self.request.user.role == 'manager'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('manager', 'admin'):
+            return True
+        return False
 
     def get_context_data(self, **kwargs):
         if 'individual' not in kwargs:
@@ -110,9 +110,9 @@ class CreateLegal(UserPassesTestMixin, CreateView):
     success_url = reverse_lazy('legals')
 
     def test_func(self):
-        if self.request.user.role == 'manager':
-            return self.request.user.role == 'manager'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('manager', 'admin'):
+            return True
+        return False
 
     def get_context_data(self, **kwargs):
         if 'legal' not in kwargs:
@@ -146,9 +146,9 @@ class CreateContractLegal(UserPassesTestMixin, CreateView):
     template_name = 'clientele\contract_form.html'
 
     def test_func(self):
-        if self.request.user.role == 'director':
-            return self.request.user.role == 'director'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('director', 'admin'):
+            return True
+        return False
 
     def get_success_url(self):
        pk = self.kwargs['pk']
@@ -182,9 +182,9 @@ class UpdateContractLegal(UserPassesTestMixin, UpdateView):
     template_name = 'clientele\contract_form.html'
 
     def test_func(self):
-        if self.request.user.role == 'director':
-            return self.request.user.role == 'director'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('director', 'admin'):
+            return True
+        return False
 
     def get_success_url(self):
        pk = self.kwargs['pk']
@@ -218,9 +218,9 @@ class CreateContractIndividual(UserPassesTestMixin, CreateView):
     template_name = 'clientele\contract_form.html'
 
     def test_func(self):
-        if self.request.user.role == 'director':
-            return self.request.user.role == 'director'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('director', 'admin'):
+            return True
+        return False
 
     def get_success_url(self):
        pk = self.kwargs['pk']
@@ -254,9 +254,9 @@ class UpdateContractIndividual(UserPassesTestMixin, UpdateView):
     template_name = 'clientele/contract_form.html'
 
     def test_func(self):
-        if self.request.user.role == 'director':
-            return self.request.user.role == 'director'
-        return self.request.user.role == 'admin'
+        if self.request.user.role in ('director', 'admin'):
+            return True
+        return False
 
     def get_success_url(self):
        pk = self.kwargs['pk']

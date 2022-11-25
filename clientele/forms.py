@@ -1,3 +1,4 @@
+import datetime
 import re
 
 import django_filters
@@ -49,9 +50,9 @@ class ContactFilter(django_filters.FilterSet):
         fields = ['last_name', 'first_name', 'fathers_name', 'phone',]
 
 class IndividualForm(forms.ModelForm):
-    def clean_phone(self):
+    def clean_num_pass(self):
         data = self.cleaned_data['num_pass']
-        if not re.fullmatch(r'[0-9]{4}[ ][0-9]{6}', str(data)):
+        if not re.fullmatch(r'^[0-9]{4}[\s][0-9]{6}', data):
             raise forms.ValidationError("Серия и номер паспорта в формате: ХХХХ ХХХХХХ")
         return data
 
@@ -59,10 +60,10 @@ class IndividualForm(forms.ModelForm):
         model = Individual
         exclude = ()
         fields = ['num_pass', 'issued', 'date']
-
-    def __init__(self, *args, **kwargs):
-        super(IndividualForm, self).__init__(*args, **kwargs)
-        self.fields['date'].widget=DateInput(attrs={'type': 'date'})#FengyuanChenDatePickerInput()
+        widgets = {
+            'num_pass': forms.TextInput(attrs={'placeholder': 'XXXX XXXXXX'}),
+            'date': FengyuanChenDatePickerInput(attrs={'type': 'date'})
+        }
 
 class LegalForm(forms.ModelForm):
     class Meta:
@@ -117,15 +118,22 @@ class EnterpriseWidget(s2forms.ModelSelect2Widget):
     ]
 
 class ContractForm(forms.ModelForm):
+    
+    date = forms.DateField(
+        label='Дата договора',
+        input_formats=('%d/%m/%Y'),
+        initial=datetime.date.today(),
+
+        widget=DateInput(attrs={'type': 'date',}, format='%d.%m.%Y')
+        )
+    
     class Meta:
         model = Contract
         exclude = ()
         fields = ('enterprise', 'number', 'date',)
-        widgets = {'enterprise': autocomplete.ModelSelect2(url='enterprise-autocomplete'),}
-
-    def __init__(self, *args, **kwargs):
-            super(ContractForm, self).__init__(*args, **kwargs)
-            self.fields['date'].widget=FengyuanChenDatePickerInput()
+        widgets = {
+            'enterprise': autocomplete.ModelSelect2(url='enterprise-autocomplete'),
+            }
 
 class FileContractForm(forms.ModelForm):
     file = forms.FileField(label='Добавить/изменить', widget=forms.ClearableFileInput(attrs={'multiple': True}))
