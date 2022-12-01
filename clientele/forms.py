@@ -1,19 +1,16 @@
-import datetime
 import re
 
 import django_filters
-from core.widgets import FengyuanChenDatePickerInput
 from dal import autocomplete
 from django import forms
-from django.forms.models import BaseInlineFormSet, inlineformset_factory
-from django_select2 import forms as s2forms
+from django.forms.models import inlineformset_factory
 from enterprises.models import Enterprise
 
 from .models import (Contact, Contract, FileContract, Individual, Legal,
                      Responsible)
 
 
-class ContactsForm(forms.ModelForm):
+class PhoneForm(forms.ModelForm):
     def clean_phone(self):
         data = self.cleaned_data['phone']
         if not re.fullmatch(r'7\d{10}', str(data)):
@@ -35,9 +32,6 @@ class ContactForm(forms.ModelForm):
             'first_name': 'Имя',
             'fathers_name': 'Отчество',
         }
-
-class DateInput(forms.DateInput):
-    input_type = 'date'
 
 class ContactFilter(django_filters.FilterSet):
     last_name = django_filters.CharFilter(field_name='last_name', lookup_expr='contains')
@@ -62,7 +56,7 @@ class IndividualForm(forms.ModelForm):
         fields = ['num_pass', 'issued', 'date']
         widgets = {
             'num_pass': forms.TextInput(attrs={'placeholder': 'XXXX XXXXXX'}),
-            'date': FengyuanChenDatePickerInput(attrs={'type': 'date'})
+            'date': forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
         }
 
 class LegalForm(forms.ModelForm):
@@ -112,27 +106,14 @@ class ContractFilter(django_filters.FilterSet):
         model = Contract
         fields = ['enterprise', 'number', 'legal', 'individual',]
 
-class EnterpriseWidget(s2forms.ModelSelect2Widget):
-    search_fields = [
-        "fullname__icontains",
-    ]
-
 class ContractForm(forms.ModelForm):
-    
-    date = forms.DateField(
-        label='Дата договора',
-        input_formats=('%d/%m/%Y'),
-        initial=datetime.date.today(),
-
-        widget=DateInput(attrs={'type': 'date',}, format='%d.%m.%Y')
-        )
-    
     class Meta:
         model = Contract
         exclude = ()
         fields = ('enterprise', 'number', 'date',)
         widgets = {
             'enterprise': autocomplete.ModelSelect2(url='enterprise-autocomplete'),
+            'date': forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
             }
 
 class FileContractForm(forms.ModelForm):
@@ -142,9 +123,5 @@ class FileContractForm(forms.ModelForm):
         exclude = ()
         fields = ('title', 'file',)
 
-class BaseContactFormset(BaseInlineFormSet):
-    pass
-
-ContactFormset = inlineformset_factory(Responsible, Contact, form=ContactsForm, extra=1)
+ContactFormset = inlineformset_factory(Responsible, Contact, form=PhoneForm, extra=1)
 ContractFormset = inlineformset_factory(Contract, FileContract, form=FileContractForm, extra=1)
-

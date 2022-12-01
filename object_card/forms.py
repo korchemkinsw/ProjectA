@@ -1,11 +1,10 @@
-from dataclasses import fields
-
 import django_filters
 from dal import autocomplete
 from django import forms
 from django.forms.models import inlineformset_factory
 
-from .models import Card, CardPhoto, Device, Partition, Qteam, Sim, Zone
+from .models import (Card, CardPhoto, Device, Partition, Person, Qteam, Sim,
+                     Zone)
 
 
 class DeviceForm(forms.ModelForm):
@@ -117,6 +116,13 @@ class CardGPSForm(forms.ModelForm):
         model = Card
         exclude = ()
         fields = ('address', 'width', 'longitude')
+
+class PersonForm(forms.ModelForm):
+    class Meta:
+        model = Person
+        exclude =()
+        fields = ('person', 'note')
+        widgets = {'person': autocomplete.ModelSelect2(url='person-autocomplete'),}
 
 class CardPhotoForm(forms.ModelForm):
     class Meta:

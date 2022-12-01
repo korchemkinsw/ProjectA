@@ -50,8 +50,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'bootstrap4',
-    #'bootstrap_datepicker_plus',
+    'bootstrap4',
+    'bootstrap_datepicker_plus',
     #'betterforms',
     'django_filters',
     'simple_history',
@@ -137,13 +137,16 @@ TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False#True
 
 USE_TZ = False
 
+DATE_FORMAT = 'd-m-Y'
+
 DATE_INPUT_FORMATS = [
-    '%d/%m/%Y',
-]
+    '%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y', '%d-%m-%Y',
+    '%d.%m.%Y'
+    ]
 
 
 # Static files (CSS, JavaScript, Images)

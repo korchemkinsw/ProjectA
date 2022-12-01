@@ -27,11 +27,11 @@ class Responsible(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Ответственное лицо'
-        verbose_name_plural = 'Ответственные лица'
+        verbose_name = 'Лицо'
+        verbose_name_plural = 'Лица'
 
     def __str__(self):
-        return f'{self.last_name} {self.first_name[:1]}.{self.fathers_name[:1]}.'
+        return f'{self.last_name} {self.first_name} {self.fathers_name}'
 
 class Contact(models.Model):
     MOBILE = 'мобильный'
@@ -62,8 +62,8 @@ class Contact(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Телефон'
-        verbose_name_plural = 'Телефоны'
+        verbose_name = 'Контакт'
+        verbose_name_plural = 'Книга контактов'
     
     def __str__(self):
         return f'{self.responsible} | {self.type} {self.phone}'

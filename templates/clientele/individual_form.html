@@ -27,7 +27,7 @@
               </label>
               <div class="col-md-6">
                 {# подключаем фильтр и указываем класс #}
-                {{ field|addclass:"form-control"  }}
+                {{ field  }}
                 {% if field.help_text %}
                   <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
                 {% endif %}
@@ -36,17 +36,6 @@
           {% endfor %}
           <button type="submit" class="btn btn-outline-success btn-sm">Добавить</button>
         </form>
-        
-        <script src="{% static 'js/datepicker.ru-RU.min.js' %}"></script>
-        <script>
-          $(function () {
-            $("#id_date").datepicker({
-              language:'ru-RU',
-              format:'dd.mm.yyyy',
-              autoPick:true,
-            });
-          });
-        </script>
       </div>
     </div>
   </div>

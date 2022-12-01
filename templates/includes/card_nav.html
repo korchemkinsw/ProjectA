@@ -23,7 +23,7 @@
       {% endif %}
     </li>
     <li class="nav-item">
-      <a class="nav-link {{responsibles}} text-dark" href="#">Ответственные лица</a>
+      <a class="nav-link {{responsible}} text-dark" href="{% url 'card_responsible' card.pk %}">Ответственные лица</a>
     </li>
     <li class="nav-item">
       {% if card.device %}

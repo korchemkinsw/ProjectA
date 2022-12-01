@@ -1,7 +1,6 @@
 import os
-from enum import unique
 
-from clientele.models import Contract, Individual, Legal
+from clientele.models import Contract, Individual, Legal, Responsible
 from django.contrib.auth import get_user_model
 from django.db import models
 from enterprises.models import Responseteam
@@ -146,7 +145,6 @@ class ImageSim(models.Model):
     part_sim = models.CharField(
         max_length=5,
         choices=SIM_CHOICES,
-        #unique=True,
         verbose_name='sim #',
     )
  
@@ -440,6 +438,35 @@ class Zone(models.Model):
 
     def __str__(self):
         return f'{self.device} | {self.partition} | {self.number} {self.name}'
+
+class Person(models.Model):
+    card = models.ForeignKey(
+        Card,
+        verbose_name='Объект',
+        help_text='Объект',
+        null=True,
+        on_delete=models.CASCADE,
+        related_name='card_person',
+    )
+    person = models.ForeignKey(
+        Responsible,
+        verbose_name='Ответственное лицо',
+        on_delete=models.CASCADE,
+    )
+    note = models.CharField(
+        max_length=50,
+        verbose_name='Примечание',
+        null=True,
+        blank=True,
+    )
+    history = HistoricalRecords()
+
+    class Meta:
+        verbose_name = 'Ответственное лицо'
+        verbose_name_plural = 'Ответственные лица'
+
+    def __str__(self):
+        return f'{self.card} {self.person}'
 
 class CardPhoto(models.Model):
     card = models.ForeignKey(

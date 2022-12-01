@@ -1,8 +1,9 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
-from .forms import QteamForm
-from .models import Card, CardPhoto, Device, Partition, Qteam, Sim, Zone
+from .forms import PersonForm, QteamForm
+from .models import (Card, CardPhoto, Device, Partition, Person, Qteam, Sim,
+                     Zone)
 
 
 @admin.register(Device)
@@ -62,6 +63,14 @@ class ZoneAdmin(SimpleHistoryAdmin):
     list_display = ('device', 'partition', 'number', 'name')
     fields = ['device', 'partition', 'number', 'name']
     search_fields = ('device', 'partition',)
+    empty_value_display = '-пусто-'
+
+@admin.register(Person)
+class PersonAdmin(SimpleHistoryAdmin):
+    form = PersonForm
+    list_display = ('card', 'person', 'note',)
+    fields = ['card', 'person', 'note',]
+    search_fields = ('card', 'person',)
     empty_value_display = '-пусто-'
 
 @admin.register(CardPhoto)

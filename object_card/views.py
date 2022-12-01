@@ -1,7 +1,7 @@
 import datetime
-from msilib.schema import Error
 
-from clientele.models import Contract, Individual, Legal
+from clientele.forms import ContactForm, ContactFormset
+from clientele.models import Contract, Individual, Legal, Responsible
 from dal import autocomplete
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db import transaction
@@ -14,9 +14,9 @@ from enterprises.models import Responseteam
 from .forms import (CardContractForm, CardFilter, CardGPSForm,
                     CardIndividualForm, CardLegalForm, CardQnoteForm,
                     DeviceForm, DeviceNoneForm, DeviceUpdateForm,
-                    PartitionFormset, PhotoFormset, QteamForm, SimFormset,
-                    ZoneFormset)
-from .models import Card, Device, Partition, Qteam
+                    PartitionFormset, PersonForm, PhotoFormset, QteamForm,
+                    SimFormset, ZoneFormset)
+from .models import Card, Device, Partition, Person, Qteam
 
 
 class QteamAutocomplete(autocomplete.Select2QuerySetView):
@@ -26,6 +26,15 @@ class QteamAutocomplete(autocomplete.Select2QuerySetView):
         qs = Responseteam.objects.all()
         if self.q:
             qs = qs.filter(name__icontains=self.q)
+        return qs
+
+class PersonAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Responsible.objects.none()
+        qs = Responsible.objects.all()
+        if self.q:
+            qs = qs.filter(last_name__icontains=self.q)
         return qs
 
 class FilterCard(FilterView):
@@ -77,6 +86,15 @@ class DetailCardZones(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['zone']='active'
+        return context
+
+class DetailCardResponsible(DetailView):
+    model = Card
+    template_name = 'object_card/card_responsible_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['responsible']='active'
         return context
 
 class DetailCardPhotos(DetailView):
@@ -475,6 +493,53 @@ class CardZone(UserPassesTestMixin, UpdateView):
                 return response
             else:
                 return super().form_invalid(form)
+
+class CreateResponsible(UserPassesTestMixin, CreateView):
+    model = Person
+    form_class = PersonForm
+    template_name = 'object_card/card_responsible_detail.html'
+    
+    def test_func(self):
+        if self.request.user.role in ('manager', 'admin'):
+            return True
+        return False
+
+    def get_success_url(self):
+       pk = self.kwargs['pk']
+       return reverse('card_responsible', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        data = super(CreateResponsible, self).get_context_data(**kwargs)
+        #data['phones'] = []
+        data['action'] = 'create'
+        data['responsible'] = 'active'
+        data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object = form.save()
+            self.object.card = context['card']
+            self.object = form.save()
+            return super(CreateResponsible, self).form_valid(form)
+
+class DeleteResponsible(UserPassesTestMixin, DeleteView):
+    model = Person
+
+    def test_func(self):
+        if self.request.user.role in ('manager', 'admin'):
+            return True
+        return False
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        person = get_object_or_404(Person, id=self.kwargs['pk'],)
+        pk = person.card.pk
+        return reverse('card_responsible', kwargs={'pk': pk})
 
 class UpdateCardPhotos(UserPassesTestMixin, UpdateView):
     model = Card
