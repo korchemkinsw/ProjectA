@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'orders',
     'clientele',
     'object_card',
+    'dal',
+    'dal_select2',
+    #'dal_queryset_sequence',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -56,9 +59,8 @@ INSTALLED_APPS = [
     'django_filters',
     'simple_history',
     'sorl.thumbnail',
-    'django_select2',
-    'dal',
-    'dal_select2',
+    #'django_select2',
+    
 ]
 
 MIDDLEWARE = [

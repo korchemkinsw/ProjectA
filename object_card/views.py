@@ -510,7 +510,8 @@ class CreateResponsible(UserPassesTestMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         data = super(CreateResponsible, self).get_context_data(**kwargs)
-        #data['phones'] = []
+        #form = PersonForm(self.request.POST)
+        #data['phones'] = form.save(commit=False)
         data['action'] = 'create'
         data['responsible'] = 'active'
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
