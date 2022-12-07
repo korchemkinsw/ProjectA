@@ -6,17 +6,17 @@ from .models import (Contact, Contract, FileContract, Individual, Legal,
                      Responsible)
 
 
-@admin.register(Contact)
-class ContactAdmin(admin.ModelAdmin):
-    list_display = ('responsible', 'type', 'phone')
-    fields = ['responsible', 'type', 'phone']
-    search_fields = ('responsible', 'phone',)
+class ResponsiblePhonesInline(admin.TabularInline):
+    model = Contact
+    min_num = 1
+    extra = 0
 
 @admin.register(Responsible)
 class ResponsibleAdmin(admin.ModelAdmin):
     list_display = ('last_name', 'first_name', 'fathers_name')
     fields = ['last_name', 'first_name', 'fathers_name']
     search_fields = ('last_name',)
+    inlines = [ResponsiblePhonesInline]
     empty_value_display = '-пусто-'
 
 @admin.register(Legal)
@@ -57,6 +57,11 @@ class IndividualAdmin(SimpleHistoryAdmin):
     search_fields = ('name',)
     empty_value_display = '-пусто-'
 
+class ContractFilesInline(admin.TabularInline):
+    model = FileContract
+    min_num = 1
+    extra = 0
+
 @admin.register(Contract)
 class ContractAdmin(SimpleHistoryAdmin):
     form = ContractForm
@@ -78,9 +83,4 @@ class ContractAdmin(SimpleHistoryAdmin):
         'contractholder',
         ]
     search_fields = ('number', 'date', 'enterprise',)
-
-@admin.register(FileContract)
-class FileContractAdmin(admin.ModelAdmin):
-    list_display = ('contract', 'title', 'file', 'generated')
-    field = ['contract', 'title', 'file', 'generated']
-
+    inlines = [ContractFilesInline]

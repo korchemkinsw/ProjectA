@@ -6,6 +6,21 @@ from .models import (Card, CardPhoto, Device, Partition, Person, Qteam, Sim,
                      Zone)
 
 
+class DeviceSimInline(admin.TabularInline):
+    model = Sim
+    min_num = 1
+    extra = 0
+
+class DevicePartitionInline(admin.TabularInline):
+    model = Partition
+    min_num = 1
+    extra = 0
+
+class DeviceZoneInline(admin.TabularInline):
+    model = Zone
+    min_num = 1
+    extra = 0
+
 @admin.register(Device)
 class DeviceAdmin(SimpleHistoryAdmin):
     list_display = (
@@ -17,14 +32,23 @@ class DeviceAdmin(SimpleHistoryAdmin):
         'changed_pult', 'technican', 'changed_tech',
         ]
     search_fields = ('account',)
+    inlines = [DeviceSimInline, DevicePartitionInline, DeviceZoneInline]
     empty_value_display = '-пусто-'
 
-@admin.register(Sim)
-class SimAdmin(SimpleHistoryAdmin):
-    list_display = ('device', 'part_sim', 'iccid', 'msisdn', 'image')
-    fields = ['device', 'part_sim', 'iccid', 'msisdn', 'image']
-    search_fields = ('iccid', 'msisdn', 'device',)
-    empty_value_display = '-пусто-'
+class CardQteamInline(admin.TabularInline):
+    model = Qteam
+    min_num = 1
+    extra = 0
+
+class CardPersonInline(admin.TabularInline):
+    model = Person
+    min_num = 1
+    extra = 0
+
+class CardPhotoInline(admin.TabularInline):
+    model = CardPhoto
+    min_num = 1
+    extra = 0
 
 @admin.register(Card)
 class CardAdmin(SimpleHistoryAdmin):
@@ -41,41 +65,5 @@ class CardAdmin(SimpleHistoryAdmin):
         'manager', 'generated', 'director', 'changed',
         ]
     search_fields = ('device', 'legal', 'individual', 'address',)
-    empty_value_display = '-пусто-'
-
-@admin.register(Qteam)
-class QteamAdmin(SimpleHistoryAdmin,):
-    form = QteamForm
-    list_display = ('id', 'card', 'type', 'qteam')
-    fields = ['card', 'type', 'qteam']
-    search_fields = ('card',)
-    empty_value_display = '-пусто-'
-
-@admin.register(Partition)
-class PartitionAdmin(SimpleHistoryAdmin):
-    list_display = ('device', 'number', 'name')
-    fields = ['device', 'number', 'name']
-    search_fields = ('device',)
-    empty_value_display = '-пусто-'
-
-@admin.register(Zone)
-class ZoneAdmin(SimpleHistoryAdmin):
-    list_display = ('device', 'partition', 'number', 'name')
-    fields = ['device', 'partition', 'number', 'name']
-    search_fields = ('device', 'partition',)
-    empty_value_display = '-пусто-'
-
-@admin.register(Person)
-class PersonAdmin(SimpleHistoryAdmin):
-    form = PersonForm
-    list_display = ('card', 'person', 'note',)
-    fields = ['card', 'person', 'note',]
-    search_fields = ('card', 'person',)
-    empty_value_display = '-пусто-'
-
-@admin.register(CardPhoto)
-class CardPhotoAdmin(admin.ModelAdmin):
-    list_display = ('card', 'title', 'image',)
-    fields = ['card', 'title', 'image',]
-    search_fields = ('card', 'title',)
+    inlines = [CardQteamInline, CardPersonInline, CardPhotoInline]
     empty_value_display = '-пусто-'
