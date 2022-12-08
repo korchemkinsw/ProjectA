@@ -10,6 +10,7 @@ from . import views
 admin.autodiscover()
 
 urlpatterns = [
+    path('select2/', include('django_select2.urls')),
     path('jsi18n', JavaScriptCatalog.as_view(), name='javascript-catalog'),
     url(r'^admin/', admin.site.urls),
     path('auth/', include('users.urls')),

@@ -6,8 +6,8 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
 
 STATIC_URL = '/static/'
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+#STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 MEDIA_URL = '/media/'
 #MEDIAFILES_DIRS = [os.path.join(BASE_DIR, 'media')]
@@ -45,21 +45,17 @@ INSTALLED_APPS = [
     'object_card',
     'dal',
     'dal_select2',
-    #'dal_queryset_sequence',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_select2',
     'bootstrap4',
-    'bootstrap_datepicker_plus',
-    #'betterforms',
     'django_filters',
     'simple_history',
     'sorl.thumbnail',
-    #'django_select2',
-    
 ]
 
 MIDDLEWARE = [
@@ -74,7 +70,21 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'Project_A.urls'
+'''
+CACHES = {
+    # … default cache config and others
+    "select2": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
 
+# Tell select2 which cache configuration to use:
+SELECT2_CACHE_BACKEND = "select2"
+'''
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
