@@ -1,7 +1,7 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
-from .forms import PersonForm, QteamForm
+from .forms import PersonForm, QteamForm, ZoneForm
 from .models import (Card, CardPhoto, Device, Partition, Person, Qteam, Sim,
                      Zone)
 
@@ -18,6 +18,7 @@ class DevicePartitionInline(admin.TabularInline):
 
 class DeviceZoneInline(admin.TabularInline):
     model = Zone
+    form = ZoneForm
     min_num = 1
     extra = 0
 
@@ -37,11 +38,13 @@ class DeviceAdmin(SimpleHistoryAdmin):
 
 class CardQteamInline(admin.TabularInline):
     model = Qteam
+    form = QteamForm
     min_num = 1
     extra = 0
 
 class CardPersonInline(admin.TabularInline):
     model = Person
+    form = PersonForm
     min_num = 1
     extra = 0
 

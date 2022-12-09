@@ -1,7 +1,5 @@
 import datetime
 
-from clientele.forms import ContactForm, ContactFormset
-from clientele.models import Contract, Individual, Legal, Responsible
 from dal import autocomplete
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db import transaction
@@ -9,6 +7,10 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from django_filters.views import FilterView
+
+from clientele.forms import ContactForm, ContactFormset
+from clientele.models import Contract, Individual, Legal, Responsible
+from clientele.views import CreateContact
 from enterprises.models import Responseteam
 
 from .forms import (CardContractForm, CardFilter, CardGPSForm,
@@ -525,6 +527,11 @@ class CreateResponsible(UserPassesTestMixin, CreateView):
             self.object.card = context['card']
             self.object = form.save()
             return super(CreateResponsible, self).form_valid(form)
+
+class CreateNewResponsible(CreateContact):
+    def get_success_url(self):
+       pk = self.kwargs['pk']
+       return reverse('add_card_responsible', kwargs={'pk': pk})
 
 class DeleteResponsible(UserPassesTestMixin, DeleteView):
     model = Person

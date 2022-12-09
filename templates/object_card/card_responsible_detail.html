@@ -43,7 +43,10 @@
                 <form method="post" enctype="multipart/form-data" action="">
                   {% csrf_token %}
                   <tr>
-                    <th>{{ form.person }}</th>
+                    <th>
+                      {{ form.person }}
+                      <a class="badge badge-primary" href="{% url 'new_card_responsible' card.id %}" role="button">Новый</a>
+                    </th>
                     <td>{{ form.note }}</td>
                     <td>
                       {{ phones }}
@@ -51,6 +54,8 @@
                       {% for phone in phones %}
                         <p>{{ phone.type }} {{ phone.phone }}</p>
                       {% endfor %}
+                      fas fa-camera
+                      badge badge-danger
                       -->
                       <button type="submit" class="badge badge-outline">Добавить</button>
                     </td>

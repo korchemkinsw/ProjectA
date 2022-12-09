@@ -52,10 +52,19 @@ class PartitionForm(forms.ModelForm):
         fields = ('number', 'name',)
 
 class ZoneForm(forms.ModelForm):
+    def clean_device(self):
+        data = self.cleaned_data['device']
+        return data
+
     class Meta:
         model = Zone
         exclude =()
         fields = ('device', 'number', 'partition', 'name',)
+        #widgets = {'partition': autocomplete.ModelSelect2(url='partition-autocomplete',),}
+
+    def __init__(self, *args, **kwargs):
+            super(ZoneForm, self).__init__(*args, **kwargs)
+            self.fields['partition'].queryset = Partition.objects.filter(device=self.instance.device)
 
 class CardFilter(django_filters.FilterSet):
     status = django_filters.ChoiceFilter(choices=Card.STATUS_CHOICES)

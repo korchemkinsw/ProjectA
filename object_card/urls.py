@@ -26,6 +26,7 @@ urlpatterns = [
     path('add_card_partition/<int:pk>/', views.CardPartition.as_view(), name='add_card_partition'),
     path('add_card_zone/<int:pk>/', views.CardZone.as_view(), name='add_card_zone'),
     path('add_card_responsible/<int:pk>/', views.CreateResponsible.as_view(), name='add_card_responsible'),
+    path('new_card_responsible/<int:pk>/', views.CreateNewResponsible.as_view(), name='new_card_responsible'),
     path('del_card_responsible/<int:pk>/', views.DeleteResponsible.as_view(), name='del_card_responsible'),
     path('upd_card_photos/<int:pk>/', views.UpdateCardPhotos.as_view(), name='upd_card_photos'),
 ]
