@@ -1,6 +1,6 @@
 import os
 
-from clientele.models import Contract, Individual, Legal, Responsible
+from clientele.models import Contract, Individual, Legal, Contact
 from django.contrib.auth import get_user_model
 from django.db import models
 from enterprises.models import Responseteam
@@ -449,7 +449,7 @@ class Person(models.Model):
         related_name='card_person',
     )
     person = models.ForeignKey(
-        Responsible,
+        Contact,
         verbose_name='Ответственное лицо',
         on_delete=models.CASCADE,
     )

@@ -7,7 +7,7 @@ from . import views
 urlpatterns = [
     url(r'^enterprise-autocomplete/$', views.EnterpriseAutocomplete.as_view(), name='enterprise-autocomplete'),
     path('contactlist/', views.FilterContact.as_view(), name='contactlist'),
-    path('contactlist/<int:pk>/',views.DetailContact.as_view(), name='contact'),
+    path('contact/<int:pk>/',views.DetailContact.as_view(), name='contact'),
     path('add_contact/', views.CreateContact.as_view(), name='add_contact'),
     path('legals/', views.FilterLegal.as_view(), name='legals'),
     path('contracts/', views.FilterContract.as_view(), name='contracts'),

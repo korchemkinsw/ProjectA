@@ -9,10 +9,10 @@ from django.views.generic import CreateView, DetailView, UpdateView
 from django_filters.views import FilterView
 from enterprises.models import Enterprise
 
-from .forms import (ContactFilter, ContactForm, ContactFormset, ContractFilter,
+from .forms import (ContactFilter, ContactForm, PhoneFormset, ContractFilter,
                     ContractForm, ContractFormset, IndividualFilter,
                     IndividualForm, LegalFilter, LegalForm)
-from .models import Contract, Individual, Legal, Responsible
+from .models import Contract, Individual, Legal, Contact
 
 
 class EnterpriseAutocomplete(autocomplete.Select2QuerySetView):
@@ -25,14 +25,14 @@ class EnterpriseAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
 class FilterContact(FilterView):
-    model = Responsible
+    model = Contact
     context_object_name = 'filter'
-    template_name = 'clientele/responsible_filter.html'
+    template_name = 'clientele/contacts_filter.html'
     filterset_class = ContactFilter
     paginate_by = 5
 
 class CreateContact(UserPassesTestMixin, CreateView):
-    model = Responsible
+    model = Contact
     form_class = ContactForm
     template_name = 'clientele/contacts_form.html'
     success_url = reverse_lazy('contactlist')
@@ -45,14 +45,14 @@ class CreateContact(UserPassesTestMixin, CreateView):
     def get_context_data(self, **kwargs):
         data = super(CreateContact, self).get_context_data(**kwargs)
         if self.request.POST:
-            data['contacts'] = ContactFormset(self.request.POST)
+            data['phones'] = PhoneFormset(self.request.POST)
         else:
-            data['contacts'] = ContactFormset()
+            data['phones'] = PhoneFormset()
         return data
 
     def form_valid(self, form):
         context = self.get_context_data(form=form)
-        phones = context['contacts']
+        phones = context['phones']
         if phones.is_valid():
             response = super(CreateContact, self).form_valid(form)
             phones.instance = self.object
@@ -62,7 +62,7 @@ class CreateContact(UserPassesTestMixin, CreateView):
             return super().form_invalid(form)
 
 class DetailContact(DetailView):
-    model = Responsible
+    model = Contact
 
 class FilterIndividual(FilterView):
     model = Individual
@@ -83,14 +83,14 @@ class CreateIndividual(UserPassesTestMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         if 'individual' not in kwargs:
-            kwargs['individual'] = get_object_or_404(Responsible, id=self.kwargs['pk'])
+            kwargs['individual'] = get_object_or_404(Contact, id=self.kwargs['pk'])
         context = super().get_context_data(**kwargs)
         return context
         
     def form_valid(self, form):
         with transaction.atomic():
             self.object = form.save(commit=False)
-            self.object.name = get_object_or_404(Responsible, id=self.kwargs['pk'])
+            self.object.name = get_object_or_404(Contact, id=self.kwargs['pk'])
             self.object = form.save()
         return super(CreateIndividual, self).form_valid(form)
 
@@ -116,9 +116,10 @@ class CreateLegal(UserPassesTestMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         if 'legal' not in kwargs:
-            kwargs['legal'] = get_object_or_404(Responsible, id=self.kwargs['pk'])
+            kwargs['legal'] = get_object_or_404(Contact, id=self.kwargs['pk'])
         context = super().get_context_data(**kwargs)
-        context['form'].fields['bigboss'].queryset = Responsible.objects.filter(id=self.kwargs['pk'])
+        context['form'].fields['bigboss'].queryset = Contact.objects.filter(id=self.kwargs['pk'])
+        #context['form'].fields['bigboss'].initial = get_object_or_404(Contact, id=self.kwargs['pk'])
         return context
         
     def form_valid(self, form):

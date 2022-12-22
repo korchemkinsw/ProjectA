@@ -4,11 +4,11 @@
 {% block title %}Добавить данные физического лица{% endblock %}
 {% block content %}
 {% load user_filters %}
-<div class="row justify-content-center">
+<div style="text-align: left; font-size: 12px" class="row justify-content-center">
   <div class="col-md-12">
     <div class="card">
       <div class="card-header">
-        <h3>{{ individual.last_name }} {{ individual.first_name }} {{ individual.fathers_name }}</h3>
+        <h5>{{ individual.name }}</h5>
       </div>
       <div class="card-body">
         <form method="post" enctype="multipart/form-data" action="">

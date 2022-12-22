@@ -8,8 +8,8 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from django_filters.views import FilterView
 
-from clientele.forms import ContactForm, ContactFormset
-from clientele.models import Contract, Individual, Legal, Responsible
+#from clientele.forms import ContactForm, PhoneFormset
+from clientele.models import Contract, Individual, Legal, Contact
 from clientele.views import CreateContact
 from enterprises.models import Responseteam
 
@@ -33,8 +33,8 @@ class QteamAutocomplete(autocomplete.Select2QuerySetView):
 class PersonAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         if not self.request.user.is_authenticated:
-            return Responsible.objects.none()
-        qs = Responsible.objects.all()
+            return Contact.objects.none()
+        qs = Contact.objects.all()
         if self.q:
             qs = qs.filter(last_name__icontains=self.q)
         return qs

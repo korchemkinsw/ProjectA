@@ -2,21 +2,21 @@ from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
 from .forms import ContractForm
-from .models import (Contact, Contract, FileContract, Individual, Legal,
-                     Responsible)
+from .models import (Phone, Contract, FileContract, Individual, Legal,
+                     Contact)
 
 
-class ResponsiblePhonesInline(admin.TabularInline):
-    model = Contact
+class ContactPhonesInline(admin.TabularInline):
+    model = Phone
     min_num = 1
     extra = 0
 
-@admin.register(Responsible)
-class ResponsibleAdmin(admin.ModelAdmin):
-    list_display = ('last_name', 'first_name', 'fathers_name')
-    fields = ['last_name', 'first_name', 'fathers_name']
-    search_fields = ('last_name',)
-    inlines = [ResponsiblePhonesInline]
+@admin.register(Contact)
+class ContactAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    fields = ['name',]
+    search_fields = ('name',)
+    inlines = [ContactPhonesInline]
     empty_value_display = '-пусто-'
 
 @admin.register(Legal)

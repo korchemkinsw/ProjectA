@@ -7,7 +7,7 @@ from django.forms.models import inlineformset_factory
 from enterprises.models import Enterprise
 
 from .models import (Contact, Contract, FileContract, Individual, Legal,
-                     Responsible)
+                     Phone)
 
 
 class PhoneForm(forms.ModelForm):
@@ -18,30 +18,32 @@ class PhoneForm(forms.ModelForm):
         return data
 
     class Meta:
-        model = Contact
+        model = Phone
         exclude = ()
         fields = ('type', 'phone',)
 
 class ContactForm(forms.ModelForm):
+    def clean_name(self):
+        data = self.cleaned_data['name']
+        if not re.fullmatch(r'^[А-ЯЁ][а-яё]+[\S]+[\s][А-ЯЁ][а-яё]+[\s][А-ЯЁ][а-яё]+[\W]+', str(data)):
+            raise forms.ValidationError("Фамилия Имя Отчество")
+        return data
+
     class Meta:
-        model = Responsible
+        model = Contact
         exclude = ()
-        fields = ('last_name', 'first_name', 'fathers_name',)
+        fields = ('name',)
         labels ={
-            'last_name': 'Фамилия',
-            'first_name': 'Имя',
-            'fathers_name': 'Отчество',
+            'name': 'Фамилия Имя Отчество',
         }
 
 class ContactFilter(django_filters.FilterSet):
-    last_name = django_filters.CharFilter(field_name='last_name', lookup_expr='contains')
-    first_name = django_filters.CharFilter(field_name='first_name', lookup_expr='contains')
-    fathers_name = django_filters.CharFilter(field_name='fathers_name', lookup_expr='contains')
+    name = django_filters.CharFilter(field_name='name', lookup_expr='contains')
     phone = django_filters.CharFilter(field_name='contacts__phone', lookup_expr='exact')
 
     class Meta:
         model = Contact
-        fields = ['last_name', 'first_name', 'fathers_name', 'phone',]
+        fields = ['name', 'phone',]
 
 class IndividualForm(forms.ModelForm):
     def clean_num_pass(self):
@@ -80,13 +82,11 @@ class LegalForm(forms.ModelForm):
         ]
 
 class IndividualFilter(django_filters.FilterSet):
-    last_name = django_filters.CharFilter(field_name='name__last_name', lookup_expr='contains')
-    first_name = django_filters.CharFilter(field_name='name__first_name', lookup_expr='contains')
-    fathers_name = django_filters.CharFilter(field_name='name__fathers_name', lookup_expr='contains')
+    name = django_filters.CharFilter(field_name='name__name', lookup_expr='contains')
     
     class Meta:
         model = Individual
-        fields = ['last_name', 'first_name', 'fathers_name']
+        fields = ['name',]
 
 class LegalFilter(django_filters.FilterSet):
     fullname = django_filters.CharFilter(field_name='fullname', lookup_expr='contains')
@@ -100,7 +100,7 @@ class ContractFilter(django_filters.FilterSet):
     enterprise = django_filters.ModelChoiceFilter(queryset=Enterprise.objects.all())
     number = django_filters.CharFilter(field_name='number', lookup_expr='contains')
     legal = django_filters.CharFilter(field_name='legal__fullname', lookup_expr='contains')
-    individual = django_filters.CharFilter(field_name='individual__name__last_name', lookup_expr='contains')
+    individual = django_filters.CharFilter(field_name='individual__name__name', lookup_expr='contains')
 
     class Meta:
         model = Contract
@@ -123,5 +123,5 @@ class FileContractForm(forms.ModelForm):
         exclude = ()
         fields = ('title', 'file',)
 
-ContactFormset = inlineformset_factory(Responsible, Contact, form=PhoneForm, extra=1)
+PhoneFormset = inlineformset_factory(Contact, Phone, form=PhoneForm, extra=1)
 ContractFormset = inlineformset_factory(Contract, FileContract, form=FileContractForm, extra=1)

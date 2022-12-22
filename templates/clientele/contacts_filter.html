@@ -1,27 +1,26 @@
 {% extends "base.html" %}
 {% block title %}Контакты{% endblock %}
 {% block content %}
+{% load user_filters %}
 <div class="card">
   <div class="card-header">
     <h5>Контакты</h5>
   </div>
   <div class="card-body" style="text-align: left; font-size: 14px">
     
-    <div style="text-align: center; font-size: 12px" class="table-responsive">
+    <div style="text-align: left; font-size: 12px" class="table-responsive">
       <table class="table table-sm">
         <thead>
           <tr>
-            <th scope="col">Фамилия</th>
-            <th scope="col">Имя</th>
-            <th scope="col">Отчество</th>
+            <th scope="col">Фамилия Имя Отчество</th>
             <th scope="col">Телефоны</th>
+            <th></th>
           </tr>
           <form method="get">
             <tr>
-              <th>{{ filter.form.last_name }}</th>
-              <th>{{ filter.form.first_name }}</th>
-              <th>{{ filter.form.fathers_name }}</th>
-              <th>{{ filter.form.phone }}&nbsp;<input type="submit" value="Найти" /></th>
+              <th>{{ filter.form.name|addclass:"form-control" }}</th>
+              <th>{{ filter.form.phone|addclass:"form-control" }}</th>
+              <th>&nbsp;<input type="submit" value="Найти" /></th>
             </tr>
         </form>
         </thead>
@@ -29,19 +28,19 @@
           {% for contact in page_obj %}
             <tr>
               <td>
-                <a href="{% url 'contact' contact.pk %}">{{ contact.last_name }}</a>
+                <a href="{% url 'contact' contact.pk %}">{{ contact.name }}</a>
               </td>
               <td>
-                {{contact.first_name }}
-              </td>
-              <td> 
-                {{ contact.fathers_name }}
-              <td>
-                {% for phone in contact.contacts.all %}
-                  <p>
-                    {{ phone.type }} | {{ phone.phone }}
-                  </p>
-                {% endfor %}
+                <table class="table table-sm">
+                  <tbody>
+                    {% for phone in contact.contacts.all %}
+                      <tr>
+                        <td>{{ phone.type }}</td>
+                        <td>{{ phone.phone }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
               </td>
             <tr>
           {% endfor %}

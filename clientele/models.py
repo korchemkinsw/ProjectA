@@ -11,19 +11,10 @@ from simple_history.models import HistoricalRecords
 User = get_user_model()
 
 
-class Responsible(models.Model):
-    last_name = models.CharField(
-        verbose_name='фамилия',
+class Contact(models.Model):
+    name = models.CharField(
+        verbose_name='Фамилия Имя Отчество',
         max_length=150,
-    )
-    first_name = models.CharField(
-        verbose_name='имя',
-        max_length=150,
-    )
-    fathers_name = models.CharField(
-        verbose_name='отчество',
-        max_length=150,
-        blank=True
     )
 
     class Meta:
@@ -31,9 +22,9 @@ class Responsible(models.Model):
         verbose_name_plural = 'Контакты'
 
     def __str__(self):
-        return f'{self.last_name} {self.first_name} {self.fathers_name}'
+        return self.name
 
-class Contact(models.Model):
+class Phone(models.Model):
     MOBILE = 'мобильный'
     HOME = 'домашний'
     WORKER = 'рабочий'
@@ -43,11 +34,11 @@ class Contact(models.Model):
         (HOME, 'домашний'),
         (WORKER, 'рабочий')
     )
-    responsible = models.ForeignKey(
-        Responsible,
-        verbose_name='Ответственное лицо',
+    name = models.ForeignKey(
+        Contact,
+        verbose_name='Фамилия Имя Отчество',
         on_delete=models.CASCADE,
-        related_name='contacts',
+        related_name='phones',
         blank=True,
     )
     type = models.CharField(
@@ -66,7 +57,7 @@ class Contact(models.Model):
         verbose_name_plural = 'Телефоны'
     
     def __str__(self):
-        return f'{self.responsible} | {self.type} {self.phone}'
+        return f'{self.name} | {self.type} {self.phone}'
 
 class Legal(models.Model):
     fullname = models.CharField(
@@ -142,7 +133,7 @@ class Legal(models.Model):
         blank=True
     )
     bigboss = models.ForeignKey(
-        Responsible,
+        Contact,
         verbose_name='Ген. директор',
         help_text='Ген. директор',
         null=True,
@@ -161,7 +152,7 @@ class Legal(models.Model):
 
 class Individual(models.Model):
     name = models.ForeignKey(
-        Responsible,
+        Contact,
         verbose_name='Клиент',
         help_text='Клиент',
         on_delete=models.CASCADE,
