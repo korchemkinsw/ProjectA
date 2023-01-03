@@ -6,7 +6,12 @@
   <div class="col-12">
     <div class="card">
       <div class="card-header">
-        <h5>{{ contact }}</h5>
+        <h5>
+          {{ contact }}
+          {% if user.role == 'manager' or user.role == 'director' or user.role == 'admin' and user.is_authenticated %}
+            <a class="btn btn-outline-warning btn-sm" href="{% url 'upd_contact' contact.id  %}" role="button">Изменить</a>
+          {% endif %}
+        </h5>
       </div>
       <div class="card-body">
         <div style="text-align: left; font-size: 12px" class="table-responsive">
@@ -18,7 +23,7 @@
             </thead>
             <tbody>
               <td>
-                {% for phone in contact.contacts.all %}
+                {% for phone in contact.phones.all %}
                   <p>
                     <div class="row">
                       <div class="col-sm-2">{{ phone.type }}</div>
@@ -29,7 +34,7 @@
               </td>
             </tbody>
           </table>
-          {% if contact.individual %}
+          {% if contact.individual.all %}
             <table class="table table-sm">
               <thead>
                 <tr>
@@ -49,7 +54,7 @@
               </tbody>
             </table>
           {% endif %}
-          {% if contact.bigboss %}
+          {% if contact.bigboss.all %}
             <table class="table table-sm">
               <thead>
                 <tr>

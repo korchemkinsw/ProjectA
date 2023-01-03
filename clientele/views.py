@@ -34,7 +34,7 @@ class FilterContact(FilterView):
 class CreateContact(UserPassesTestMixin, CreateView):
     model = Contact
     form_class = ContactForm
-    template_name = 'clientele/contacts_form.html'
+    template_name = 'clientele/contact_form.html'
     success_url = reverse_lazy('contactlist')
 
     def test_func(self):
@@ -48,6 +48,7 @@ class CreateContact(UserPassesTestMixin, CreateView):
             data['phones'] = PhoneFormset(self.request.POST)
         else:
             data['phones'] = PhoneFormset()
+        data['action'] = 'create'
         return data
 
     def form_valid(self, form):
@@ -55,6 +56,40 @@ class CreateContact(UserPassesTestMixin, CreateView):
         phones = context['phones']
         if phones.is_valid():
             response = super(CreateContact, self).form_valid(form)
+            phones.instance = self.object
+            phones.save()
+            return response
+        else:
+            return super().form_invalid(form)
+
+class UpdateContact(UserPassesTestMixin, UpdateView):
+    model = Contact
+    form_class = ContactForm
+    template_name = 'clientele/contact_form.html'
+
+    def test_func(self):
+        if self.request.user.role == 'manager':
+            return self.request.user.role == 'manager'
+        return self.request.user.role == 'admin'
+
+    def get_success_url(self):
+       pk = self.kwargs['pk']
+       return reverse('contact', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        data = super(UpdateContact, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data['phones'] = PhoneFormset(self.request.POST, instance=self.object)
+        else:
+            data['phones'] = PhoneFormset(instance=self.object)
+        data['action'] = 'update'
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        phones = context['phones']
+        if phones.is_valid():
+            response = super(UpdateContact, self).form_valid(form)
             phones.instance = self.object
             phones.save()
             return response
@@ -119,7 +154,7 @@ class CreateLegal(UserPassesTestMixin, CreateView):
             kwargs['legal'] = get_object_or_404(Contact, id=self.kwargs['pk'])
         context = super().get_context_data(**kwargs)
         context['form'].fields['bigboss'].queryset = Contact.objects.filter(id=self.kwargs['pk'])
-        #context['form'].fields['bigboss'].initial = get_object_or_404(Contact, id=self.kwargs['pk'])
+        context['form'].fields['bigboss'].initial = get_object_or_404(Contact, id=self.kwargs['pk'])
         return context
         
     def form_valid(self, form):

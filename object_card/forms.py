@@ -131,7 +131,12 @@ class PersonForm(forms.ModelForm):
         model = Person
         exclude =()
         fields = ('person', 'note')
-        widgets = {'person': autocomplete.ModelSelect2(url='person-autocomplete'),}
+        widgets = {
+            'person': autocomplete.ModelSelect2(
+                url='person-autocomplete',
+                attrs={'style':'width:400px'}
+                ),
+            }
 
 class CardPhotoForm(forms.ModelForm):
     class Meta:

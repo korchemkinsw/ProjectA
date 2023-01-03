@@ -4,68 +4,74 @@
 {% block title %}Добавить контакт{% endblock %}
 {% block content %}
 {% load user_filters %}
-<div class="row justify-content-center">
+<div style="text-align: left; font-size: 12px" class="row justify-content-center">
   <div class="col-md-12">
     <div class="card">
       <div class="card-header">
-        <h5>Добавить контакт</h5>
+        {% if action == 'create' %}
+          <h5>Добавить контакт</h5>
+        {% endif %}
+        {% if action == 'update' %}
+          <h5>Изменить контакт</h5>
+        {% endif %}
       </div>
       <div class="card-body">
         <form method="post" enctype="multipart/form-data" action="">
           {% csrf_token %}
-          {% for field in form %}
-            <div class="form-group row" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
-              <label for="{{ field.id_for_label }}" class="col-md-2 col-form-label text-md-left">
-                {{ field.label }}
-                {% if field.field.required %}
-                  <span class="required">*</span>
-                {% endif %}
-              </label>
-              <div class="col-md-6">
-                {# подключаем фильтр и указываем класс #}
-                {{ field|addclass:"form-control" }}
-                {% if field.help_text %}
-                  <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
-                {% endif %}
-              </div>                
-            </div>
-          {% endfor %}
-
           <table class="table">
-            {{ phonebook.management_form }}
-              {% for form in phonebook.forms %}
-                {% if forloop.first %}
-                  <thead>
-                    <tr>
-                      {% for field in form.visible_fields %}
-                        <th>
-                          {% if field.label == 'Телефон' %}  
-                            <a class="btn btn-outline-primary btn-sm" href="{% url 'add_phone' %}" role="button">{{ field.label|capfirst }} (добавить номер)</a>
-                          {% else %}
-                              {{ field.label|capfirst }}
-                          {% endif %}
-                        </th>
-                      {% endfor %}
-                    </tr>
-                  </thead>
-                {% endif %}
-                <tr class="{% cycle row1 row2 %} formset_row">
-                  {% for field in form.visible_fields %}
-                    <td>
-                      {# Include the hidden fields in the form #}
-                      {% if forloop.first %}
-                        {% for hidden in form.hidden_fields %}
-                          {{ hidden }}
-                        {% endfor %}
-                      {% endif %}
-                      {{ field.errors.as_ul }}
-                      {{ field }}
-                    </td>
-                  {% endfor %}
+            <tbody>
+              {% for field in form %}
+              <tr>
+                <th class="col-lg-2">
+                  {{ field.label }}
+                  {% if field.field.required %}
+                    <span class="required">*</span>
+                  {% endif %}
+                </th>
+                <td>
+                  {# подключаем фильтр и указываем класс #}
+                  {{ field|addclass:"form-control" }}
+                  {% if field.help_text %}
+                    <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+                  {% endif %}
+                </td>
                 </tr>
               {% endfor %}
-            </table>
-          <button type="submit" class="btn btn-outline-success btn-sm">Добавить</button>
+            </tbody>
+          </table>
+
+          <table class="table">
+            {{ phones.management_form }}
+            {% for form in phones.forms %}
+              {% if forloop.first %}
+                <thead>
+                  <tr>
+                    {% for field in form.visible_fields %}
+                      <th class="col-lg-2">
+                        {{ field.label|capfirst }}
+                      </th>
+                    {% endfor %}
+                  </tr>
+                </thead>
+              {% endif %}
+              <tr class="{% cycle row1 row2 %} formset_row">
+                {% for field in form.visible_fields %}
+                  <td  class="col-lg-2">
+                    {# Include the hidden fields in the form #}
+                    {% if forloop.first %}
+                      {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                      {% endfor %}
+                    {% endif %}
+                    {{ field.errors.as_ul }}
+                    {{ field }}
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </table>
+          <button type="submit" class="btn btn-outline-success btn-sm">Сохранить</button>
+          <a class="btn btn-outline-primary btn-sm" href="{% url 'contactlist' %}" role="button">Список контактов</a>
         </form>
       </div>
 
@@ -74,7 +80,7 @@
         $('.formset_row').formset({
             addText: 'Ещё один телефон',
             deleteText: 'Удалить',
-            prefix: 'phonebook',
+            prefix: 'phones',
           });
       </script>
 

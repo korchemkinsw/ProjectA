@@ -10,7 +10,7 @@ from django_filters.views import FilterView
 
 #from clientele.forms import ContactForm, PhoneFormset
 from clientele.models import Contract, Individual, Legal, Contact
-from clientele.views import CreateContact
+from clientele.views import CreateContact, UpdateContact
 from enterprises.models import Responseteam
 
 from .forms import (CardContractForm, CardFilter, CardGPSForm,
@@ -36,7 +36,7 @@ class PersonAutocomplete(autocomplete.Select2QuerySetView):
             return Contact.objects.none()
         qs = Contact.objects.all()
         if self.q:
-            qs = qs.filter(last_name__icontains=self.q)
+            qs = qs.filter(name__icontains=self.q)
         return qs
 
 class FilterCard(FilterView):
@@ -532,6 +532,12 @@ class CreateNewResponsible(CreateContact):
     def get_success_url(self):
        pk = self.kwargs['pk']
        return reverse('add_card_responsible', kwargs={'pk': pk})
+
+class UpdateResponsible(UpdateContact):
+    def get_success_url(self):
+        person = get_object_or_404(Person, id=self.kwargs['pk'],)
+        pk = person.card.pk
+        return reverse('card_responsible', kwargs={'pk': pk})
 
 class DeleteResponsible(UserPassesTestMixin, DeleteView):
     model = Person

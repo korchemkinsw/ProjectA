@@ -25,7 +25,7 @@ class PhoneForm(forms.ModelForm):
 class ContactForm(forms.ModelForm):
     def clean_name(self):
         data = self.cleaned_data['name']
-        if not re.fullmatch(r'^[А-ЯЁ][а-яё]+[\S]+[\s][А-ЯЁ][а-яё]+[\s][А-ЯЁ][а-яё]+[\W]+', str(data)):
+        if not re.fullmatch(r'^[А-ЯЁ][а-яё]+[\S]+[\s][А-ЯЁ][а-яё]+[\s][А-ЯЁ][\D]+', str(data)):
             raise forms.ValidationError("Фамилия Имя Отчество")
         return data
 
@@ -112,7 +112,7 @@ class ContractForm(forms.ModelForm):
         exclude = ()
         fields = ('enterprise', 'number', 'date',)
         widgets = {
-            'enterprise': autocomplete.ModelSelect2(url='enterprise-autocomplete'),
+            'enterprise': autocomplete.ModelSelect2(url='enterprise-autocomplete', attrs={'style':'width:400px'}),
             'date': forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
             }
 
