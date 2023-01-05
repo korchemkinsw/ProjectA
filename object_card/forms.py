@@ -130,7 +130,7 @@ class PersonForm(forms.ModelForm):
     class Meta:
         model = Person
         exclude =()
-        fields = ('person', 'note')
+        fields = ('person', 'note', 'application')
         widgets = {
             'person': autocomplete.ModelSelect2(
                 url='person-autocomplete',

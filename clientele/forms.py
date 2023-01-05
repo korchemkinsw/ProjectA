@@ -21,6 +21,9 @@ class PhoneForm(forms.ModelForm):
         model = Phone
         exclude = ()
         fields = ('type', 'phone',)
+        widgets = {
+            'phone': forms.TextInput(attrs={'placeholder': '7XXXXXXXXXX'}),
+        }
 
 class ContactForm(forms.ModelForm):
     def clean_name(self):
@@ -35,6 +38,9 @@ class ContactForm(forms.ModelForm):
         fields = ('name',)
         labels ={
             'name': 'Фамилия Имя Отчество',
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'Фамилия Имя Отчество'}),
         }
 
 class ContactFilter(django_filters.FilterSet):

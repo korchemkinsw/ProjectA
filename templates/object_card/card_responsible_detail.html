@@ -10,39 +10,57 @@
 {% load static %}
 {% load user_filters %}
 {% block content %}
-  <div class="col-lg-12">
+  <div class="col-sm-12">
     {% include "includes/card_nav.html" %}
     <div style="text-align: left; font-size: 12px" class="row justify-content-center">
       {% include "includes/card_head.html" %}
-      <div class="col-lg-12">
-      <div style="text-align: left; font-size: 12px" class="table-bordered">
+      <div class="col-sm-12">
+      <div style="text-align: left; font-size: 12px" class="table">
         <table class="table table-sm">
           {% if card.card_person.all or action == 'create' %}
             <thead>
-              <th class="col-lg-4">Фамилия Имя Отчество: </th>
+              <th class="col-sm-4">Фамилия Имя Отчество: </th>
               <th></th>
-              <th class="col-lg-4">Примечание: </th>
-              <th class="col-lg-4">Номер телефона: </th>
+              <th class="col-sm-4">Примечание: </th>
+              <th class="col-sm-2">Номер телефона: </th>
+              <th class="col-sm-1">Приложение: </th>
               <th></th>
             </thead>
             <tbody>
               {% for person in card.card_person.all %}
-                <tr>
-                  <th>
-                    {{ person.person }}
-                    {% if user.role == 'manager' or user.role == 'admin' %}
-                      <a class="badge badge-danger" href="{% url 'del_card_responsible' person.pk %}" role="button">Удалить</a>
-                      <a class="badge badge-warning" href="{% url 'upd_responsible' person.pk %}" role="button">Изменить</a>
-                    {% endif %}
-                  </th>
-                  <td></td>
-                  <td>{{ person.note }}</td>
-                  <td>
-                    {% for phone in person.person.phones.all %}
-                      <p>{{ phone.type }} {{ phone.phone }}</p>
-                    {% endfor %}
-                  </td>
-                </tr>
+                {% if action == 'update' and person.id == id %}
+                  <form method="post" enctype="multipart/form-data" action="">
+                    {% csrf_token %}
+                    <tr>
+                      <th>
+                        {{ form.person }}
+                      </th>
+                      <td><a class="badge badge-primary" href="{% url 'new_card_responsible' card.id %}" role="button">Новый</a></td>
+                      <td>{{ form.note }}</td>
+                      <td>{{ phones }}</td>
+                      <td>{{ form.application }}</td>
+                      <td><button type="submit" class="badge badge-outline">Сохранить</button></td>
+                    </tr>
+                  </form>
+                {% else %}
+                  <tr>
+                    <th>
+                      {{ person.person }}
+                      {% if user.role == 'manager' or user.role == 'admin' %}
+                        <a class="badge badge-danger" href="{% url 'del_card_responsible' person.pk %}" role="button">Удалить</a>
+                        <a class="badge badge-info" href="{% url 'upd_responsible' person.pk %}" role="button">Изменить</a>
+                      {% endif %}
+                    </th>
+                    <td></td>
+                    <td>{{ person.note }}</td>
+                    <td>
+                      {% for phone in person.person.phones.all %}
+                        <p>{{ phone.type }} {{ phone.phone }}</p>
+                      {% endfor %}
+                    </td>
+                    <td>{{ person.application }}</td>
+                  </tr>
+                {% endif %}
               {% endfor %}
               {% if action == 'create' %}
                 <form method="post" enctype="multipart/form-data" action="">
@@ -53,18 +71,9 @@
                     </th>
                     <td><a class="badge badge-primary" href="{% url 'new_card_responsible' card.id %}" role="button">Новый</a></td>
                     <td>{{ form.note }}</td>
-                    <td>
-                      {{ phones }}
-                      <!--
-                      {% for phone in phones %}
-                        <p>{{ phone.type }} {{ phone.phone }}</p>
-                      {% endfor %}
-                      fas fa-camera
-                      badge badge-danger
-                      -->
-                    </td>
+                    <td>{{ phones }}</td>
+                    <td>{{ form.application }}</td>
                     <td><button type="submit" class="badge badge-outline">Добавить</button></td>
-                    
                   </tr>
                 </form>
               {% endif %}
@@ -74,7 +83,7 @@
       </div>
     </div>
     <br>
-    <div style="text-align: left; font-size: 12px" class="col-lg-12">
+    <div style="text-align: left; font-size: 12px" class="col-sm-12">
       <p>
         {% if user.role == 'manager' or user.role == 'admin' and user.is_authenticated %}
           <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_responsible' card.id  %}" role="button">Добавить ответственного</a>

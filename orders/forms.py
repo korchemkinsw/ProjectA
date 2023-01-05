@@ -1,20 +1,11 @@
 import django_filters
-from core.widgets import FengyuanChenDatePickerInput
 from django import forms
-from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.auth import get_user_model
 from django.forms.models import inlineformset_factory
 
-from .models import CommentOrder, ContractorsOrder, FileOrder, Order
+from .models import CommentOrder, FileOrder, Order
 
 User = get_user_model()
-
-NEW = 'новый'
-INWORK = 'в работе'
-PENDING = 'ожидающий'
-COMPLETED = 'завершен'
-REDJECTED = 'отклонен'
-EXPIRED = 'Просрочен!'
 
 class FileOrderForm(forms.ModelForm):
     class Meta:
@@ -22,52 +13,12 @@ class FileOrderForm(forms.ModelForm):
         exclude = ()
         fields = ('file', 'order',)
 
-class ContractorOrderForm(forms.ModelForm):
-    class Meta:
-        model = ContractorsOrder
-        exclude = ()
-        fields = ('contractor',)
-
-    def __init__(self, *args, **kwargs):
-        super (ContractorOrderForm,self ).__init__(*args,**kwargs)
-        self.fields['contractor'].queryset = User.objects.filter(role=User.ENGINEER)
-
-class DateInput(forms.DateInput):
-    input_type = 'date'
-
-class OrderFormCreate(forms.ModelForm):
-    class Meta:
-        model = Order
-        exclude = ()
-        fields = (
-            'number',
-            'firm',
-            'action',
-            'perday',
-            'comment',
+class OrderForm(forms.ModelForm):
+    contractor=forms.ModelMultipleChoiceField(
+        label='Исполнители',
+        queryset=User.objects.filter(role=User.ENGINEER),
+        widget=forms.widgets.CheckboxSelectMultiple()
         )
-        labels = {
-            'number': 'Номер приказа',
-            'firm': 'Организация',
-            'action': 'Действие',
-            'perday': 'Выполнить до',
-            'comment': 'Комментарий',
-        }
-
-        widgets = {'perday': DateInput(),}
-        
-    def __init__(self, *args, **kwargs):
-        super(OrderFormCreate, self).__init__(*args, **kwargs)
-        self.fields['perday'].widget=AdminDateWidget()
-        #self.fields['perday'].widget=FengyuanChenDatePickerInput()
-
-class OrderFormUpdate(forms.ModelForm):
-    STATUS_CHOICES = (
-        (INWORK, 'В работе'),
-        (COMPLETED, 'Завершен'),
-        (REDJECTED, 'Отклонен'),
-    )
-    status = forms.ChoiceField(choices=STATUS_CHOICES)
     class Meta:   
         model = Order
         exclude = ()
@@ -88,15 +39,23 @@ class OrderFormUpdate(forms.ModelForm):
             'comment': 'Пояснение',
         }
 
-        widgets = {'perday': DateInput(),}
+        widgets = {
+            'perday': forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
+            'comment': forms.Textarea(attrs={'rows': 2,'cols': 50})
+        }
         
-
     def __init__(self, *args, **kwargs):
-        super(OrderFormUpdate, self).__init__(*args, **kwargs)
-        self.fields['perday'].widget=AdminDateWidget()
-        #self.fields['perday'].widget=FengyuanChenDatePickerInput()
+        super(OrderForm, self).__init__(*args, **kwargs)
+        if self.instance.pk:
+          self.fields['contractor'].initial = self.instance.contractor.all()
 
 class OrderFilter(django_filters.FilterSet):
+    NEW = 'новый'
+    INWORK = 'в работе'
+    PENDING = 'ожидающий'
+    COMPLETED = 'завершен'
+    REDJECTED = 'отклонен'
+    EXPIRED = 'Просрочен!'
     STATUS_CHOICES = (
         (NEW, 'Новый'),
         (INWORK, 'В работе'),
@@ -105,16 +64,20 @@ class OrderFilter(django_filters.FilterSet):
         (REDJECTED, 'Отклонен'),
         (EXPIRED, 'Просрочен!')
     )
-    number = django_filters.CharFilter(field_name='number', lookup_expr='contains')
+    number = django_filters.CharFilter(
+        field_name='number',
+        widget=forms.TextInput(attrs={'style':'width:70px'}),
+        lookup_expr='contains'
+    )
     status = django_filters.ChoiceFilter(choices=STATUS_CHOICES)
     generated_gt = django_filters.DateFilter(
         field_name='generated',
-        widget=DateInput(attrs={'type': 'date'}),
+        widget=forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
         lookup_expr='gt'
         )
     generated_lt = django_filters.DateFilter(
         field_name='generated',
-        widget=DateInput(attrs={'type': 'date'}),
+        widget=forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
         lookup_expr='lte'
         )
     comment = django_filters.CharFilter(field_name='comment', lookup_expr='contains')
@@ -124,11 +87,10 @@ class OrderFilter(django_filters.FilterSet):
         fields = ['number', 'status', 'generated_gt', 'generated_lt', 'comment']
 
 class CommentForm(forms.ModelForm):
-    comment = forms.CharField(widget=forms.Textarea(attrs={'rows': 3,'cols': 70}))
+    comment = forms.CharField(widget=forms.Textarea(attrs={'rows': 2,'cols': 50}))
     class Meta:
         model = CommentOrder
         fields = ('comment',)
 
 
-ContractorOrderFormset = inlineformset_factory(Order, ContractorsOrder, form=ContractorOrderForm, extra=1)
-#FileOrderFormset = inlineformset_factory(Order, FileOrder, form=FileOrderForm, extra=1)
+FileOrderFormset = inlineformset_factory(Order, FileOrder, form=FileOrderForm, extra=1)

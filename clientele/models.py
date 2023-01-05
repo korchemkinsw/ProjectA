@@ -16,6 +16,7 @@ class Contact(models.Model):
         verbose_name='Фамилия Имя Отчество',
         max_length=150,
     )
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Контакт'
@@ -51,6 +52,7 @@ class Phone(models.Model):
         max_length=11,
         unique=True
     )
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Телефон'

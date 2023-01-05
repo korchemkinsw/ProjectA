@@ -148,7 +148,7 @@ TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
-USE_L10N = False#True
+USE_L10N = True#False
 
 USE_TZ = False
 

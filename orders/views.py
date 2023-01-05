@@ -8,8 +8,7 @@ from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from django_filters.views import FilterView
 from users.models import CustomUser
 
-from .forms import (CommentForm, ContractorOrderFormset, OrderFilter,
-                    OrderFormCreate, OrderFormUpdate)
+from .forms import CommentForm, FileOrderFormset, OrderFilter, OrderForm
 from .models import CommentOrder, FileOrder, Order
 
 
@@ -21,7 +20,7 @@ class ListOrders(LoginRequiredMixin, FilterView):
     paginate_by = 5
 
     def get_queryset(self):
-        expireds = Order.objects.filter(perday__gt=datetime.date.today()).exclude(status='завершен')
+        expireds = Order.objects.filter(perday__lt=datetime.date.today()).exclude(status='завершен')
         for expired in expireds:
             expired.status = 'Просрочен!'
             expired.save()
@@ -43,26 +42,22 @@ class ListOrders(LoginRequiredMixin, FilterView):
         context['parameters'] = parameters
         return context
 
-class CreateOrder(LoginRequiredMixin, CreateView):
-    model = Order
-    form_class = OrderFormCreate
-
 class CreateContractorOrder(LoginRequiredMixin, CreateView):
     model = Order
-    form_class = OrderFormCreate
+    form_class = OrderForm
     success_url = reverse_lazy('orders')
 
     def get_context_data(self, **kwargs):
         data = super(CreateContractorOrder, self).get_context_data(**kwargs)
         if self.request.POST:
-            data['contractors'] = ContractorOrderFormset(self.request.POST)
+            data['files'] = FileOrderFormset(self.request.POST, self.request.FILES)
         else:
-            data['contractors'] = ContractorOrderFormset()
+            data['files'] = FileOrderFormset()
         return data
 
     def form_valid(self, form):
         context = self.get_context_data()
-        contractors = context['contractors']
+        files = context['files']
         with transaction.atomic():
             
             self.object = form.save(commit=False)
@@ -73,9 +68,9 @@ class CreateContractorOrder(LoginRequiredMixin, CreateView):
             self.object.changed = datetime.datetime.today()
             self.object = form.save()
 
-            if contractors.is_valid():
-                contractors.instance = self.object
-                contractors.save()
+            if files.is_valid():
+                files.instance = self.object
+                files.save()
         return super(CreateContractorOrder, self).form_valid(form)
 
 class UpdateOrder(LoginRequiredMixin, UpdateView):
@@ -87,23 +82,36 @@ class UpdateOrder(LoginRequiredMixin, UpdateView):
 
 class UpdateContractorOrder(LoginRequiredMixin, UpdateView):
     model = Order
-    form_class = OrderFormUpdate
+    form_class = OrderForm
 
     def get_success_url(self):
        pk = self.kwargs['pk']
        return reverse('order', kwargs={'pk': pk})
 
     def get_context_data(self, **kwargs):
+        NEW = 'новый'
+        INWORK = 'в работе'
+        PENDING = 'ожидающий'
+        COMPLETED = 'завершен'
+        REDJECTED = 'отклонен'
+        EXPIRED = 'Просрочен!'
+
+        STATUS_CHOICES = (
+            (INWORK, 'В работе'),
+            (COMPLETED, 'Завершен'),
+            (REDJECTED, 'Отклонен'),
+        )
         data = super(UpdateContractorOrder, self).get_context_data(**kwargs)
+        data['form'].fields['status'].widget.choices = STATUS_CHOICES
         if self.request.POST:
-            data['contractors'] = ContractorOrderFormset(self.request.POST, instance=self.object)
+            data['files'] = FileOrderFormset(self.request.POST, self.request.FILES, instance=self.object)
         else:
-            data['contractors'] = ContractorOrderFormset(instance=self.object)
+            data['files'] = FileOrderFormset(instance=self.object)
         return data
 
     def form_valid(self, form):
         context = self.get_context_data()
-        contractors = context['contractors']
+        files = context['files']
         with transaction.atomic():
             self.object = form.save(commit=False)
             self.object.lastuser = self.request.user
@@ -112,9 +120,9 @@ class UpdateContractorOrder(LoginRequiredMixin, UpdateView):
                 self.object.status = 'Новый'
             self.object = form.save()
 
-            if contractors.is_valid():
-                contractors.instance = self.object
-                contractors.save()
+            if files.is_valid():
+                files.instance = self.object
+                files.save()
         return super(UpdateContractorOrder, self).form_valid(form)
 
 class DeleteOrder(LoginRequiredMixin, DeleteView):
@@ -150,10 +158,17 @@ class DeleteDocument(DeleteView):
 class CreateComment(CreateView):
     model = CommentOrder
     form_class = CommentForm
+    template_name = 'orders/order_detail.html'
     
     def get_success_url(self):
        pk = self.kwargs['pk']
        return reverse('order', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        data = super(CreateComment, self).get_context_data(**kwargs)
+        data['order'] = get_object_or_404(Order, id=self.kwargs['pk'])
+        data['action'] = 'create_comment'
+        return data
 
     def form_valid(self, form):
         with transaction.atomic():

@@ -5,30 +5,24 @@
 {% block content %}
 {% load user_filters %}
 <div class="row justify-content-center">
-    <div class="col-md-12">
+    <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
-          <h3>Приказ</h3>
+          <h5>Приказ</h5>
         </div>
         <div class="card-body">
           <form action="" method="post">
             {% csrf_token %}
             {% for field in form %}
               <div class="form-group row" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
-                <label for="{{ field.id_for_label }}" class="col-md-2 col-form-label text-md-left">
+                <label for="{{ field.id_for_label }}" class="col-sm-2 col-form-label text-sm-left">
                   {{ field.label }}
                   {% if field.field.required %}
                     <span class="required">*</span>
                   {% endif %}
                 </label>
-                <div class="col-md-6">
-
-                  {# подключаем фильтр и указываем класс #}
-                  {% if field.id_for_label == 'id_perday' %}
-                      {{ field }}
-                  {% else %}
-                    {{ field|addclass:"form-control" }}
-                  {% endif %}
+                <div class="col-sm-6">
+                  {{ field }}
                   {% if field.help_text %}
                     <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
                   {% endif %}
@@ -36,8 +30,8 @@
               </div>
             {% endfor %}
             <table class="table">
-              {{ contractors.management_form }}
-              {% for form in contractors.forms %}
+              {{ files.management_form }}
+              {% for form in files.forms %}
                 {% if forloop.first %}
                   <thead>
                     <tr>
@@ -67,16 +61,14 @@
             <a class="btn btn-primary" href="{% url 'orders' %}" role="button">Приказы</a>
           </form>
         </div>
-
         <script src="{% static 'js/jquery.formset.js' %}"></script>
         <script type="text/javascript">
             $('.formset_row').formset({
-              addText: 'Добавить исполнителя',
+              addText: 'Добавить файл',
               deleteText: 'Удалить',
-              prefix: 'contractors'
+              prefix: 'files'
             });
         </script>
-
       </div>
     </div>
 </div>

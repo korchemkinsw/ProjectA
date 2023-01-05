@@ -512,8 +512,6 @@ class CreateResponsible(UserPassesTestMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         data = super(CreateResponsible, self).get_context_data(**kwargs)
-        #form = PersonForm(self.request.POST)
-        #data['phones'] = form.save(commit=False)
         data['action'] = 'create'
         data['responsible'] = 'active'
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
@@ -533,11 +531,29 @@ class CreateNewResponsible(CreateContact):
        pk = self.kwargs['pk']
        return reverse('add_card_responsible', kwargs={'pk': pk})
 
-class UpdateResponsible(UpdateContact):
+class UpdateResponsible(UserPassesTestMixin, UpdateView):
+    model = Person
+    form_class = PersonForm
+    template_name = 'object_card/card_responsible_detail.html'
+
+    def test_func(self):
+        if self.request.user.role in ('manager', 'admin'):
+            return True
+        return False
+
     def get_success_url(self):
-        person = get_object_or_404(Person, id=self.kwargs['pk'],)
-        pk = person.card.pk
+        person=get_object_or_404(Person, id=self.kwargs['pk'])
+        pk=person.card.pk
         return reverse('card_responsible', kwargs={'pk': pk})
+    
+    def get_context_data(self, **kwargs):
+        person=get_object_or_404(Person, id=self.kwargs['pk'])
+        data = super(UpdateResponsible, self).get_context_data(**kwargs)
+        data['id'] = person.id
+        data['action'] = 'update'
+        data['responsible'] = 'active'
+        data['card'] = person.card
+        return data
 
 class DeleteResponsible(UserPassesTestMixin, DeleteView):
     model = Person

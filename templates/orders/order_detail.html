@@ -1,115 +1,119 @@
 {% extends "base.html" %}
 {% block title %}{{ order }}{% endblock %}
-{% load static %}
 {% block content %}
-<div style="text-align: center; font-size: 14px" class="row justify-content-center">
-  <div class="col-12">
+<!--div style="text-align: center; font-size: 12px" class="row justify-content-left">
+  <div class="col-12"-->
     <div class="card">
       <div class="card-header">
         <h5>Приказ №{{ order.number }} по предприятию: {{ order.firm }}: {{ order.action }}</h5>
       </div>
       <div class="card-body">
-        <table style="text-align: left" class="table table">
-          <thead>
-            <tr>
-              <th scope="col">Статус</th>
-              <th scope="col">Создал:</th>
-              <th scope="col">Дата создания:</th>
-              <th scope="col">Выполнить до:</th>
-              <th scope="col">Изменил:</th>
-              <th scope="col">Дата изменения:</th>
-              <th scope="col">Исполнители</th>
-            </tr>
-          </thead>
-          <tbody>
-            <td>{{ order.status }}</td>
-            <td>
-              {{ order.author.last_name }}
-              {{ order.author.first_name|first }}.{{ order.author.fathers_name|first }}.
-            </td>
-            <td>{{ order.generated|date:"d.m.Y" }}:{{ order.generated|time:"H:i" }}</td>
-            <td>{{ order.perday|date:"d.m.Y" }}</td>
-            <td>
-              {{ order.lastuser.last_name }}
-              {{ order.lastuser.first_name|first }}.{{ order.lastuser.fathers_name|first }}.
-            </td>
-            <td>{{ order.changed|date:"d.m.Y" }}:{{ order.changed|time:"H:i" }}</td>
-            <td>
-              {% for contractor in order.contractor.all %}
-                {{ contractor.last_name }}
-                {{ contractor.first_name|first }}.{{ contractor.fathers_name|first }}.&nbsp;&nbsp;
-              {% endfor %}
-            </td>
-           </tbody>
-        </table>
-        {% if order.comment %}
-          <table style="text-align: left" class="table table">
+        <div style="text-align: left; font-size: 12px" class="table">
+          <table class="table table-sm">
             <thead>
               <tr>
-                <th scope="col">Примечание:</th>
+                <th scope="col">Статус</th>
+                <th scope="col">Создал:</th>
+                <th scope="col">Дата создания:</th>
+                <th scope="col">Выполнить до:</th>
+                <th scope="col">Изменил:</th>
+                <th scope="col">Дата изменения:</th>
+                <th scope="col">Исполнители</th>
               </tr>
             </thead>
             <tbody>
-              <td>{{ order.comment }}</td>
+              <tr>
+                <td>{{ order.status }}</td>
+                <td>
+                  {{ order.author.last_name }}
+                  {{ order.author.first_name|first }}.{{ order.author.fathers_name|first }}.
+                </td>
+                <td>{{ order.generated|date:"d.m.Y" }}:{{ order.generated|time:"H:i" }}</td>
+                <td>{{ order.perday|date:"d.m.Y" }}</td>
+                <td>
+                  {{ order.lastuser.last_name }}
+                  {{ order.lastuser.first_name|first }}.{{ order.lastuser.fathers_name|first }}.
+                </td>
+                <td>{{ order.changed|date:"d.m.Y" }}:{{ order.changed|time:"H:i" }}</td>
+                <td>
+                  {% for contractor in order.contractor.all %}
+                    {{ contractor.last_name }}
+                    {{ contractor.first_name|first }}.{{ contractor.fathers_name|first }}.&nbsp;&nbsp;
+                  {% endfor %}
+                </td>
+              </tr>
             </tbody>
           </table>
-        {% endif %}
-        <table style="text-align: left" class="table table">
-          <thead>
-            <tr>
-              <th scope="col">
-                Файлы:&nbsp;&nbsp;
-                {% if user.role == 'secretary' %}
-                  <a class="badge rounded-pill bg-primary text-white" href="{% url 'add_doc' order.id  %}" role="button">Добавить</a>
-                {% endif %}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <td>
-              {% for file in order.files.all %}
-                <li>
-                  <a href="{{ file.file.url }}">{{ file.file }}&nbsp;&nbsp;</a>
-                  {% if user.role == 'secretary' %}
-                    <a class="badge rounded-pill bg-danger text-white" href="{% url 'del_doc' file.id %}" role="button">Удалить</a>
-                  {% endif %}
-                </li>
-              {% endfor %}
-            </td>
-          </tbody>
-        </table>
-        <table style="text-align: left" class="table table">
-          <thead>
-            <tr>
-              <th scope="col">
-                Комментарии:&nbsp;&nbsp;
-                <a class="badge rounded-pill bg-primary text-white" href="{% url 'add_comment' order.id  %}" role="button">Добавить</a>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <td>
+          {% if order.comment %}
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th scope="col">Примечание:</th>
+                </tr>
+              </thead>
+              <tbody>
+                <td>{{ order.comment }}</td>
+              </tbody>
+            </table>
+          {% endif %}
+          {% if order.files.all %}
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th scope="col">Файлы:</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for file in order.files.all %}
+                  <td><a href="{{ file.file.url }}">{{ file.file }}</a></td>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
+          <table class="table table-sm">
+            <thead>
+              <tr class="d-flex">
+                <th class="col-2">
+                  Комментарии:&nbsp;&nbsp;
+                  <a class="badge rounded-pill bg-primary text-white" href="{% url 'add_comment' order.id  %}" role="button">Добавить</a>
+                </th>
+                <th class="col-3"></th>
+                <th class="col-7"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if action == 'create_comment' %}
+                <tr>
+                  <td>
+                    <form method="post" enctype="multipart/form-data" action="">
+                      {% csrf_token %}
+                      {{ form.comment }}
+                      <br>
+                      <button type="submit" class="btn btn-outline-success btn-sm">Добавить</button>
+                    </form>
+                  </td>
+                </tr>
+              {% endif %}
               {% for comment in order.comments.all %}
-                <div class="row">
-                  <div class="col-5">
-                    {{ comment.created|date:"d.m.Y" }}:{{ comment.created|time:"H:i" }}  {{ comment.author }}:&nbsp;&nbsp;
-                  </div>
-                  <div class="col">
-                    {{ comment.comment }}
-                  </div>
-                </div>
+                <tr class="d-flex">
+                  <td class="col-2">{{ comment.created|date:"d.m.Y" }}:{{ comment.created|time:"H:i" }}</td>
+                  <td class="col-3">{{ comment.author }}</td>
+                  <td class="col-7">{{ comment.comment }}</td>
+                </tr>
               {% endfor %}
-            </td>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         <br>
-        <a class="btn btn-primary" href="{% url 'orders' %}" role="button">Приказы</a>
-        <a class="btn btn-primary" href="{% url 'update_order' order.id  %}" role="button">Редактировать</a>
-        {% if user.role == 'secretary' %}
-          <a class="btn btn-danger" href="{% url 'delete_order' order.id %}">Удалить</a>
-        {% endif %}
+        <div>
+          <a class="btn btn-outline-primary btn-sm" href="{% url 'orders' %}" role="button">Приказы</a>
+          <a class="btn btn-outline-primary btn-sm" href="{% url 'update_order' order.id  %}" role="button">Редактировать</a>
+          {% if user.role == 'secretary' %}
+            <a class="btn btn-outline-danger btn-sm" href="{% url 'delete_order' order.id %}">Удалить</a>
+          {% endif %}
+        </div>
       </div>
     </div>
-  </div>
-</div>
+  <!--/div>
+</div-->
 {% endblock %}

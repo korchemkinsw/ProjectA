@@ -5,7 +5,6 @@ from .forms import PersonForm, QteamForm, ZoneForm
 from .models import (Card, CardPhoto, Device, Partition, Person, Qteam, Sim,
                      Zone)
 
-
 class DeviceSimInline(admin.TabularInline):
     model = Sim
     min_num = 1

@@ -440,6 +440,11 @@ class Zone(models.Model):
         return f'{self.device} | {self.partition} | {self.number} {self.name}'
 
 class Person(models.Model):
+    APPLICATION = (
+        ('MyAlarm', 'MyAlarm'),
+        ('GeoRitm', 'GeoRitm'),
+        ('PhoenixMK', 'PhoenixMK'),
+    )
     card = models.ForeignKey(
         Card,
         verbose_name='Объект',
@@ -458,6 +463,13 @@ class Person(models.Model):
         verbose_name='Примечание',
         null=True,
         blank=True,
+    )
+    application = models.CharField(
+        max_length=9,
+        choices=APPLICATION,
+        null=True,
+        blank=True,
+        verbose_name='Приложение',
     )
     history = HistoricalRecords()
 

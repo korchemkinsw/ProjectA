@@ -3,20 +3,10 @@
 {% block content %}
 <div class="card">
   <div class="card-header">
-    <h3>Приказы</h3>
+    <h5>Приказы</h5>
   </div>
-  <div class="card-body" style="text-align: left; font-size: 14px">
-    <form method="get">
-      <p>
-        Статус: {{ filter.form.status }}&nbsp;&nbsp;
-        Номер: {{ filter.form.number }}&nbsp;&nbsp;
-        Примечание: {{ filter.form.comment }}&nbsp;&nbsp;
-        Дата от: {{ filter.form.generated_gt }}&nbsp;&nbsp;
-        Дата до: {{ filter.form.generated_lt }}&nbsp;&nbsp;
-        <input type="submit" value="Найти" />
-      </p>
-    </form>
-    <div style="text-align: center; font-size: 14px" class="table-responsive">
+  <div class="card-body">
+    <div style="text-align: left; font-size: 12px" class="table-responsive">
       <table class="table table-sm">
         <thead>
           <tr>
@@ -26,11 +16,26 @@
             <th scope="col">Предприятие</th>
             <th scope="col">Что сделать</th>
             <th scope="col">Выполнить до:</th>
+            <th scope="col">Примечание</th>
             <th scope="col">Назначен</th>
             <th scope="col">Файлы</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
+          <form method="get">
+            <tr>
+              <td>{{ filter.form.status }}</td>
+              <td>{{ filter.form.number }}</td>
+              <td>{{ filter.form.generated_lt }}</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>{{ filter.form.comment }}</td>
+              <td></td>
+              <td><input type="submit" value="Найти" /></td>
+            </tr>
+          </form>
           {% for order in page_obj %}
             <tr>
               <td>
@@ -53,6 +58,7 @@
               <td> 
                 {{ order.perday|date:"d.m.Y" }}
               </td>
+              <td>{{ order.comment|truncatechars:10 }}</td>
               <td>
                 {% for contractor in order.contractor.all %}
                   <p>
@@ -98,7 +104,7 @@
     <div>
       {% if user.role == 'secretary' or user.role == 'admin' %}
       <p>
-        <a class="btn btn-primary" href="{% url 'new_order' %}" role="button">Создать</a>
+        <a class="btn btn-outline-primary btn-sm" href="{% url 'new_order' %}" role="button">Создать</a>
       </p>
       {% endif %}
     </div>
