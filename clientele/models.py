@@ -1,8 +1,7 @@
 import datetime
 import os
-from email.policy import default
-from trace import Trace
-
+import re
+from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.db import models
 from enterprises.models import Enterprise
@@ -25,6 +24,16 @@ class Contact(models.Model):
     def __str__(self):
         return self.name
 
+    def clean(self):
+        if not re.fullmatch(r'^[А-ЯЁ][а-яё]+[\S]+[\s][А-ЯЁ][а-яё]+[\s][А-ЯЁ][\D]+', str(self.name)):
+            raise ValidationError(
+                {'name': 'Фамилия Имя Отчество'}
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
+
 class Phone(models.Model):
     MOBILE = 'мобильный'
     HOME = 'домашний'
@@ -46,11 +55,13 @@ class Phone(models.Model):
         max_length=10,
         choices=TYPES,
         verbose_name='тип телефона',
+        blank=True,
     )
     phone = models.CharField(
         verbose_name='номер телефона',
         max_length=11,
-        unique=True
+        unique=True,
+        blank=True,
     )
     history = HistoricalRecords()
 

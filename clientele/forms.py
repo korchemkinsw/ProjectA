@@ -26,12 +26,6 @@ class PhoneForm(forms.ModelForm):
         }
 
 class ContactForm(forms.ModelForm):
-    def clean_name(self):
-        data = self.cleaned_data['name']
-        if not re.fullmatch(r'^[А-ЯЁ][а-яё]+[\S]+[\s][А-ЯЁ][а-яё]+[\s][А-ЯЁ][\D]+', str(data)):
-            raise forms.ValidationError("Фамилия Имя Отчество")
-        return data
-
     class Meta:
         model = Contact
         exclude = ()
@@ -54,7 +48,7 @@ class ContactFilter(django_filters.FilterSet):
 class IndividualForm(forms.ModelForm):
     def clean_num_pass(self):
         data = self.cleaned_data['num_pass']
-        if not re.fullmatch(r'^[0-9]{4}[\s][0-9]{6}', data):
+        if not re.fullmatch(r'^[0-9]{4}[\s][0-9]{6}', str(data)):
             raise forms.ValidationError("Серия и номер паспорта в формате: ХХХХ ХХХХХХ")
         return data
 

@@ -29,7 +29,7 @@ class FilterContact(FilterView):
     context_object_name = 'filter'
     template_name = 'clientele/contacts_filter.html'
     filterset_class = ContactFilter
-    paginate_by = 5
+    paginate_by = 10
 
 class CreateContact(UserPassesTestMixin, CreateView):
     model = Contact

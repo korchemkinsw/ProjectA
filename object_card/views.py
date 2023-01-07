@@ -17,8 +17,8 @@ from .forms import (CardContractForm, CardFilter, CardGPSForm,
                     CardIndividualForm, CardLegalForm, CardQnoteForm,
                     DeviceForm, DeviceNoneForm, DeviceUpdateForm,
                     PartitionFormset, PersonForm, PhotoFormset, QteamForm,
-                    SimFormset, ZoneFormset)
-from .models import Card, Device, Partition, Person, Qteam
+                    SimFormset, ZoneFormset, GPSForm)
+from .models import Card, Device, Partition, Person, Qteam, GPS
 
 
 class QteamAutocomplete(autocomplete.Select2QuerySetView):
@@ -496,6 +496,63 @@ class CardZone(UserPassesTestMixin, UpdateView):
             else:
                 return super().form_invalid(form)
 
+class CreateCardGPS(UserPassesTestMixin, CreateView):
+    model = GPS
+    form_class = GPSForm
+    template_name = 'object_card\card_detail.html'
+
+    def test_func(self):
+        if self.request.user.role in ('engineer', 'technican', 'admin'):
+            return True
+        return False
+
+    def get_success_url(self):
+        pk = self.kwargs['pk']
+        return reverse('card', kwargs={'pk': pk})
+    
+    def get_context_data(self, **kwargs):
+        data = super(CreateCardGPS, self).get_context_data(**kwargs)
+        data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
+        data['cards'] = 'active'
+        data['action'] = 'gps_create'
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        with transaction.atomic(): 
+            self.object = form.save(commit=False)
+            self.object.card = context['card']
+            return super(CreateCardGPS, self).form_valid(form)
+
+class UpdateCardGPS(UserPassesTestMixin, UpdateView):
+    model = GPS
+    form_class = GPSForm
+    template_name = 'object_card\card_detail.html'
+
+    def test_func(self):
+        if self.request.user.role in ('engineer', 'technican', 'admin'):
+            return True
+        return False
+
+    def get_success_url(self):
+        card_gps = get_object_or_404(GPS, id=self.kwargs['pk'],)
+        pk = card_gps.card.pk
+        return reverse('card', kwargs={'pk': pk})
+    
+    def get_context_data(self, **kwargs):
+        data = super(UpdateCardGPS, self).get_context_data(**kwargs)
+        data['card'] = get_object_or_404(GPS, id=self.kwargs['pk']).card
+        data['cards'] = 'active'
+        data['action'] = 'gps_create'
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        with transaction.atomic(): 
+            self.object = form.save(commit=False)
+            self.object.card = context['card']
+            return super(UpdateCardGPS, self).form_valid(form)
+
 class CreateResponsible(UserPassesTestMixin, CreateView):
     model = Person
     form_class = PersonForm
@@ -526,10 +583,15 @@ class CreateResponsible(UserPassesTestMixin, CreateView):
             self.object = form.save()
             return super(CreateResponsible, self).form_valid(form)
 
-class CreateNewResponsible(CreateContact):
+class UpdateNewResponsible(UpdateContact):
     def get_success_url(self):
-       pk = self.kwargs['pk']
-       return reverse('add_card_responsible', kwargs={'pk': pk})
+        person=get_object_or_404(Person, id=self.kwargs['pk'])
+        pk = person.card.id
+        return reverse('card_responsible', kwargs={'pk': pk})
+
+    def get_object(self, queryset=None):
+        person=get_object_or_404(Person, id=self.kwargs['pk'])
+        return person.person
 
 class UpdateResponsible(UserPassesTestMixin, UpdateView):
     model = Person

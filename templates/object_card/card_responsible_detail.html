@@ -33,9 +33,10 @@
                     {% csrf_token %}
                     <tr>
                       <th>
+                        {{ field.errors.as_ul }}
                         {{ form.person }}
                       </th>
-                      <td><a class="badge badge-primary" href="{% url 'new_card_responsible' card.id %}" role="button">Новый</a></td>
+                      <td></td>
                       <td>{{ form.note }}</td>
                       <td>{{ phones }}</td>
                       <td>{{ form.application }}</td>
@@ -48,12 +49,15 @@
                       {{ person.person }}
                       {% if user.role == 'manager' or user.role == 'admin' %}
                         <a class="badge badge-danger" href="{% url 'del_card_responsible' person.pk %}" role="button">Удалить</a>
-                        <a class="badge badge-info" href="{% url 'upd_responsible' person.pk %}" role="button">Изменить</a>
+                        <a class="badge badge-info" href="{% url 'upd_card_responsible' person.pk %}" role="button">Изменить</a>
                       {% endif %}
                     </th>
                     <td></td>
                     <td>{{ person.note }}</td>
                     <td>
+                      {% if not person.person.phones.all %}
+                        <a class="badge badge-primary" href="{% url 'upd_new_responsible' person.pk %}" role="button">добавить телефоны</a>
+                      {% endif %}
                       {% for phone in person.person.phones.all %}
                         <p>{{ phone.type }} {{ phone.phone }}</p>
                       {% endfor %}
@@ -67,9 +71,10 @@
                   {% csrf_token %}
                   <tr>
                     <th>
+                      {{ field.errors.as_ul }}
                       {{ form.person }}
                     </th>
-                    <td><a class="badge badge-primary" href="{% url 'new_card_responsible' card.id %}" role="button">Новый</a></td>
+                    <td></td>
                     <td>{{ form.note }}</td>
                     <td>{{ phones }}</td>
                     <td>{{ form.application }}</td>

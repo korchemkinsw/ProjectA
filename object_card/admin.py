@@ -1,9 +1,9 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
-from .forms import PersonForm, QteamForm, ZoneForm
+from .forms import PersonForm, QteamForm, ZoneForm, GPSForm
 from .models import (Card, CardPhoto, Device, Partition, Person, Qteam, Sim,
-                     Zone)
+                     Zone, GPS)
 
 class DeviceSimInline(admin.TabularInline):
     model = Sim
@@ -35,6 +35,13 @@ class DeviceAdmin(SimpleHistoryAdmin):
     inlines = [DeviceSimInline, DevicePartitionInline, DeviceZoneInline]
     empty_value_display = '-пусто-'
 
+class CardGPSInline(admin.TabularInline):
+    model = GPS
+    form = GPSForm
+    min_num = 1
+    max_num = 1
+    extra = 1
+
 class CardQteamInline(admin.TabularInline):
     model = Qteam
     form = QteamForm
@@ -56,16 +63,16 @@ class CardPhotoInline(admin.TabularInline):
 class CardAdmin(SimpleHistoryAdmin):
     list_display = (
         'status', 'legal', 'individual', 'object_name',
-        'phone', 'address', 'width', 'longitude',
+        'phone', 'address',
         'transmission', 'device', 'note', 'contract', 'qnote',
         'manager', 'generated', 'director', 'changed',
         )
     fields = [
         'status', 'legal', 'individual', 'object_name',
-        'phone', 'address', 'width', 'longitude',
+        'phone', 'address',
         'transmission', 'device', 'note', 'contract', 'qnote',
         'manager', 'generated', 'director', 'changed',
         ]
     search_fields = ('device', 'legal', 'individual', 'address',)
-    inlines = [CardQteamInline, CardPersonInline, CardPhotoInline]
+    inlines = [CardGPSInline, CardQteamInline, CardPersonInline, CardPhotoInline]
     empty_value_display = '-пусто-'

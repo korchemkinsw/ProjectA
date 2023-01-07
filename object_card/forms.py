@@ -4,7 +4,7 @@ from django import forms
 from django.forms.models import inlineformset_factory
 
 from .models import (Card, CardPhoto, Device, Partition, Person, Qteam, Sim,
-                     Zone)
+                     Zone, GPS)
 
 
 class DeviceForm(forms.ModelForm):
@@ -35,15 +35,21 @@ class DeviceNoneForm(forms.ModelForm):
 class SimForm(forms.ModelForm):
     class Meta:
         model = Sim
-        exclude =()
+        exclude = ()
         fields = ('part_sim', 'iccid', 'msisdn', 'image')
 
 class QteamForm(forms.ModelForm):
     class Meta:
         model = Qteam
-        exclude =()
+        exclude = ()
         fields = ('qteam', 'type')
         widgets = {'qteam': autocomplete.ModelSelect2(url='qteam-autocomplete'),}
+
+class GPSForm(forms.ModelForm):
+    class Meta:
+        model = GPS
+        exclude = ()
+        fields = ('gps',)
 
 class PartitionForm(forms.ModelForm):
     class Meta:
@@ -130,7 +136,7 @@ class PersonForm(forms.ModelForm):
     class Meta:
         model = Person
         exclude =()
-        fields = ('person', 'note', 'application')
+        fields = ('number', 'person', 'note', 'application')
         widgets = {
             'person': autocomplete.ModelSelect2(
                 url='person-autocomplete',

@@ -9,7 +9,7 @@ from django_filters.views import FilterView
 from users.models import CustomUser
 
 from .forms import CommentForm, FileOrderFormset, OrderFilter, OrderForm
-from .models import CommentOrder, FileOrder, Order
+from .models import CommentOrder, Order
 
 
 class ListOrders(LoginRequiredMixin, FilterView):
@@ -73,13 +73,6 @@ class CreateContractorOrder(LoginRequiredMixin, CreateView):
                 files.save()
         return super(CreateContractorOrder, self).form_valid(form)
 
-class UpdateOrder(LoginRequiredMixin, UpdateView):
-    model = Order
-    
-    def get_success_url(self):
-       pk = self.kwargs['pk']
-       return reverse('order', kwargs={'pk': pk})
-
 class UpdateContractorOrder(LoginRequiredMixin, UpdateView):
     model = Order
     form_class = OrderForm
@@ -116,8 +109,8 @@ class UpdateContractorOrder(LoginRequiredMixin, UpdateView):
             self.object = form.save(commit=False)
             self.object.lastuser = self.request.user
             self.object.changed = datetime.datetime.today()
-            if self.object.author == self.request.user:
-                self.object.status = 'Новый'
+            #if self.object.author == self.request.user:
+            #    self.object.status = 'Новый'
             self.object = form.save()
 
             if files.is_valid():
@@ -131,29 +124,6 @@ class DeleteOrder(LoginRequiredMixin, DeleteView):
 
 class DetailOrder(DetailView):
     model = Order
-
-class CreateDocument(CreateView):
-    model = FileOrder
-    fields = ['file']
-     
-    def get_success_url(self):
-       pk = self.kwargs['pk']
-       return reverse('order', kwargs={'pk': pk})
-
-    def form_valid(self, form):
-        with transaction.atomic():
-            self.object = form.save(commit=False)
-            self.object.order = get_object_or_404(Order, id=self.kwargs['pk'])
-            self.object = form.save()
-        return super(CreateDocument, self).form_valid(form)
-
-class DeleteDocument(DeleteView):
-    model = FileOrder
-    fields = ['file']
-
-    def get_success_url(self):
-       file = get_object_or_404(FileOrder, id=self.kwargs['pk'])
-       return reverse('order', kwargs={'pk':file.order.id})
 
 class CreateComment(CreateView):
     model = CommentOrder

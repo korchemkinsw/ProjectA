@@ -42,7 +42,24 @@
             </tr>
             <tr>
               <th class="col-lg-3">Координаты: </th>
-              <td class="col-lg-9">{{ card.width }} {{ card.longitude }}</td>
+              <td class="col-lg-9">
+                {% if not card.card_gps.all and action != 'gps_create' %}
+                  <a class="badge badge-primary" href="{% url 'add_card_gps' card.pk %}" role="button">добавить</a>
+                {% endif %}
+                {% if card.card_gps.all and action != 'gps_create' %}
+                  {{ card.card_gps.first.gps }}
+                  <a class="badge badge-info" href="{% url 'upd_card_gps' card.card_gps.first.pk %}" role="button">изменить</a>
+                {% endif %}
+                {% if action == 'gps_create' %}
+                  <form method="post" enctype="multipart/form-data" action="">
+                    {% csrf_token %}
+                    {{ form.errors.as_ul }}
+                    {{ form.gps }}
+                    <button type="submit" class="badge badge-outline">сохранить</button>
+                  </form>
+                
+                {% endif %}
+              </td>
             </tr>
             {% for app in card.contract.all %}
               <tr>

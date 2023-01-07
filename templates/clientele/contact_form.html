@@ -30,7 +30,8 @@
                 </th>
                 <td>
                   {# подключаем фильтр и указываем класс #}
-                  {{ field|addclass:"form-control" }}
+                  {{ field.errors.as_ul }}
+                  {{ field }}
                   {% if field.help_text %}
                     <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
                   {% endif %}

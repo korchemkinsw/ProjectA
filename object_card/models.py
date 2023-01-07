@@ -1,5 +1,6 @@
 import os
-
+import re
+from django.core.exceptions import ValidationError
 from clientele.models import Contract, Individual, Legal, Contact
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -339,6 +340,40 @@ class Card(models.Model):
         if self.individual:
             return f'{self.individual} {self.object_name} {self.address}'
 
+class GPS(models.Model):
+    card = models.ForeignKey(
+        Card,
+        verbose_name='Объект',
+        help_text='Объект',
+        null=True,
+        on_delete=models.CASCADE,
+        related_name='card_gps',
+    )
+    gps = models.CharField(
+        max_length=19,
+        verbose_name='координаты GPS',
+        help_text='координаты GPS',
+        blank=True,
+        null=True
+    )
+
+    class Meta:
+        verbose_name = 'координаты GPS'
+        verbose_name_plural = 'координаты GPS'
+
+    def __str__(self):
+        return f'{self.gps} {self.card.address[:50]}...'
+
+    def clean(self):
+        if not re.fullmatch(r'^[5-6][0-9][,][0-9]{6}[\s][2-4][0-9][,][0-9]{6}', str(self.gps)):
+            raise ValidationError(
+                {'gps': 'Координаты не верны'}
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
+
 class Qteam(models.Model):
     BASIC = 'основная'
     RESERVE = 'резервная'
@@ -385,9 +420,9 @@ class Partition(models.Model):
         on_delete=models.CASCADE,
         related_name='partition',
     )
-    number = models.IntegerField(
-        verbose_name='Номер раздела',
-        help_text='Номер раздела',
+    number = models.PositiveIntegerField(
+        verbose_name='№',
+        help_text='№',
     )
     name = models.CharField(
         max_length=20,
@@ -420,9 +455,9 @@ class Zone(models.Model):
         null=True,
         on_delete=models.CASCADE,
     )
-    number = models.IntegerField(
-        verbose_name='Номер зоны',
-        help_text='Номер зоны',
+    number = models.PositiveIntegerField(
+        verbose_name='№',
+        help_text='№',
     )
     name = models.CharField(
         max_length=20,
@@ -452,6 +487,10 @@ class Person(models.Model):
         null=True,
         on_delete=models.CASCADE,
         related_name='card_person',
+    )
+    number = models.PositiveIntegerField(
+        verbose_name='№',
+        help_text='№',
     )
     person = models.ForeignKey(
         Contact,
