@@ -48,7 +48,7 @@
             {% if not card.address  %}
               <p>Карточка: Необходимо указать адрес объекта</p>
             {% endif %}
-            {% if not card.width or not card.longitude %}
+            {% if not card.card_gps.all %}
               <p>Карточка: Необходимо указать GPS-координаты объекта</p>
             {% endif %}
             {% if card.device  %}

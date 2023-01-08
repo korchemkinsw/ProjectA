@@ -9,18 +9,18 @@
 {% endblock %}
 {% load static %}
 {% block content %}
-  <div class="col-lg-12">
+  <div class="col-sm-12">
     {% include "includes/card_nav.html" %}
     <div style="text-align: left; font-size: 12px" class="row justify-content-center">
       {% include "includes/card_head.html" %}
-      <div class="col-lg-12">
+      <div class="col-sm-12">
       <div style="text-align: left; font-size: 12px" class="table-bordered">
         <table class="table table-sm">
           {% if card.card_qtem.all or action == 'create' %}
             <thead>
-              <th class="col-lg-3">Группа реагирования: </th>
-              <th class="col-lg-4">Телефон группы: </th>
-              <th class="col-lg-3">Тип группы: </th>
+              <th class="col-sm-3">Группа реагирования: </th>
+              <th class="col-sm-4">Телефон группы: </th>
+              <th class="col-sm-3">Тип группы: </th>
               <th></th>
             </thead>
             <tbody>
@@ -68,10 +68,10 @@
         
         <table class="table table-sm">
           <thead>
-            <th class="col-lg-3">Инструкции для группы: </th>
+            <th class="col-sm-3">Инструкции для группы: </th>
           </thead>
           <tbody> 
-            <td class="col-lg-9">
+            <td class="col-sm-9">
               {% if action == 'qnote' %}
                 <form method="post" enctype="multipart/form-data" action="">
                   {% csrf_token %}
@@ -90,7 +90,7 @@
       </div>
     </div>
     <br>
-    <div style="text-align: left; font-size: 12px" class="col-lg-12">
+    <div style="text-align: left; font-size: 12px" class="col-sm-12">
       <p>
         {% if user.role == 'director' or user.role == 'admin' and user.is_authenticated %}
           {% if not card.qteam %}

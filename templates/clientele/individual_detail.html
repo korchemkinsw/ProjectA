@@ -6,7 +6,7 @@
   <div class="col-12">
     <div class="card">
       <div class="card-header">
-        <h5>{{ individual.name.last_name }} {{ individual.name.first_name }} {{ individual.name.fathers_name }}</h5>
+        <h5>{{ individual.name }} </h5>
       </div>
       <div class="card-body">
         <div style="text-align: left; font-size: 12px" class="table-responsive">
@@ -64,7 +64,7 @@
           <br>
           <p>
             {% if user.role == 'manager' or user.role == 'admin' and user.is_authenticated %}
-              <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_individ' individual.pk %}" role="button">Создать карточку объекта</a>
+              <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_individual' individual.pk %}" role="button">Создать карточку объекта</a>
             {% endif %}
             {% if user.role == 'director' or user.role == 'admin' and user.is_authenticated %}
               <a class="btn btn-outline-primary btn-sm" href="{% url 'add_contract_individual' individual.pk %}" role="button">Создать договор</a>

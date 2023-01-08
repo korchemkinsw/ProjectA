@@ -9,112 +9,102 @@
 {% endblock %}
 {% load static %}
 {% block content %}
-  <div class="col-lg-12">
+  <div class="col-sm-12">
     {% include "includes/card_nav.html" %}
     <div style="text-align: left; font-size: 12px" class="row justify-content-center">
       {% include "includes/card_head.html" %}
-      <div class="col-lg-12">
-      <div style="text-align: left; font-size: 12px" class="table-bordered">
-        <table class="table table-sm">
-          <tbody>
-            <tr>
-              <th class="col-lg-3">Клиент: </th>
-              <td class="col-lg-9">
+      <div class="col-sm-12">
+        <div style="text-align: left; font-size: 12px" class="table-bordered">
+          <table class="table table-sm">
+            <tbody>
+              <tr>
+                <th class="col-sm-3">Клиент: </th>
+                <td class="col-sm-9">
+                  {% if card.legal %}
+                    {{ card.legal.fullname }}
+                  {% endif %}
+                  {% if card.individual %}
+                    {{ card.individual }}
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <th class="col-sm-3">Объект: </th>
+                <td class="col-sm-9">{{ card.object_name }}</td>
+              </tr>
+              <tr>
+                <th class="col-sm-3">Телефон на объекте: </th>
+                <td class="col-sm-9">{{ card.phone }}</td>
+              </tr>
+              <tr>
+                <th class="col-sm-3">Адрес: </th>
+                <td class="col-sm-9">{{ card.address }}</td>
+              </tr>
+              <tr>
+                <th class="col-sm-3">Координаты: </th>
+                <td class="col-sm-9">
+                  {% if not card.card_gps.all and action != 'gps_create' %}
+                    <a class="badge badge-primary" href="{% url 'add_card_gps' card.pk %}" role="button">добавить</a>
+                  {% endif %}
+                  {% if card.card_gps.all and action != 'gps_create' %}
+                    {{ card.card_gps.first.gps }}
+                    <a class="badge badge-info" href="{% url 'upd_card_gps' card.card_gps.first.pk %}" role="button">изменить</a>
+                  {% endif %}
+                  {% if action == 'gps_create' %}
+                    <form method="post" enctype="multipart/form-data" action="">
+                      {% csrf_token %}
+                      {{ form.errors.gps }}
+                      {{ form.gps }}
+                      <button type="submit" class="badge badge-outline">сохранить</button>
+                    </form>
+                  {% endif %}
+                </td>
+              </tr>
+              <!--tr>
+                <th class="col-sm-3">Система передачи извещений: </th>
+                <td class="col-sm-9">{{ card.transmission }}</td>
+              </tr-->
+              <tr>
+                <th class="col-sm-3">Примечание: </th>
+                <td class="col-sm-9">{{ card.note }}</td>
+              </tr>
+              <tr>
                 {% if card.legal %}
-                  {{ card.legal.fullname }}
+                  <th class="col-sm-3">Директор: </th>
+                  <td class="col-sm-9">
+                    {{ card.legal.bigboss.name }}&nbsp;&nbsp;
+                    {% for contact in card.legal.bigboss.contacts.all %}
+                      {{ contact }}&nbsp;&nbsp;
+                    {% endfor %}
+                  </td>
                 {% endif %}
                 {% if card.individual %}
-                  {{ card.individual }}
-                {% endif %}
-              </td>
-            </tr>
-            <tr>
-              <th class="col-lg-3">Объект: </th>
-              <td class="col-lg-9">{{ card.object_name }}</td>
-            </tr>
-            <tr>
-              <th class="col-lg-3">Телефон на объекте: </th>
-              <td class="col-lg-9">{{ card.phone }}</td>
-            </tr>
-            <tr>
-              <th class="col-lg-3">Адрес: </th>
-              <td class="col-lg-9">{{ card.address }}</td>
-            </tr>
-            <tr>
-              <th class="col-lg-3">Координаты: </th>
-              <td class="col-lg-9">
-                {% if not card.card_gps.all and action != 'gps_create' %}
-                  <a class="badge badge-primary" href="{% url 'add_card_gps' card.pk %}" role="button">добавить</a>
-                {% endif %}
-                {% if card.card_gps.all and action != 'gps_create' %}
-                  {{ card.card_gps.first.gps }}
-                  <a class="badge badge-info" href="{% url 'upd_card_gps' card.card_gps.first.pk %}" role="button">изменить</a>
-                {% endif %}
-                {% if action == 'gps_create' %}
-                  <form method="post" enctype="multipart/form-data" action="">
-                    {% csrf_token %}
-                    {{ form.errors.as_ul }}
-                    {{ form.gps }}
-                    <button type="submit" class="badge badge-outline">сохранить</button>
-                  </form>
-                
-                {% endif %}
-              </td>
-            </tr>
-            {% for app in card.contract.all %}
-              <tr>
-                <th class="col-lg-3">Группа реагирования: </th>
-                <td class="col-lg-9">{{ app.qteam }}</td>
-              </tr>
-            {% endfor %}
-            <tr>
-              <th class="col-lg-3">Система передачи извещений: </th>
-              <td class="col-lg-9">{{ card.transmission }}</td>
-            </tr>
-            <tr>
-              <th class="col-lg-3">Примечание: </th>
-              <td class="col-lg-9">{{ card.note }}</td>
-            </tr>
-            <tr>
-              {% if card.legal %}
-                <th class="col-lg-3">Директор: </th>
-                <td class="col-lg-9">
-                  {{ card.legal.bigboss.last_name }} {{ card.legal.bigboss.first_name }} {{ card.legal.bigboss.fathers_name }}&nbsp;&nbsp;
-                  {% for contact in card.legal.bigboss.contacts.all %}
-                    {{ contact.phone }}&nbsp;&nbsp;
-                  {% endfor %}
+                  <th class="col-sm-3">Собственник: </th>
+                  <td class="col-sm-9">
+                    {{ card.individual.name }}&nbsp;&nbsp;
+                    {% for contact in card.individual.name.contacts.all %}
+                      {{ contact.phone }}&nbsp;&nbsp;
+                    {% endfor %}
+                  {% endif %}
                 </td>
-              {% endif %}
-              {% if card.individual %}
-                <th class="col-lg-3">Собственник: </th>
-                <td class="col-lg-9">
-                  {{ card.individual.name.last_name }} {{ card.individual.name.first_name }} {{ card.individual.name.fathers_name }}&nbsp;&nbsp;
-                  {% for contact in card.individual.name.contacts.all %}
-                    {{ contact.phone }}&nbsp;&nbsp;
-                  {% endfor %}
-                {% endif %}
-              </td>
-            </tr>
-            <tr>
-              <th class="col-lg-3">Подготовил: </th>
-              <td class="col-lg-9">{{ card.manager }} {{ card.generated|date:"d.m.Y" }} {{ card.generated|time:"H:i" }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <br>
-    <div style="text-align: left; font-size: 12px" class="col-lg-12">
-      <!--p>
-        <a class="btn btn-outline-primary btn-sm" href="{% url 'cards' %}" role="button">Карточки объектов</a>
-        {% if not card.controldev.all %}
-          <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_device' card.id  %}" role="button">Добавить прибор</a>
-        {% else %}
-          {% if not card.contract.all %}
-            <a class="btn btn-outline-primary btn-sm" href="{% url 'add_contract' card.id  %}" role="button">Добавить реагирование</a>
+              </tr>
+              <tr>
+                <th class="col-sm-3">Подготовил: </th>
+                <td class="col-sm-9">{{ card.manager }} {{ card.generated|date:"d.m.Y" }} {{ card.generated|time:"H:i" }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <br>
+        {% if user.role == 'manager' or user.role == 'admin' and user.is_authenticated %}
+          {% if card.individual %}
+            <a class="btn btn-outline-info btn-sm" href="{% url 'upd_card_individual' card.pk %}" role="button">Изменить</a>
+          {% endif %}
+          {% if card.legal %}
+            <a class="btn btn-outline-info btn-sm" href="{% url 'upd_card_legal' card.pk %}" role="button">Изменить</a>
           {% endif %}
         {% endif %}
-      </p-->
+      </div>
     </div>
   </div>
 {% endblock %}

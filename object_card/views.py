@@ -111,7 +111,7 @@ class DetailCardPhotos(DetailView):
 class CreateCardIndividual(UserPassesTestMixin, CreateView):
     model = Card
     form_class = CardIndividualForm
-    template_name = 'form.html'
+    template_name = 'object_card/form_card.html'
     success_url = reverse_lazy('individual')
 
     def test_func(self):
@@ -123,8 +123,12 @@ class CreateCardIndividual(UserPassesTestMixin, CreateView):
         context = super().get_context_data(**kwargs)
         individ = get_object_or_404(Individual, id=self.kwargs['pk'])
         context['form'].fields['individual'].queryset = Individual.objects.filter(id=self.kwargs['pk']).exclude()
+        context['form'].fields['individual'].initial = individ
         context['title'] = 'Добавить карточку'
         context['header'] = f'Добавить карточку {individ}'
+        context['action'] = 'add_individual'
+        context['cards']='active'
+        context['individ'] = individ.pk
         return context
 
     def form_valid(self, form):
@@ -136,10 +140,43 @@ class CreateCardIndividual(UserPassesTestMixin, CreateView):
             self.object = form.save()
         return super(CreateCardIndividual, self).form_valid(form)
 
+class UpdateCardIndividual(UserPassesTestMixin, UpdateView):
+    model = Card
+    form_class = CardIndividualForm
+    template_name = 'object_card/form_card.html'
+
+    def test_func(self):
+        if self.request.user.role in ('manager', 'admin'):
+            return True
+        return False
+
+    def get_success_url(self):
+       pk = self.kwargs['pk']
+       return reverse('card', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        individ = get_object_or_404(Card, id=self.kwargs['pk']).individual
+        context['form'].fields['individual'].queryset = Individual.objects.filter(id=individ.pk).exclude()
+        context['title'] = 'Добавить карточку'
+        context['header'] = f'Добавить карточку {individ}'
+        context['action'] = 'upd_individual'
+        context['cards']='active'
+        context['individ'] = individ.pk
+        return context
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object.status = Card.NEW
+            self.object.changed = datetime.datetime.today()
+            self.object = form.save()
+        return super(UpdateCardIndividual, self).form_valid(form)
+
 class CreateCardLegal(UserPassesTestMixin, CreateView):
     model = Card
     form_class = CardLegalForm
-    template_name = 'form.html'
+    template_name = 'object_card/form_card.html'#'form.html'
     success_url = reverse_lazy('legals')
 
     def test_func(self):
@@ -151,8 +188,12 @@ class CreateCardLegal(UserPassesTestMixin, CreateView):
         context = super().get_context_data(**kwargs)
         legal = get_object_or_404(Legal, id=self.kwargs['pk'])
         context['form'].fields['legal'].queryset = Legal.objects.filter(id=self.kwargs['pk']).exclude()
+        context['form'].fields['legal'].initial = legal
         context['title'] = 'Добавить карточку'
         context['header'] = f'Добавить карточку {legal.fullname}'
+        context['action'] = 'add_legal'
+        context['cards'] = 'active'
+        context['legal'] = legal.pk
         return context
 
     def form_valid(self, form):
@@ -163,6 +204,39 @@ class CreateCardLegal(UserPassesTestMixin, CreateView):
             self.object.generated = datetime.datetime.today()
             self.object = form.save()
         return super(CreateCardLegal, self).form_valid(form)
+
+class UpdateCardLegal(UserPassesTestMixin, UpdateView):
+    model = Card
+    form_class = CardLegalForm
+    template_name = 'object_card/form_card.html'
+
+    def test_func(self):
+        if self.request.user.role in ('manager', 'admin'):
+            return True
+        return False
+
+    def get_success_url(self):
+       pk = self.kwargs['pk']
+       return reverse('card', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        legal = get_object_or_404(Card, id=self.kwargs['pk']).legal
+        context['form'].fields['legal'].queryset = Legal.objects.filter(id=legal.pk).exclude()
+        context['title'] = 'Добавить карточку'
+        context['header'] = f'Добавить карточку {legal}'
+        context['action'] = 'upd_legal'
+        context['cards']='active'
+        context['legal'] = legal.pk
+        return context
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object.status = Card.NEW
+            self.object.changed = datetime.datetime.today()
+            self.object = form.save()
+        return super(UpdateCardLegal, self).form_valid(form)
 
 class UpdateCardContract(UserPassesTestMixin, UpdateView):
     model = Card
@@ -300,7 +374,7 @@ class UpdateCardQnote(UserPassesTestMixin, UpdateView):
 class CreateCardDevice(UserPassesTestMixin, CreateView):
     model = Device
     form_class = DeviceForm
-    template_name = 'object_card/form.html'
+    template_name = 'object_card/form_device.html'
 
     def test_func(self):
         if self.request.user.role in ('engineer', 'admin'):
@@ -322,6 +396,7 @@ class CreateCardDevice(UserPassesTestMixin, CreateView):
         data['title'] = 'Добавить прибор'
         data['button'] = 'Добавить sim'
         data['device'] = 'active'
+        data['action'] = 'add_device'
         return data
 
     def form_valid(self, form):
@@ -345,8 +420,8 @@ class CreateCardDevice(UserPassesTestMixin, CreateView):
 
 class UpdateCardDevice(UserPassesTestMixin, UpdateView):
     model = Device
-    form_class = DeviceUpdateForm
-    template_name = 'object_card/form.html'
+    form_class = DeviceForm
+    template_name = 'object_card/form_device.html'
 
     def test_func(self):
         if self.request.user.role in ('engineer', 'technican', 'admin'):
@@ -372,6 +447,8 @@ class UpdateCardDevice(UserPassesTestMixin, UpdateView):
         data['button'] = 'Добавить sim'
         data['prefix'] = 'sim'
         data['device'] = 'active'
+        data['account'] = self.object.account
+        data['action'] = 'upd_device'
         return data
 
     def form_valid(self, form):
@@ -383,7 +460,6 @@ class UpdateCardDevice(UserPassesTestMixin, UpdateView):
             self.object.changed_tech = datetime.datetime.today()
             self.object = form.save()
             context['card'].device = self.object
-            context['card'].status = Card.MONTAGE
             context['card'].save()
             if phones.is_valid():
                 response = super(UpdateCardDevice, self).form_valid(form)

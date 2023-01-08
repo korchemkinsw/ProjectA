@@ -25,6 +25,10 @@
               <th class="col-lg-3">Тип ППК: </th>
               <td class="col-lg-9">{{ card.device.device }}</td>
             </tr>
+            <tr>
+              <th class="col-lg-3">Дополнительная информация: </th>
+              <td class="col-lg-9">{{ card.device.note }}</td>
+            </tr>
             {% for phone in card.device.sim.all %}
               <tr>
                 <th class="col-lg-3">{{ phone.part_sim }}: </th>

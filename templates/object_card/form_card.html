@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="col-sm-12">
+  <div style="text-align: left; font-size: 12px" class="row justify-content-center">
+    {% include "includes/card_nav_form.html" %}
+    {% include "includes/card_head_form.html" %}
+    <div class="col-sm-12">
+      <div style="text-align: left; font-size: 12px" class="table-bordered">
+        <form method="post" enctype="multipart/form-data" action="">
+          <table class="table table-sm">
+            {% csrf_token %}
+            <tbody>
+              <tr>
+                <th class="col-sm-3">Клиент: </th>
+                <td class="col-sm-9">
+                  {% if action == 'add_individual' or action == 'upd_individual'%}
+                    {{ form.errors.individual }}
+                    {{ form.individual }}
+                  {% endif %}
+                  {% if action == 'add_legal' or action == 'upd_legal'%}
+                    {{ form.errors.legal }}
+                    {{ form.legal }}
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <th class="col-sm-3">Объект: </th>
+                <td class="col-sm-9">
+                  {{ form.errors.object_name }}
+                  {{ form.object_name }}
+                </td>
+              </tr>
+              <tr>
+                <th class="col-sm-3">Телефон на объекте: </th>
+                <td class="col-sm-9">
+                  {{ form.errors.phone }}
+                  {{ form.phone }}
+                </td>
+              </tr>
+              <tr>
+                <th class="col-sm-3">Адрес: </th>
+                <td class="col-sm-9">
+                  {{ form.errors.address }}
+                  {{ form.address }}
+                </td>
+              </tr>
+              <!--tr>
+                <th class="col-sm-3">Координаты: </th>
+                <td class="col-sm-9"></td>
+              </tr-->
+              <tr>
+                <th class="col-sm-3">Система передачи извещений: </th>
+                <td class="col-sm-9">
+                  {{ form.errors.transmission }}
+                  {{ form.transmission }}
+                </td>
+              </tr>
+              <tr>
+                <th class="col-sm-3">Примечание: </th>
+                <td class="col-sm-9">
+                  {{ form.errors.note }}
+                  {{ form.note }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br>
+          <button type="submit" class="btn btn-outline-success btn-sm">Сохранить</button>
+          {% if action == 'add_individual' %}
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'individ' individ  %}" role="button">Отменить</a>
+          {% endif %}
+          {% if action == 'add_legal' %}
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'legal' legal  %}" role="button">Отменить</a>
+          {% endif %}
+          {% if action == 'upd_individual' or action == 'upd_legal' %}
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'card' card.pk  %}" role="button">Отменить</a>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

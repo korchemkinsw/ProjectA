@@ -11,9 +11,14 @@ class DeviceForm(forms.ModelForm):
     class Meta:
         model = Device
         exclude = ()
-        fields = ('account',)
+        fields = ('account','device', 'note',)
         labels ={
             'account': 'Передаваемый номер',
+            'device': 'Тип ППК',
+            'note': 'примечание',
+        }
+        widgets = {
+            'note': forms.Textarea(attrs={'rows': 2,'cols': 65})
         }
 
 class DeviceUpdateForm(forms.ModelForm):
@@ -92,9 +97,16 @@ class CardIndividualForm(forms.ModelForm):
             'individual',
             'object_name',
             'address',
+            'phone',
             'transmission',
             'note',
         ]
+        widgets = {
+            'object_name': forms.TextInput(attrs={'style': 'width:450px'}),
+            'address': forms.TextInput(attrs={'style': 'width:450px'}),
+            'phone': forms.TextInput(attrs={'style': 'width:450px'}),
+            'note': forms.Textarea(attrs={'rows': 2,'cols': 65})
+        }
 
 class CardLegalForm(forms.ModelForm):
     class Meta:
@@ -104,9 +116,16 @@ class CardLegalForm(forms.ModelForm):
             'legal',
             'object_name',
             'address',
+            'phone',
             'transmission',
             'note',
         ]
+        widgets = {
+            'object_name': forms.TextInput(attrs={'style': 'width:450px'}),
+            'address': forms.TextInput(attrs={'style': 'width:450px'}),
+            'phone': forms.TextInput(attrs={'style': 'width:450px'}),
+            'note': forms.Textarea(attrs={'rows': 2,'cols': 65})
+        }
 
 class CardDeviceForm(forms.ModelForm):
     class Meta:
