@@ -425,6 +425,7 @@ class Partition(models.Model):
     number = models.PositiveIntegerField(
         verbose_name='№',
         help_text='№',
+        max_length=999,
     )
     name = models.CharField(
         max_length=20,
@@ -460,6 +461,7 @@ class Zone(models.Model):
     number = models.PositiveIntegerField(
         verbose_name='№',
         help_text='№',
+        max_length=999,
     )
     name = models.CharField(
         max_length=20,

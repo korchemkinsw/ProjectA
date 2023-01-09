@@ -61,6 +61,10 @@ class PartitionForm(forms.ModelForm):
         model = Partition
         exclude =()
         fields = ('number', 'name',)
+        widgets = {
+            'number': forms.NumberInput(attrs={'style': 'width:50px'}),
+            'name': forms.TextInput(attrs={'style': 'width:750px'}),
+            }
 
 class ZoneForm(forms.ModelForm):
     def clean_device(self):
@@ -71,7 +75,10 @@ class ZoneForm(forms.ModelForm):
         model = Zone
         exclude =()
         fields = ('device', 'number', 'partition', 'name',)
-        #widgets = {'partition': autocomplete.ModelSelect2(url='partition-autocomplete',),}
+        widgets = {
+            'number': forms.NumberInput(attrs={'style': 'width:50px'}),
+            'name': forms.TextInput(attrs={'style': 'width:550px'}),
+            }
 
     def __init__(self, *args, **kwargs):
             super(ZoneForm, self).__init__(*args, **kwargs)
@@ -157,6 +164,7 @@ class PersonForm(forms.ModelForm):
         exclude =()
         fields = ('number', 'person', 'note', 'application')
         widgets = {
+            'number': forms.NumberInput(attrs={'style': 'width:50px'}),
             'person': autocomplete.ModelSelect2(
                 url='person-autocomplete',
                 attrs={'style':'width:400px'}

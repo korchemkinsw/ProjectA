@@ -648,6 +648,7 @@ class CreateResponsible(UserPassesTestMixin, CreateView):
         data['action'] = 'create'
         data['responsible'] = 'active'
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
+        data['form'].fields['number'].initial = Person.objects.filter(card=data['card']).order_by('-number')[0].number + 1
         return data
 
     def form_valid(self, form):
