@@ -3,9 +3,9 @@
 {% block title %}{{ title}}{% endblock %}
 {% block content %}
 {% load user_filters %}
-<div class="col-lg-12">
+<div class="col-sm-12">
   {% include "includes/card_nav.html" %}
-  <div style="text-align: left; font-size: 14px" class="row justify-content-center">
+  <div style="text-align: left; font-size: 12px" class="row justify-content-center">
     <div class="col-md-12">
       <div class="card">
         <div class="card-body">
@@ -23,7 +23,7 @@
                   <div class="col-md-6">
                     {{ devicecardformset.management_form }}
                     {# подключаем фильтр и указываем класс #}
-                    {{ field|addclass:"form-control"  }}
+                    {{ field }}
                     {% if field.help_text %}
                       <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
                     {% endif %}
@@ -31,7 +31,7 @@
                 </div>
               {% endif %}
             {% endfor %}
-            <table class="table">
+            <table class="table table-sm">
               {{ forms.management_form }}
               {% for form in forms.forms %}
                 {% if forloop.first %}
@@ -39,7 +39,7 @@
                     <tr>
                       {% for field in form.visible_fields %}
                         {% if field.label == 'Номер раздела' or field.label == 'Номер зоны' %}
-                          <th class="col-lg-2">{{ field.label }}</th>
+                          <th class="col-sm-2">{{ field.label }}</th>
                         {% else %}  
                           <th>{{ field.label }}</th>
                         {% endif %}
@@ -57,16 +57,16 @@
                         {% endfor %}
                       {% endif %}
                       {% if field.label == 'Номер SIM-карты' and form.instance.iccid %}
-                        {{ field|readonly:"form-control" }}
+                        {{ field }}
                       {% else %}
                         {% if field.label == 'Абонентский номер' and form.instance.msisdn %}
-                          {{ field|readonly:"form-control" }}
+                          {{ field }}
                         {% else %}
                           {% if field.label == 'Фотография объекта' and form.instance.image or field.label == 'Фото sim-карты' and form.instance.image %}
                             <img src="{{ form.instance.image.url }}" alt="" width="100" height="75" class="d-inline-block align-text-top">
                           {% endif %}
                           {{ field.errors.as_ul }}
-                          {{ field|addclass:"form-control" }}
+                          {{ field }}
                         {% endif %}
                       {% endif %}
                     </td>

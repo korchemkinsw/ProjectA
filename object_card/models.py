@@ -1,11 +1,13 @@
 import os
 import re
-from django.core.exceptions import ValidationError
-from clientele.models import Contract, Individual, Legal, Contact
+
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
-from enterprises.models import Responseteam
 from simple_history.models import HistoricalRecords
+
+from clientele.models import Contact, Contract, Individual, Legal
+from enterprises.models import Responseteam
 
 User = get_user_model()
 
@@ -365,7 +367,7 @@ class GPS(models.Model):
         return f'{self.gps} {self.card.address[:50]}...'
 
     def clean(self):
-        if not re.fullmatch(r'^[5-6][0-9][,][0-9]{6}[\s][2-4][0-9][,][0-9]{6}', str(self.gps)):
+        if not re.fullmatch(r'^[5-6][0-9][.][0-9]{6}[\s][2-4][0-9][.][0-9]{6}', str(self.gps)):
             raise ValidationError(
                 {'gps': 'Координаты не верны'}
             )
@@ -500,13 +502,11 @@ class Person(models.Model):
     note = models.CharField(
         max_length=50,
         verbose_name='Примечание',
-        null=True,
         blank=True,
     )
     application = models.CharField(
         max_length=9,
         choices=APPLICATION,
-        null=True,
         blank=True,
         verbose_name='Приложение',
     )

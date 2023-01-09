@@ -4,10 +4,10 @@ import django_filters
 from dal import autocomplete
 from django import forms
 from django.forms.models import inlineformset_factory
+
 from enterprises.models import Enterprise
 
-from .models import (Contact, Contract, FileContract, Individual, Legal,
-                     Phone)
+from .models import Contact, Contract, FileContract, Individual, Legal, Phone
 
 
 class PhoneForm(forms.ModelForm):
@@ -34,7 +34,7 @@ class ContactForm(forms.ModelForm):
             'name': 'Фамилия Имя Отчество',
         }
         widgets = {
-            'name': forms.TextInput(attrs={'placeholder': 'Фамилия Имя Отчество'}),
+            'name': forms.TextInput(attrs={'placeholder': 'Фамилия Имя Отчество', 'style':'width:400px'}),
         }
 
 class ContactFilter(django_filters.FilterSet):
@@ -58,6 +58,7 @@ class IndividualForm(forms.ModelForm):
         fields = ['num_pass', 'issued', 'date']
         widgets = {
             'num_pass': forms.TextInput(attrs={'placeholder': 'XXXX XXXXXX'}),
+            'issued': forms.TextInput(attrs={'placeholder': 'Кем выдан', 'style':'width:400px'}),
             'date': forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
         }
 

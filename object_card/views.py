@@ -9,16 +9,16 @@ from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from django_filters.views import FilterView
 
 #from clientele.forms import ContactForm, PhoneFormset
-from clientele.models import Contract, Individual, Legal, Contact
+from clientele.models import Contact, Contract, Individual, Legal
 from clientele.views import CreateContact, UpdateContact
 from enterprises.models import Responseteam
 
 from .forms import (CardContractForm, CardFilter, CardGPSForm,
                     CardIndividualForm, CardLegalForm, CardQnoteForm,
-                    DeviceForm, DeviceNoneForm, DeviceUpdateForm,
+                    DeviceForm, DeviceNoneForm, DeviceUpdateForm, GPSForm,
                     PartitionFormset, PersonForm, PhotoFormset, QteamForm,
-                    SimFormset, ZoneFormset, GPSForm)
-from .models import Card, Device, Partition, Person, Qteam, GPS
+                    SimFormset, ZoneFormset)
+from .models import GPS, Card, Device, Partition, Person, Qteam
 
 
 class QteamAutocomplete(autocomplete.Select2QuerySetView):

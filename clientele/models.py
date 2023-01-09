@@ -1,11 +1,13 @@
 import datetime
 import os
 import re
-from django.core.exceptions import ValidationError
+
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
-from enterprises.models import Enterprise
 from simple_history.models import HistoricalRecords
+
+from enterprises.models import Enterprise
 
 User = get_user_model()
 
@@ -104,7 +106,7 @@ class Legal(models.Model):
         blank=True
     )
     inn = models.CharField(
-        max_length=10,
+        max_length=12,
         verbose_name='ИНН',
         help_text='ИНН',
         unique=True

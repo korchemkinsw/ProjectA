@@ -21,7 +21,7 @@
                 <th class="col-sm-3">Клиент: </th>
                 <td class="col-sm-9">
                   {% if card.legal %}
-                    {{ card.legal.fullname }}
+                    {{ card.legal.abbreviatedname }}
                   {% endif %}
                   {% if card.individual %}
                     {{ card.individual }}
@@ -60,10 +60,6 @@
                   {% endif %}
                 </td>
               </tr>
-              <!--tr>
-                <th class="col-sm-3">Система передачи извещений: </th>
-                <td class="col-sm-9">{{ card.transmission }}</td>
-              </tr-->
               <tr>
                 <th class="col-sm-3">Примечание: </th>
                 <td class="col-sm-9">{{ card.note }}</td>
@@ -73,8 +69,8 @@
                   <th class="col-sm-3">Директор: </th>
                   <td class="col-sm-9">
                     {{ card.legal.bigboss.name }}&nbsp;&nbsp;
-                    {% for contact in card.legal.bigboss.contacts.all %}
-                      {{ contact }}&nbsp;&nbsp;
+                    {% for contact in card.legal.bigboss.phones.all %}
+                      {{ contact.phone }}&nbsp;&nbsp;
                     {% endfor %}
                   </td>
                 {% endif %}
@@ -82,8 +78,8 @@
                   <th class="col-sm-3">Собственник: </th>
                   <td class="col-sm-9">
                     {{ card.individual.name }}&nbsp;&nbsp;
-                    {% for contact in card.individual.name.contacts.all %}
-                      {{ contact.phone }}&nbsp;&nbsp;
+                    {% for contact in card.individual.name.phones.all %}
+                      {{ contact.phone}}&nbsp;&nbsp;
                     {% endfor %}
                   {% endif %}
                 </td>

@@ -19,9 +19,10 @@
         <table class="table table-sm">
           {% if card.card_person.all or action == 'create' %}
             <thead>
+              <th class="col-sm-1">№</th>
               <th class="col-sm-4">Фамилия Имя Отчество: </th>
               <th></th>
-              <th class="col-sm-4">Примечание: </th>
+              <th class="col-sm-3">Примечание: </th>
               <th class="col-sm-2">Номер телефона: </th>
               <th class="col-sm-1">Приложение: </th>
               <th></th>
@@ -32,19 +33,24 @@
                   <form method="post" enctype="multipart/form-data" action="">
                     {% csrf_token %}
                     <tr>
+                      <th class="col-sm-1">
+                        {{ form.errors.number }}
+                        {{ form.number }}
+                      </th>
                       <th>
-                        {{ field.errors.as_ul }}
+                        {{ form.errors.person }}
                         {{ form.person }}
                       </th>
                       <td></td>
                       <td>{{ form.note }}</td>
                       <td>{{ phones }}</td>
                       <td>{{ form.application }}</td>
-                      <td><button type="submit" class="badge badge-outline">Сохранить</button></td>
+                      <td><button type="submit" class="badge badge-primary">Сохранить</button></td>
                     </tr>
                   </form>
                 {% else %}
                   <tr>
+                    <th>{{ person.number }}</th>
                     <th>
                       {{ person.person }}
                       {% if user.role == 'manager' or user.role == 'admin' %}
@@ -70,15 +76,19 @@
                 <form method="post" enctype="multipart/form-data" action="">
                   {% csrf_token %}
                   <tr>
+                    <th class="col-sm-1">
+                      {{ form.errors.number }}
+                      {{ form.number }}
+                    </th>
                     <th>
-                      {{ field.errors.as_ul }}
+                      {{ form.errors.person }}
                       {{ form.person }}
                     </th>
                     <td></td>
                     <td>{{ form.note }}</td>
                     <td>{{ phones }}</td>
                     <td>{{ form.application }}</td>
-                    <td><button type="submit" class="badge badge-outline">Добавить</button></td>
+                    <td><button type="submit" class="badge badge-primary">Сохранить</button></td>
                   </tr>
                 </form>
               {% endif %}

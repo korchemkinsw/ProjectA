@@ -56,7 +56,7 @@
                 <form method="post" enctype="multipart/form-data" action="">
                   {% csrf_token %}
                   {{ form.contract }}
-                  <button type="submit" class="badge badge-outline">Изменить</button>
+                  <button type="submit" class="badge badge-outline">Сохранить</button>
                 </form>
               {% else %}
                 № {{card.contract.number}} от {{card.contract.date|date:"d.m.Y"}}

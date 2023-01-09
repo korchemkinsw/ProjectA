@@ -65,7 +65,17 @@
             </tbody>
           {% endif %}
         </table>
-        
+        <div style="text-align: left; font-size: 12px" class="col-sm-12">
+          <p>
+            {% if user.role == 'director' or user.role == 'admin' and user.is_authenticated %}
+              {% if not card.qteam %}
+                <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_qteam' card.id  %}" role="button">Добавить группу</a>
+              {% else %}
+              <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_qteam' card.id  %}" role="button">Изменить группу</a>
+              {% endif %}
+            {% endif %}
+          </p>
+        </div>
         <table class="table table-sm">
           <thead>
             <th class="col-sm-3">Инструкции для группы: </th>
@@ -90,16 +100,5 @@
       </div>
     </div>
     <br>
-    <div style="text-align: left; font-size: 12px" class="col-sm-12">
-      <p>
-        {% if user.role == 'director' or user.role == 'admin' and user.is_authenticated %}
-          {% if not card.qteam %}
-            <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_qteam' card.id  %}" role="button">Добавить группу</a>
-          {% else %}
-          <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_qteam' card.id  %}" role="button">Изменить группу</a>
-          {% endif %}
-        {% endif %}
-      </p>
-    </div>
   </div>
 {% endblock %}

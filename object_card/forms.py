@@ -3,8 +3,8 @@ from dal import autocomplete
 from django import forms
 from django.forms.models import inlineformset_factory
 
-from .models import (Card, CardPhoto, Device, Partition, Person, Qteam, Sim,
-                     Zone, GPS)
+from .models import (GPS, Card, CardPhoto, Device, Partition, Person, Qteam,
+                     Sim, Zone)
 
 
 class DeviceForm(forms.ModelForm):
