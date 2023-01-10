@@ -286,9 +286,9 @@ class FileContract(models.Model):
     )
     generated = models.DateTimeField(
         'Дата создания',
-        null=True,
+        #null=True,
         blank=True,
-        default=datetime.datetime.today()
+        #default=datetime.datetime.today()
     )
 
     def generate_path(instance, filename):

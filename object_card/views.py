@@ -18,7 +18,7 @@ from .forms import (CardContractForm, CardFilter, CardGPSForm,
                     DeviceForm, DeviceNoneForm, DeviceUpdateForm, GPSForm,
                     PartitionFormset, PersonForm, PhotoFormset, QteamForm,
                     SimFormset, ZoneFormset)
-from .models import GPS, Card, Device, Partition, Person, Qteam
+from .models import GPS, Card, Device, Partition, Person, Qteam, Zone
 
 
 class QteamAutocomplete(autocomplete.Select2QuerySetView):
@@ -544,9 +544,10 @@ class CardZone(UserPassesTestMixin, UpdateView):
         else:
             data['forms'] = ZoneFormset(instance=self.object)
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
-        data['device'] = get_object_or_404(Device, id=data['card'].device.id)
         for form in data['forms']:
-            form.fields['partition'].queryset = Partition.objects.filter(device=data['device'])
+            queryset = Partition.objects.filter(device=self.object).order_by('number')
+            form.fields['partition'].queryset = queryset
+            form.fields['partition'].initial = queryset[0]
         data['title'] = 'Добавить зоны'
         data['button'] = 'Добавить зону'
         data['prefix'] = 'zones'
@@ -648,7 +649,10 @@ class CreateResponsible(UserPassesTestMixin, CreateView):
         data['action'] = 'create'
         data['responsible'] = 'active'
         data['card'] = get_object_or_404(Card, id=self.kwargs['pk'])
-        data['form'].fields['number'].initial = Person.objects.filter(card=data['card']).order_by('-number')[0].number + 1
+        if Person.objects.filter(card=data['card']):
+            data['form'].fields['number'].initial = Person.objects.filter(card=data['card']).order_by('-number')[0].number + 1
+        else:
+            data['form'].fields['number'].initial = 1
         return data
 
     def form_valid(self, form):

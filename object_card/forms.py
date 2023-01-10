@@ -82,7 +82,7 @@ class ZoneForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
             super(ZoneForm, self).__init__(*args, **kwargs)
-            self.fields['partition'].queryset = Partition.objects.filter(device=self.instance.device)
+            #self.fields['partition'].queryset = Partition.objects.filter(device=self.fields['device'].instance)
 
 class CardFilter(django_filters.FilterSet):
     status = django_filters.ChoiceFilter(choices=Card.STATUS_CHOICES)
@@ -156,7 +156,7 @@ class CardGPSForm(forms.ModelForm):
     class Meta:
         model = Card
         exclude = ()
-        fields = ('address', 'width', 'longitude')
+        fields = ('width', 'longitude')
 
 class PersonForm(forms.ModelForm):
     class Meta:

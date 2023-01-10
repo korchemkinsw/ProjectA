@@ -250,14 +250,14 @@ class Card(models.Model):
     )
     width = models.CharField(
         max_length=9,
-        verbose_name='широта',
-        help_text='широта',
+        verbose_name='--пусто--',
+        help_text='--пусто--',
         blank=True,
     )
     longitude = models.CharField(
         max_length=9,
-        verbose_name='долгота',
-        help_text='долгота',
+        verbose_name='--пусто--',
+        help_text='--пусто--',
         blank=True,
     )
     transmission = models.CharField(
@@ -425,7 +425,6 @@ class Partition(models.Model):
     number = models.PositiveIntegerField(
         verbose_name='№',
         help_text='№',
-        max_length=999,
     )
     name = models.CharField(
         max_length=20,
@@ -461,7 +460,6 @@ class Zone(models.Model):
     number = models.PositiveIntegerField(
         verbose_name='№',
         help_text='№',
-        max_length=999,
     )
     name = models.CharField(
         max_length=20,
