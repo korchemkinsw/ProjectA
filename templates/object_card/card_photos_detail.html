@@ -9,15 +9,15 @@
 {% endblock %}
 {% load static %}
 {% block content %}
-  <div class="col-lg-12">
+  <div class="col-sm-12">
     {% include "includes/card_nav.html" %}
     <div style="text-align: left; font-size: 12px" class="row justify-content-center">
       {% include "includes/card_head.html" %}
-      <div class="col-lg-12">
+      <div class="col-sm-12">
         <div class="card text-center">
           <div class="row">
             {% for photo in card.card_photo.all %}
-              <div class="col-lg-3">
+              <div class="col-sm-3">
                 <div class="card text-left" style="width: 15rem;">
                   <img src="{{ photo.image.url }}" class="card-img-top" alt="...">
                   <div class="card-body">
@@ -27,7 +27,7 @@
               </div>
             {% endfor %}
           </div>
-          <div style="text-align: left; font-size: 12px" class="col-lg-12">
+          <div style="text-align: left; font-size: 12px" class="col-sm-12">
             <p>
               {% if user.role == 'technican' or user.role == 'admin' and user.is_authenticated %}
                 <a class="btn btn-outline-primary btn-sm" href="{% url 'upd_card_photos' card.id  %}" role="button">Изменить фотографии</a>

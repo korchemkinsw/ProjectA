@@ -5,7 +5,7 @@
 {% block content %}
 {% load user_filters %}
 <div style="text-align: left; font-size: 12px" class="row justify-content-center">
-  <div class="col-md-12">
+  <div class="col-sm-12">
     <div class="card">
       <div class="card-header">
         <h5>{{ header }}</h5>
@@ -15,13 +15,13 @@
           {% csrf_token %}
           {% for field in form %}
             <div class="form-group row" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
-              <label for="{{ field.id_for_label }}" class="col-md-2 col-form-label text-md-left">
+              <label for="{{ field.id_for_label }}" class="col-sm-2 col-form-label text-sm-left">
                 {{ field.label }}
                 {% if field.field.required %}
                   <span class="required">*</span>
                 {% endif %}
               </label>
-              <div class="col-md-6">
+              <div class="col-sm-6">
                 {{ devicecardformset.management_form }}
                 {# подключаем фильтр и указываем класс #}
                 {{ field|addclass:"form-control"  }}

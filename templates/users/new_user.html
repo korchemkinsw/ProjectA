@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block title %}NewUser{% endblock %}
 {% block content %}
-  <div style="text-align: center; font-size: 15px" class="row justify-content-center">
-    <div class="col-md-10">
+  <div style="text-align: center; font-size: 12px" class="row justify-content-center">
+    <div class="col-sm-10">
       <div class="card">
         <div class="card-header">
           <h4>Новый пользователь</h4>
@@ -29,13 +29,13 @@
             {% csrf_token %}
             {% for field in form %}
               <div class="form-group row my-3">
-                <label for="{{ field.id_for_label }}" class="col-md-3 col-form-label text-md-left">
+                <label for="{{ field.id_for_label }}" class="col-sm-3 col-form-label text-sm-left">
                   {{ field.label }}
                   {% if field.field.required %}
                     <span class="required text-danger">*</span>
                   {% endif %}
                 </label>    
-                <div class="col-md-8">
+                <div class="col-sm-8">
                   {{ field|addclass:"form-control" }}
                   {% if field.help_text %}
                     <small id="{{ field.id_for_label }}-help" class="form-text text-muted">

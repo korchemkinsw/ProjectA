@@ -13,27 +13,25 @@
           <table class="table table-sm">
             <tbody>
               <tr>
-                <th class="col-lg-2">Статус:</th>
-                <td class="col-lg-10">{{ contract.status }}</td>
+                <th class="col-sm-2">Статус:</th>
+                <td class="col-sm-10">{{ contract.status }}</td>
               </tr>
               <tr>
-                <th class="col-lg-2">Предприятие:</th>
-                <td class="col-lg-10">{{ contract.enterprise }}</td>
+                <th class="col-sm-2">Предприятие:</th>
+                <td class="col-sm-10">{{ contract.enterprise }}</td>
               </tr>
               <tr>
-                <th class="col-lg-2">Номер:</th>
-                <td class="col-lg-10">{{ contract }}</td>
+                <th class="col-sm-2">Номер:</th>
+                <td class="col-sm-10">{{ contract }}</td>
               </tr>
               <tr>
-                <th class="col-lg-2">Клиент:</th>
+                <th class="col-sm-2">Клиент:</th>
                 <td>
                   {% if contract.legal %}
                     {{ contract.legal.fullname }}
                   {% endif %}
                   {% if contract.individual %}
-                    {{ contract.individual.name.last_name }} 
-                    {{ contract.individual.name.first_name }} 
-                    {{ contract.individual.name.fathers_name }}
+                    {{ contract.individual.name }} 
                   {% endif %}
                 </td>
               </tr>

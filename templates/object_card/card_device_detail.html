@@ -9,38 +9,38 @@
 {% endblock %}
 {% load static %}
 {% block content %}
-  <div class="col-lg-12">
+  <div class="col-sm-12">
     {% include "includes/card_nav.html" %}
     <div style="text-align: left; font-size: 12px" class="row justify-content-center">
       {% include "includes/card_head.html" %}
-      <div class="col-lg-12">
-      <div style="text-align: left; font-size: 12px" class="table-bordered">
+      <div class="col-sm-12">
+      <div style="text-align: left; font-size: 12px" class="table-bordered-responsive">
         <table class="table table-sm">
           <tbody>
             <tr>
-              <th class="col-lg-3">Пуредаваемый номер: </th>
-              <td class="col-lg-9">{{ card.device.account }}</td>
+              <th class="col-sm-3">Пуредаваемый номер: </th>
+              <td class="col-sm-9">{{ card.device.account }}</td>
             </tr>
             <tr>
-              <th class="col-lg-3">Тип ППК: </th>
-              <td class="col-lg-9">{{ card.device.device }}</td>
+              <th class="col-sm-3">Тип ППК: </th>
+              <td class="col-sm-9">{{ card.device.device }}</td>
             </tr>
             <tr>
-              <th class="col-lg-3">Дополнительная информация: </th>
-              <td class="col-lg-9">{{ card.device.note }}</td>
+              <th class="col-sm-3">Дополнительная информация: </th>
+              <td class="col-sm-9">{{ card.device.note }}</td>
             </tr>
             {% for phone in card.device.sim.all %}
               <tr>
-                <th class="col-lg-3">{{ phone.part_sim }}: </th>
-                <td class="col-lg-9">
+                <th class="col-sm-3">{{ phone.part_sim }}: </th>
+                <td class="col-sm-9">
                   <div class="row">
-                    <div class="col-lg">
+                    <div class="col-sm">
                       Аб. номер: {{ phone.msisdn }}
                     </div>
-                    <div class="col-lg">
+                    <div class="col-sm">
                       ICCID: {{ phone.iccid }}
                     </div>
-                    <div class="col-lg">
+                    <div class="col-sm">
                       {% if phone.image %}
                         <div><a href="{{ phone.image.url }}"><img src="{{ phone.image.url }}" alt="" width="100" height="75" class="d-inline-block align-text-top"></a></div>
                       {% endif %}
@@ -50,19 +50,19 @@
               </tr>
             {% endfor %}
             <tr>
-              <th class="col-lg-3">Подготовил: </th>
-              <td class="col-lg-9">{{ card.device.enginer_pult }} {{ card.device.changed_pult|date:"d.m.Y" }} {{ card.device.changed_pult|time:"H:i" }}</td>
+              <th class="col-sm-3">Подготовил: </th>
+              <td class="col-sm-9">{{ card.device.enginer_pult }} {{ card.device.changed_pult|date:"d.m.Y" }} {{ card.device.changed_pult|time:"H:i" }}</td>
             </tr>
             <tr>
-              <th class="col-lg-3">Заполнил: </th>
-              <td class="col-lg-9">{{ card.device.technican }} {{ card.device.changed_tech|date:"d.m.Y" }} {{ card.device.changed_tech|time:"H:i" }}</td>
+              <th class="col-sm-3">Заполнил: </th>
+              <td class="col-sm-9">{{ card.device.technican }} {{ card.device.changed_tech|date:"d.m.Y" }} {{ card.device.changed_tech|time:"H:i" }}</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
     <br>
-    <div style="text-align: left; font-size: 12px" class="col-lg-12">
+    <div style="text-align: left; font-size: 12px" class="col-sm-12">
       <p>
         {% if not card.device %}
           {% if user.role == 'engineer' or user.role == 'admin' and user.is_authenticated %}

@@ -3,8 +3,8 @@
 {% block content %}
 {% load user_filters %}
 
-<div style="text-align: center; font-size: 15px" class="row justify-content-center">
-  <div class="col-md-7 p-5">
+<div style="text-align: center; font-size: 12px" class="row justify-content-center">
+  <div class="col-sm-7 p-5">
     <div class="card">
       
       <div class="card-body">
@@ -34,13 +34,13 @@
                 aria-required="false"
               {% endif %}
             >
-            <label for="{{ field.id_for_label }}" class="col-md-5 col-form-label text-md-left">
+            <label for="{{ field.id_for_label }}" class="col-sm-5 col-form-label text-sm-left">
                 {{ field.label }}
                   {% if field.field.required %}
                     <span class="required text-danger">*</span>
                   {% endif %}
               </label>
-              <div class="col-md-7">
+              <div class="col-sm-7">
                 {{ field|addclass:'form-control' }}
                 {% if field.help_text %}
                   <small id="{{ field.id_for_label }}-help" class="form-text text-muted">
@@ -51,7 +51,7 @@
             </div>
           {% endfor %}
 
-          <div class="col-md">              
+          <div class="col-sm">              
               <button type="submit" class="btn btn-primary">
                 Войти
               </button>

@@ -8,7 +8,6 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from django_filters.views import FilterView
 
-#from clientele.forms import ContactForm, PhoneFormset
 from clientele.models import Contact, Contract, Individual, Legal
 from clientele.views import CreateContact, UpdateContact
 from enterprises.models import Responseteam
@@ -156,13 +155,16 @@ class UpdateCardIndividual(UserPassesTestMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        individ = get_object_or_404(Card, id=self.kwargs['pk']).individual
-        context['form'].fields['individual'].queryset = Individual.objects.filter(id=individ.pk).exclude()
+        context['form'].fields['individual'].queryset = Individual.objects.filter(id=self.object.individual.pk).exclude()
         context['title'] = 'Добавить карточку'
-        context['header'] = f'Добавить карточку {individ}'
+        context['header'] = f'Добавить карточку {self.object.individual}'
         context['action'] = 'upd_individual'
         context['cards']='active'
-        context['individ'] = individ.pk
+        context['individ'] = self.object.individual.pk
+        context['account'] = self.object.device.account
+        context['transmission'] = self.object.transmission
+        context['enterprise'] = self.object.contract.enterprise
+        context['contract'] = self.object.contract
         return context
 
     def form_valid(self, form):
@@ -221,13 +223,16 @@ class UpdateCardLegal(UserPassesTestMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        legal = get_object_or_404(Card, id=self.kwargs['pk']).legal
-        context['form'].fields['legal'].queryset = Legal.objects.filter(id=legal.pk).exclude()
+        context['form'].fields['legal'].queryset = Legal.objects.filter(id=self.object.legal.pk).exclude()
         context['title'] = 'Добавить карточку'
-        context['header'] = f'Добавить карточку {legal}'
+        context['header'] = f'Добавить карточку {self.object.legal.pk}'
         context['action'] = 'upd_legal'
         context['cards']='active'
-        context['legal'] = legal.pk
+        context['legal'] = self.object.legal.pk
+        context['account'] = self.object.device.account
+        context['transmission'] = self.object.transmission
+        context['enterprise'] = self.object.contract.enterprise
+        context['contract'] = self.object.contract
         return context
 
     def form_valid(self, form):
@@ -576,7 +581,7 @@ class CardZone(UserPassesTestMixin, UpdateView):
 class CreateCardGPS(UserPassesTestMixin, CreateView):
     model = GPS
     form_class = GPSForm
-    template_name = 'object_card\card_detail.html'
+    template_name = 'object_card/card_detail.html'
 
     def test_func(self):
         if self.request.user.role in ('engineer', 'technican', 'admin'):
@@ -604,7 +609,7 @@ class CreateCardGPS(UserPassesTestMixin, CreateView):
 class UpdateCardGPS(UserPassesTestMixin, UpdateView):
     model = GPS
     form_class = GPSForm
-    template_name = 'object_card\card_detail.html'
+    template_name = 'object_card/card_detail.html'
 
     def test_func(self):
         if self.request.user.role in ('engineer', 'technican', 'admin'):

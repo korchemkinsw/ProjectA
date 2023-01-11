@@ -22,16 +22,16 @@
               </tr>
             </thead>
             <tbody>
-              <td>
-                {% for phone in contact.phones.all %}
-                  <p>
+              {% for phone in contact.phones.all %}
+                <tr>
+                  <td>
                     <div class="row">
                       <div class="col-sm-2">{{ phone.type }}</div>
                       <div class="col-sm-2">{{ phone.phone }}</div>
                     </div>
-                  </p>
-                {% endfor %}
-              </td>
+                </td>
+              </tr>
+              {% endfor %}
             </tbody>
           </table>
           {% if contact.individual.all %}
@@ -42,15 +42,13 @@
                 </tr>
               </thead>
               <tbody>
-                <td>
-                  {% for individ in contact.individual.all %}
-                    <p>
-                      <div class="row">
-                        <a class="col-sm-2" href="{% url 'individ' individ.pk  %}">{{ individ.name }}</a>
-                      </div>
-                    </p>
-                  {% endfor %}
-                </td>
+                {% for individ in contact.individual.all %}
+                <tr>
+                  <td>
+                    <a href="{% url 'individ' individ.pk  %}">{{ individ.name }}</a>
+                  </td>
+                </tr>
+                {% endfor %}
               </tbody>
             </table>
           {% endif %}
@@ -62,15 +60,13 @@
                 </tr>
               </thead>
               <tbody>
-                <td>
-                  {% for legal in contact.bigboss.all %}
-                    <p>
-                      <div class="row">
-                        <a class="col-sm-2" href="{% url 'legal' legal.pk  %}">{{ legal }}</a>
-                      </div>
-                    </p>
-                  {% endfor %}
-                </td>
+                {% for legal in contact.bigboss.all %}
+                <tr>
+                  <td>
+                    <a href="{% url 'legal' legal.pk  %}">{{ legal }}</a>
+                  </td>
+                </tr>
+                {% endfor %}
               </tbody>
             </table>
           {% endif %} 

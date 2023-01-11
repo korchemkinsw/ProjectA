@@ -5,7 +5,7 @@
 {% block content %}
 {% load user_filters %}
 <div style="text-align: left; font-size: 12px" class="row justify-content-center">
-  <div class="col-md-12">
+  <div class="col-sm-12">
     <div class="card">
       <div class="card-header">
         {% if action == 'create' %}
@@ -22,7 +22,7 @@
             <tbody>
               {% for field in form %}
               <tr>
-                <th class="col-lg-2">
+                <th class="col-sm-2">
                   {{ field.label }}
                   {% if field.field.required %}
                     <span class="required">*</span>
@@ -48,7 +48,7 @@
                 <thead>
                   <tr>
                     {% for field in form.visible_fields %}
-                      <th class="col-lg-2">
+                      <th class="col-sm-2">
                         {{ field.label|capfirst }}
                       </th>
                     {% endfor %}
@@ -57,7 +57,7 @@
               {% endif %}
               <tr class="{% cycle row1 row2 %} formset_row">
                 {% for field in form.visible_fields %}
-                  <td  class="col-lg-2">
+                  <td  class="col-sm-2">
                     {# Include the hidden fields in the form #}
                     {% if forloop.first %}
                       {% for hidden in form.hidden_fields %}

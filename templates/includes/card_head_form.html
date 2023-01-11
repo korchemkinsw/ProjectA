@@ -1,63 +1,60 @@
-<br>
-<div class="col-lg-2">
-    <div class="card">
-      <div style="text-align: left; font-size: 12px" class="table-borderless">
-        <table class="table table-sm">
-          <thead></thead>
-          <tbody>
-            <tr>
-              <th class="col-lg-4">Объект: </th>
-              <td class="col-lg-8">{{ account }}</td>
-            </tr>
-            <tr>
-              <th class="col-lg-3">СПИ: </th>
-              <td class="col-lg-9">{{ transmission }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+<div class="col-sm-12">
+  <div class="card">
+    <div style="text-align: left; font-size: 12px">
+      <table class="table table-bordered-sm">
+        <thead></thead>
+        <tbody>
+          <tr>
+            <td class="col-sm-2">
+              <table class="table table-sm">
+                <thead></thead>
+                <tbody>
+                  <tr>
+                    <th>Объект: </th>
+                    <th>{{ account }}</th>
+                  </tr>
+                  <tr>
+                    <th>СПИ: </th>
+                    <td>{{ transmission }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+            <td class="col-sm-5">
+              <table class="table table-sm">
+                <thead></thead>
+                <tbody>
+                  <tr>
+                  <th>Обслуживание: </th>
+                  <th></th>
+                  </tr>
+                  <tr>
+                    <th>Договор: </th>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+            <td class="col-sm-5">
+              <table class="table table-sm">
+                <thead></thead>
+                <tbody>
+                  <tr>
+                    <th>Охрана: </th>
+                    <th>
+                      {{enterprise}}
+                    </th>
+                  </tr>
+                  <tr>
+                    <th>Договор: </th>
+                    <td>{{ contract }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
-  <div class="col-lg-5">
-    <div class="card">
-      <div style="text-align: left; font-size: 12px" class="table-borderless">
-        <table class="table table-sm">
-          <thead></thead>
-          <tbody>
-            <tr>
-              <th class="col-lg-3">Обслуживание: </th>
-              <th class="col-lg-9"></th>
-            </tr>
-            <tr>
-              <th class="col-lg-3">Договор: </th>
-              <td class="col-lg-9"></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-5">
-    <div class="card">
-      <div style="text-align: left; font-size: 12px" class="table-borderless">
-        <table class="table table-sm">
-          <thead></thead>
-          <tbody>
-            <tr>
-              <th class="col-lg-3">Охрана: </th>
-              <th class="col-lg-9">
-                {{enterprise}}
-              </th>
-            </tr>
-            <tr>
-              <th class="col-lg-3">Договор: </th>
-              <td class="col-lg-9">
-                {{ contract }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  <br>
+</div>
