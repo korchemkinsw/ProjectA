@@ -1,5 +1,8 @@
+import os
+
 from django.contrib.auth import get_user_model
 from django.db import models
+
 from enterprises.models import Enterprise
 from users.models import CustomUser
 
@@ -141,7 +144,14 @@ class FileOrder(models.Model):
         on_delete=models.CASCADE,
         related_name='files'
     )
-    file = models.FileField(verbose_name='Файл приказа', upload_to='orders/%Y-%m-%d/')
+
+    def generate_path(instance, filename):
+        enterprise=str(instance.order.firm.abbreviatedname)
+        for simb, new in (" ", "-"), ("/", "-"), ('"', ""):
+            enterprise=enterprise.replace(simb, new)
+        return os.path.join('orders', str(enterprise)+"/%Y-%m-%d/", filename)
+
+    file = models.FileField(verbose_name='Файл приказа', upload_to=generate_path)
 
     def delete(self, *args, **kwargs):
         storage, path = self.file.storage, self.file.path

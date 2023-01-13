@@ -1,24 +1,25 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
-from .forms import PersonForm, QteamForm, ZoneForm, GPSForm
-from .models import (Card, CardPhoto, Device, Partition, Person, Qteam, Sim,
-                     Zone, GPS)
+from .forms import GPSForm, PersonForm, QteamForm, ZoneForm
+from .models import (GPS, Card, CardPhoto, Device, Partition, Person, Qteam,
+                     Sim, Zone)
+
 
 class DeviceSimInline(admin.TabularInline):
     model = Sim
-    min_num = 1
+    min_num = 0
     extra = 0
 
 class DevicePartitionInline(admin.TabularInline):
     model = Partition
-    min_num = 1
+    min_num = 0
     extra = 0
 
 class DeviceZoneInline(admin.TabularInline):
     model = Zone
     form = ZoneForm
-    min_num = 1
+    min_num = 0
     extra = 0
 
 @admin.register(Device)

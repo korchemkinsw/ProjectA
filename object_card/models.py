@@ -17,7 +17,6 @@ class Device(models.Model):
         max_length=8,
         verbose_name='Номер объекта',
         help_text='Номер объекта',
-        blank=True
     )
     device = models.CharField(
         max_length=20,
@@ -87,7 +86,6 @@ class Sim(models.Model):
         max_length=5,
         choices=SIM_CHOICES,
         blank=True,
-        null=True,
         verbose_name='sim #',
     )
     iccid = models.CharField(
@@ -106,21 +104,20 @@ class Sim(models.Model):
         Device,
         verbose_name='ППК',
         help_text='ППК',
-        null=True,
         on_delete=models.CASCADE,
         related_name='sim',
     )
 
     def generate_path(instance, filename):
-        return os.path.join('object_card', str(instance.device.account)+"/sim", filename)
+        return os.path.join('object_card', str(instance.device.account)+"_sim", filename)
 
     image = models.ImageField(verbose_name='Фото sim-карты', upload_to=generate_path, blank=True, null=True)
-
+    
     def delete(self, *args, **kwargs):
         storage, path = self.image.storage, self.image.path
-        super(ImageSim,self).delete(*args,**kwargs)
+        super(Sim,self).delete(*args,**kwargs)
         storage.delete(path)
-
+    
     history = HistoricalRecords()
 
     class Meta:
@@ -129,45 +126,6 @@ class Sim(models.Model):
 
     def __str__(self):
         return f'{self.device} {self.iccid} {self.msisdn}'
-
-class ImageSim(models.Model):
-    SIM1 = 'sim 1'
-    SIM2 = 'sim 2'
-    SIM_CHOICES = (
-        (SIM1, 'sim 1'),
-        (SIM2, 'sim 2'),
-    )
-    device = models.ForeignKey(
-        Device,
-        verbose_name='ППК',
-        help_text='ППК',
-        null=True,
-        on_delete=models.CASCADE,
-        related_name='image_sim',
-    )
-    part_sim = models.CharField(
-        max_length=5,
-        choices=SIM_CHOICES,
-        verbose_name='sim #',
-    )
- 
-    def generate_path(instance, filename):
-        return os.path.join('object_card', str(instance.device.account)+"/sim", filename)
-
-    image = models.ImageField(verbose_name='Фото sim-карты', upload_to=generate_path, blank=True, null=True)
-
-    def delete(self, *args, **kwargs):
-        storage, path = self.image.storage, self.image.path
-        super(ImageSim,self).delete(*args,**kwargs)
-        storage.delete(path)
-
-    class Meta:
-        verbose_name = 'Фотография sim-карты'
-        verbose_name_plural = 'Фотографии sim-карт'
-
-    def __str__(self):
-        return f'{self.device.account} {self.part_sim} {self.image}'
-
 
 class Card(models.Model):
     ANDROMEDA = 'andromeda'

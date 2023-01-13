@@ -9,4 +9,4 @@ def addclass(field, css):
 
 @register.filter
 def readonly(field, css):
-    return field.as_widget(attrs={'class': css, 'style': 'font-size: 12px', 'readonly': True})
+    return field.as_widget(attrs={'style': 'font-size: 12px', 'readonly': True})
