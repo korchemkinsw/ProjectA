@@ -12,9 +12,15 @@
     {% block extrahead %}
       {{ form.media }}
     {% endblock %}
+    {% load static %}
+    <link rel="shortcut icon" type="image/png" href="{% static 'logo2.png' %}" />
 
   </head>
   <body>
+    <title>
+      {% block title %}
+      {% endblock %}
+    </title>
     {% include "includes/nav.html" %}
       <div style="text-align: left; font-size: 12px" class="row justify-auto-content-center ">
         <!--div class="col-auto">

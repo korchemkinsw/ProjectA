@@ -18,7 +18,8 @@ class DeviceForm(forms.ModelForm):
             'note': 'примечание',
         }
         widgets = {
-            'note': forms.Textarea(attrs={'rows': 2,'cols': 65})
+            'note': forms.Textarea(attrs={'rows': 2,'cols': 65}),
+            'device': autocomplete.ModelSelect2(url='type-autocomplete', attrs={'style': 'width:250px'}),
         }
 
 class DeviceUpdateForm(forms.ModelForm):
@@ -86,7 +87,7 @@ class ZoneForm(forms.ModelForm):
 
 class CardFilter(django_filters.FilterSet):
     status = django_filters.ChoiceFilter(choices=Card.STATUS_CHOICES)
-    account = django_filters.CharFilter(field_name='device__account', lookup_expr='contains')
+    account = django_filters.CharFilter(field_name='object_key', lookup_expr='contains')
     legal = django_filters.CharFilter(field_name='legal__abbreviatedname', lookup_expr='contains')
     individual = django_filters.CharFilter(field_name='individual__name__last_name', lookup_expr='contains')
     object_name = django_filters.CharFilter(field_name='object_name', lookup_expr='contains')
@@ -145,6 +146,9 @@ class CardQnoteForm(forms.ModelForm):
         model = Card
         exclude = ()
         fields = ('qnote',)
+        widgets = {
+            'qnote': forms.Textarea(attrs={'rows': 4,'cols': 65})
+        }
 
 class CardContractForm(forms.ModelForm):
     class Meta:
@@ -156,7 +160,7 @@ class CardGPSForm(forms.ModelForm):
     class Meta:
         model = Card
         exclude = ()
-        fields = ('width', 'longitude')
+        fields = ('none',)
 
 class PersonForm(forms.ModelForm):
     class Meta:

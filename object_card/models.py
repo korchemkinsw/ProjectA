@@ -11,18 +11,59 @@ from enterprises.models import Responseteam
 
 User = get_user_model()
 
+ANDROMEDA = 'Си-Норд'
+RITM = 'Ритм'
+NAVIGARD = 'Навигард'
+ELDES = 'Eldes'
+JABLOTRON = 'Jablotron'
+DX = 'DX'
+OTHER ='Прочее оборудование'
+NONE = 'Без оборудования'
+
+SYSTEMS = (
+    (ANDROMEDA, 'Си-Норд'),
+    (RITM, 'Ритм'),
+    (NAVIGARD, 'Навигард'),
+    (ELDES, 'Eldes'),
+    (JABLOTRON, 'Jablotron'),
+    (DX, 'DX'),
+    (OTHER, 'Прочее оборудование'),
+    (NONE, 'Без оборудования')
+)
+
+class Type_device(models.Model):
+    transmission = models.CharField(
+        max_length=20,
+        choices=SYSTEMS,
+        verbose_name='СПИ',
+    )
+    device = models.CharField(
+        max_length=30,
+        verbose_name='Тип ППК',
+        help_text='Тип ППК',
+        unique=True
+    )
+    class Meta:
+        verbose_name = 'Тип ППК'
+        verbose_name_plural = 'Типы ППК'
+
+    def __str__(self):
+        return f'{self.device}'
 
 class Device(models.Model):
     account = models.CharField(
         max_length=8,
-        verbose_name='Номер объекта',
-        help_text='Номер объекта',
+        verbose_name='Передаваемый номер',
+        help_text='Передаваемый номер',
+        unique=True
     )
-    device = models.CharField(
-        max_length=20,
-        verbose_name='Прибор',
-        help_text='Прибор',
-        blank=True
+    device = models.ForeignKey(
+        Type_device,
+        verbose_name='Тип ППК',
+        on_delete=models.SET_NULL,
+        related_name='type',
+        null=True,
+        blank=True,
     )
     note = models.CharField(
         max_length=200,
@@ -128,14 +169,6 @@ class Sim(models.Model):
         return f'{self.device} {self.iccid} {self.msisdn}'
 
 class Card(models.Model):
-    ANDROMEDA = 'andromeda'
-    RITM = 'ritm'
-    NAVIGARD = 'navigard'
-    ELDES = 'eldes'
-    JABLOTRON = 'jablotron'
-    DX = 'dx'
-    OTHER ='other'
-
     NEW = 'новый'
     ACCOUNT = 'пультовой номер'
     CONTRACT = 'договор'
@@ -143,16 +176,6 @@ class Card(models.Model):
     MONTAGE = 'монтаж'
     CHANGED = 'изменён'
     COMPLETED = 'завершен'
-
-    SYSTEMS = (
-        (ANDROMEDA, 'Си-Норд'),
-        (RITM, 'Ритм'),
-        (NAVIGARD, 'Навигард'),
-        (ELDES, 'Eldes'),
-        (JABLOTRON, 'Jablotron'),
-        (DX, 'DX'),
-        (OTHER, 'Прочее оборудование'),
-    )
 
     STATUS_CHOICES = (
         (NEW, 'Новый'),
@@ -168,7 +191,14 @@ class Card(models.Model):
         max_length=15,
         choices=STATUS_CHOICES,
         default='Новый',
-        verbose_name='Статус заявки',
+        verbose_name='Статус объекта',
+    )
+    object_key = models.CharField(
+        max_length=20,
+        verbose_name='Ключ объекта',
+        help_text='Ключ объекта',
+        blank=True,
+        unique=True
     )
     legal = models.ForeignKey(
         Legal,
@@ -192,7 +222,6 @@ class Card(models.Model):
         max_length=400,
         verbose_name='Название объекта',
         help_text='Название объекта',
-        null=True,
     )
     phone = models.CharField(
         max_length=50,
@@ -204,24 +233,10 @@ class Card(models.Model):
         max_length=400,
         verbose_name='Адрес',
         help_text='Адрес',
-        blank=True,
-    )
-    width = models.CharField(
-        max_length=9,
-        verbose_name='--пусто--',
-        help_text='--пусто--',
-        blank=True,
-    )
-    longitude = models.CharField(
-        max_length=9,
-        verbose_name='--пусто--',
-        help_text='--пусто--',
-        blank=True,
     )
     transmission = models.CharField(
         max_length=20,
         choices=SYSTEMS,
-        #default=OTHER,
         verbose_name='СПИ',
     )
     note = models.CharField(
@@ -286,6 +301,12 @@ class Card(models.Model):
     changed = models.DateTimeField(
         'Дата изменения',
         null=True,
+        blank=True,
+    )
+    none = models.CharField(
+        max_length=1,
+        verbose_name='--пусто--',
+        help_text='--пусто--',
         blank=True,
     )
     history = HistoricalRecords()

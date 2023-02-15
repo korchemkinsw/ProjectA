@@ -4,6 +4,7 @@ from django.urls import re_path as url
 from . import views
 
 urlpatterns = [
+    url(r'^type-autocomplete/$', views.Type_deviceAutocomplete.as_view(), name='type-autocomplete'),
     url(r'^qteam-autocomplete/$', views.QteamAutocomplete.as_view(), name='qteam-autocomplete'),
     url(
         r'^person-autocomplete/$',

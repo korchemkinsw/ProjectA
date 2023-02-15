@@ -55,6 +55,9 @@ class CreateContact(UserPassesTestMixin, CreateView):
     def form_valid(self, form):
         context = self.get_context_data(form=form)
         phones = context['phones']
+        self.object = form.save(commit=False)
+        self.object = form.save()
+        self.success_url = reverse('contact', args=[str(self.object.id)])
         if phones.is_valid():
             response = super(CreateContact, self).form_valid(form)
             phones.instance = self.object
@@ -128,6 +131,7 @@ class CreateIndividual(UserPassesTestMixin, CreateView):
             self.object = form.save(commit=False)
             self.object.name = get_object_or_404(Contact, id=self.kwargs['pk'])
             self.object = form.save()
+            self.success_url = reverse('individ', args=[str(self.object.id)])
         return super(CreateIndividual, self).form_valid(form)
 
 class DetailIndividual(DetailView):
@@ -162,6 +166,7 @@ class CreateLegal(UserPassesTestMixin, CreateView):
         with transaction.atomic():
             self.object = form.save(commit=False)
             self.object = form.save()
+            self.success_url = reverse('legal', args=[str(self.object.id)])
         return super(CreateLegal, self).form_valid(form)
 
 class DetailLegal(DetailView):

@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Enterprise, Position, Responseteam, Staffer
+from .models import (Enterprise, PersonalCard, Position, Responseteam,
+                     Security, Weapon, WeaponsPermit, Worker)
 
 
 @admin.register(Enterprise)
@@ -38,13 +39,55 @@ class EnterpriseAdmin(admin.ModelAdmin):
 class PositionAdmin(admin.ModelAdmin):
     list_display = ('id', 'post')
     fields = ['post']
-
+'''
 @admin.register(Staffer)
 class StafferAdmin(admin.ModelAdmin):
     list_display = ('last_name', 'first_name', 'fathers_name', 'post')
     fields = ['last_name', 'first_name', 'fathers_name', 'post']
-
+'''
 @admin.register(Responseteam)
 class ResponseteamAdmin(admin.ModelAdmin):
     list_display = ('name', 'phone')
     fields = ['name', 'phone']
+
+@admin.register(Worker)
+class WorkerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'post')
+    fields = ['name', 'post']
+
+class WeaponsPermitInline(admin.TabularInline):
+    model = WeaponsPermit
+    min_num = 0
+    extra = 0
+
+class PersonalCardInline(admin.TabularInline):
+    model = PersonalCard
+    min_num = 0
+    extra = 0
+
+@admin.register(Security)
+class SecurityAdmin(admin.ModelAdmin):
+    list_display = (
+        'security', 'photo', 'epp', 'medical', 'category',
+        'id_number', 'status', 'issue', 'prolonged', 'note'
+        )
+    fields = [
+        'security', 'photo', 'epp', 'medical', 'category',
+        'id_number', 'status', 'issue', 'prolonged', 'note'
+        ]
+    inlines = [WeaponsPermitInline, PersonalCardInline]
+
+@admin.register(Weapon)
+class WeaponAdmin(admin.ModelAdmin):
+    list_display = ('model', 'caliber', 'series', 'number')
+    fields = ['model', 'caliber', 'series', 'number']
+
+@admin.register(WeaponsPermit)
+class WeaponPermitAdmin(admin.ModelAdmin):
+    list_display = ('series', 'number', 'security', 'enterprise', 'weapon', 'issue')
+    fields = ['series', 'number', 'security', 'enterprise', 'weapon', 'issue']
+
+@admin.register(PersonalCard)
+class PersonalCardAdmin(admin.ModelAdmin):
+    list_display = ('series', 'number', 'security', 'enterprise', 'type', 'issue')
+    fields = ['series', 'number', 'security', 'enterprise', 'type', 'issue']

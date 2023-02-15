@@ -1,3 +1,7 @@
+import os
+import re
+
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import slugify
 
@@ -17,6 +21,175 @@ class Position(models.Model):
     def __str__(self):
         return self.post
 
+class Weapon(models.Model):
+    IZH71 = 'ИЖ-71'
+
+    MODEL = (
+        (IZH71, 'ИЖ-71'),
+    )
+
+    NINE = '9 мм'
+
+    CALIBER = (
+        (NINE, '9 мм'),
+    )
+
+    VET = 'ВЕТ'
+
+    SERIES = (
+        (VET, 'ВЕТ'),
+        #(),
+        #(),
+        #(),
+    )
+
+    model = models.CharField(
+        max_length=11,
+        choices=MODEL,
+        verbose_name='Модель оружия',
+        default='ИЖ-71',
+    )
+    caliber = models.CharField(
+        max_length=5,
+        choices=CALIBER,
+        verbose_name='Калибр',
+        default='9 мм',
+    )
+    series = models.CharField(
+        max_length=3,
+        verbose_name='Серия',
+        choices=SERIES,
+    )
+    number = models.CharField(
+        verbose_name='Номер',
+        max_length=4,
+    )
+
+    class Meta:
+        verbose_name = 'Оружие'
+        verbose_name_plural = 'Оружие'
+    
+    def __str__(self):
+        return f'{self.model} {self.caliber} {self.series}№{self.number}'
+
+    def clean(self):
+        if not re.fullmatch(r'^\d{4}', str(self.number)):
+            raise ValidationError(
+                {'number': 'Четыре цифры номера'}
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
+
+class Worker(models.Model):
+    name = models.CharField(
+        verbose_name='Фамилия Имя Отчество',
+        max_length=150,
+    )
+    post = models.ForeignKey(
+        Position,
+        verbose_name='Должность',
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        verbose_name = 'Сотрудник'
+        verbose_name_plural = 'Сотрудники'
+    
+    def __str__(self):
+        return f'{self.name}: {self.post}'
+
+    def clean(self):
+        if not re.fullmatch(r'^[А-ЯЁ][а-яё]+[\S]+[\s][А-ЯЁ][а-яё]+[\s][А-ЯЁ][\D]+', str(self.name)):
+            raise ValidationError(
+                {'name': 'Фамилия Имя Отчество'}
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
+
+class Security(models.Model):
+    FIRST = '1 разряд'
+    SECOND = '2 разряд'
+    THIRD = '3 разряд'
+    FOURTH = '4 разряд'
+    FIFTH = '5 разряд'
+    SIXTH = '6 разряд'
+
+    CURRENT = 'действующий'
+    EXPIRED = 'просрочен'
+
+    CATEGORY = (
+        #(FIRST, '1 разряд'),
+        #(SECOND, '2 разряд'),
+        #(THIRD, '3 разряд'),
+        (FOURTH, '4 разряд'),
+        (FIFTH, '5 разряд'),
+        (SIXTH, '6 разряд')
+    )
+
+    STATUS = (
+        (CURRENT, 'действующий'),
+        (EXPIRED, 'просрочен')
+    )
+
+    security = models.ForeignKey(
+        Worker,
+        verbose_name='Охранник',
+        on_delete=models.CASCADE
+    )
+    epp = models.DateField(
+        verbose_name='ЕПП',
+        blank=True,
+    )
+    medical = models.DateField(
+        verbose_name='Медицина',
+        blank=True,
+    )
+    category = models.CharField(
+        max_length=8,
+        choices=CATEGORY,
+        verbose_name='разряд',
+    )
+    id_number = models.CharField(
+        max_length=11,
+        verbose_name='Серия и номер удостоверения',
+        unique=True
+    )
+    issue = models.DateField(
+        verbose_name='Дата выдачи',
+    )
+    prolonged = models.DateField(
+        verbose_name='Дата продления',
+        blank=True,
+    )
+    status = models.CharField(
+        max_length=11,
+        choices=STATUS,
+        verbose_name='Статус удостоверения',
+        default='действующий',
+    )
+    note = models.CharField(
+        max_length=200,
+        verbose_name='Примечание',
+        blank=True
+    )
+
+    def generate_path(instance, filename):
+        return os.path.join('Security', str(instance.security.name)+'_'+str(instance.security.id), filename)
+
+    photo = models.ImageField(verbose_name='Фото', upload_to=generate_path, blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Охранник'
+        verbose_name_plural = 'Охранники'
+
+    def __str__(self):
+        return f'{self.security.name} {self.category} {self.status}'
+
+'''
 class Staffer(models.Model):
     last_name = models.CharField(
         verbose_name='фамилия',
@@ -46,7 +219,7 @@ class Staffer(models.Model):
     
     def __str__(self):
         return f'{self.last_name} {self.first_name} {self.fathers_name}'
-
+'''
 class Enterprise (models.Model):
     fullname = models.CharField(
         max_length=300,
@@ -121,7 +294,7 @@ class Enterprise (models.Model):
         blank=True
     )
     bigboss = models.ForeignKey(
-        Staffer,
+        Worker,
         verbose_name='Ген. директор',
         help_text='Ген. директор',
         null=True,
@@ -136,6 +309,118 @@ class Enterprise (models.Model):
 
     def __str__(self):
         return self.abbreviatedname
+
+class WeaponsPermit(models.Model):
+    RSLA = 'РСЛа'
+
+    SERIES = (
+        (RSLA, 'РСЛа'),
+    )
+    series = models.CharField(
+        max_length=4,
+        verbose_name='Серия',
+        choices=SERIES,
+        default='РСЛа'
+    )
+    number = models.CharField(
+        verbose_name='Номер',
+        max_length=7,
+    )
+    security = models.ForeignKey(
+        Security,
+        verbose_name='Охранник',
+        on_delete=models.CASCADE
+    )
+    enterprise = models.ForeignKey(
+        Enterprise,
+        verbose_name='Предприятие',
+        on_delete=models.CASCADE
+    )
+    weapon = models.ForeignKey(
+        Weapon,
+        verbose_name='Оружие',
+        on_delete=models.CASCADE
+    )
+    issue = models.DateField(
+        verbose_name='Дата выдачи',
+    )
+
+    class Meta:
+        verbose_name = 'Разрешение на хранение и ношение оружия'
+        verbose_name_plural = 'Разрешения на хранение и ношение оружия'
+
+    def __str__(self):
+        return f'{self.series}№{self.number} {self.security.security.name} {self.enterprise.abbreviatedname}'
+
+    def clean(self):
+        if not re.fullmatch(r'^\d{7}', str(self.number)):
+            raise ValidationError(
+                {'number': 'Семь цифр номера'}
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
+
+class PersonalCard(models.Model):
+    MAIN = 'основной'
+    MOONLIGHTER = 'совместитель'
+
+    TYPES = (
+        (MAIN, 'основное'),
+        (MOONLIGHTER, 'совместитель')
+    )
+
+    series = models.CharField(
+        max_length=2,
+        verbose_name='Серия',
+        default='78'
+    )
+    number = models.CharField(
+        verbose_name='Номер',
+        max_length=13,
+    )
+    security = models.ForeignKey(
+        Security,
+        verbose_name='Охранник',
+        on_delete=models.CASCADE
+    )
+    enterprise = models.ForeignKey(
+        Enterprise,
+        verbose_name='Предприятие',
+        on_delete=models.CASCADE
+    )
+    type = models.CharField(
+        max_length=12,
+        verbose_name='Тип',
+        choices=TYPES,
+        default='основное'
+    )
+    issue = models.DateField(
+        verbose_name='Дата выдачи',
+    )
+
+    class Meta:
+        verbose_name = 'Личная карточка охранника'
+        verbose_name_plural = 'Личные карточки охранников'
+
+    def __str__(self):
+        return f'{self.series}№{self.number} {self.security.security.name} {self.enterprise.abbreviatedname}-{self.type}'
+
+    def clean(self):
+        if not re.fullmatch(r'^\d{2}', str(self.series)):
+            raise ValidationError(
+                {'series': 'Две цифры'}
+            )
+        if not re.fullmatch(r'^\d{6}[А-Я]\d{6}', str(self.number)):
+            raise ValidationError(
+                {'number': 'Шесть цифр буква шесть цифр'}
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
+
 
 class Responseteam(models.Model):
     name = models.CharField(

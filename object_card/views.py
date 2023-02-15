@@ -17,8 +17,17 @@ from .forms import (CardContractForm, CardFilter, CardGPSForm,
                     DeviceForm, DeviceNoneForm, DeviceUpdateForm, GPSForm,
                     PartitionFormset, PersonForm, PhotoFormset, QteamForm,
                     SimFormset, ZoneFormset)
-from .models import GPS, Card, Device, Partition, Person, Qteam, Zone
+from .models import GPS, Card, Device, Partition, Person, Qteam, Type_device
 
+
+class Type_deviceAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Type_device.objects.none()
+        qs = Type_device.objects.all()
+        if self.q:
+            qs = qs.filter(device__icontains=self.q)
+        return qs
 
 class QteamAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -414,6 +423,7 @@ class CreateCardDevice(UserPassesTestMixin, CreateView):
             self.object = form.save()
             context['card'].device = self.object
             context['card'].status = Card.ACCOUNT
+            context['card'].object_key = self.object.account
             context['card'].save()
             if phones.is_valid():
                 response = super(CreateCardDevice, self).form_valid(form)

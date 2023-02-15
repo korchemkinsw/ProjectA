@@ -27,14 +27,14 @@
               </label>
               <div class="col-sm-6">
                 {# подключаем фильтр и указываем класс #}
-                {{ field|addclass:"form-control"  }}
+                {{ field }}
                 {% if field.help_text %}
                   <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
                 {% endif %}
               </div>                
             </div>
           {% endfor %}
-          <button type="submit" class="btn btn-outline-success btn-sm">Добавить</button>
+          <button type="submit" class="btn btn-outline-success btn-sm">Сохранить</button>
         </form>
       </div>
     </div>

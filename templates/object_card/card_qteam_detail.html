@@ -33,7 +33,7 @@
                       <td></td>
                       <td>{{ form.type }}</td>
                       <td>
-                        <button type="submit" class="badge badge-outline">Изменить</button>
+                        <button type="submit" class="badge badge-success">сохранить</button>
                         <a class="badge badge-danger" href="{% url 'del_card_qteam' qteam.pk %}" role="button">Удалить</a>
                       </td>
                     </tr>
@@ -58,7 +58,7 @@
                     <th>{{ form.qteam }}</th>
                     <td></td>
                     <td>{{ form.type }}</td>
-                    <td><button type="submit" class="badge badge-outline">Добавить</button></td>
+                    <td><button type="submit" class="badge badge-success">Сохранить</button></td>
                   </tr>
                 </form>
               {% endif %}
@@ -68,11 +68,7 @@
         <div style="text-align: left; font-size: 12px" class="col-sm-12">
           <p>
             {% if user.role == 'director' or user.role == 'admin' and user.is_authenticated %}
-              {% if not card.qteam %}
-                <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_qteam' card.id  %}" role="button">Добавить группу</a>
-              {% else %}
-              <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_qteam' card.id  %}" role="button">Изменить группу</a>
-              {% endif %}
+              <a class="btn btn-outline-primary btn-sm" href="{% url 'add_card_qteam' card.id  %}" role="button">Добавить группу</a>
             {% endif %}
           </p>
         </div>
@@ -86,7 +82,7 @@
                 <form method="post" enctype="multipart/form-data" action="">
                   {% csrf_token %}
                   <p>{{ form.qnote }}</p>
-                  <p><button type="submit" class="badge badge-outline">Изменить</button></p>
+                  <p><button type="submit" class="badge badge-success">Сохранить</button></p>
                 </form>
               {% else %}
                 <p>{{ card.qnote }}</p>

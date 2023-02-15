@@ -1,6 +1,9 @@
 from dataclasses import fields
+
 from django import forms
-from .models import Enterprise, Position, Staffer
+
+from .models import Enterprise, Position, Worker
+
 
 class AddEnterpriseForm(forms.ModelForm):
     class Meta:
@@ -29,10 +32,8 @@ class AddPositionForm(forms.ModelForm):
 
 class AddStafferForm(forms.ModelForm):
     class Meta:
-        model = Staffer
+        model = Worker
         fields = (
-            'last_name',
-            'first_name',
-            'fathers_name',
+            'name',
             'post',
         )

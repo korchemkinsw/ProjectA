@@ -1,11 +1,12 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import CreateView
 from django.urls import reverse_lazy
+from django.views.generic import CreateView
 
 from Project_A import settings
 
-from .models import Enterprise, Position, Staffer
 from .forms import AddEnterpriseForm, AddPositionForm, AddStafferForm
+from .models import Enterprise, Position, Worker
+
 
 def enterprises(request):
     latest = Enterprise.objects.all()
@@ -138,7 +139,7 @@ def del_position(request, id):
     return redirect('positions')
 
 def staffers(request):
-    latest = Staffer.objects.all()
+    latest = Worker.objects.all()
     context={
         'my_company': settings.MYCOMPANY,
         'staffers': latest,
@@ -167,7 +168,7 @@ def new_staffer(request):
     return redirect('staffers')
 
 def edit_staffer(request, id):
-    staffer = get_object_or_404(Staffer, id=id)
+    staffer = get_object_or_404(Worker, id=id)
     form = AddStafferForm(
         request.POST or None,
         files=request.FILES or None,

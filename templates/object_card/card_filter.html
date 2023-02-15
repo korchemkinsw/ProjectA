@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
-{% load static %}
 {% block title %}Карточки объектов{% endblock %}
+{% load static %}
 {% block content %}
 {% load user_filters %}
 <div class="row justify-content-centr">
@@ -13,7 +13,7 @@
             <thead>
               <tr>
                 <th scope="col">Статус</th>
-                <th scope="col">Account</th>
+                <th scope="col">Ключ</th>
                 <th scope="col">Юр. лицо</th>
                 <th scope="col">Физ. лицо</th>
                 <th scope="col">Объект</th>
@@ -43,7 +43,7 @@
             <thead>
               <tr>
                 <th scope="col">Статус</th>
-                <th scope="col">Account</th>
+                <th scope="col">Ключ</th>
                 <th scope="col">Клиент</th>
                 <th scope="col">Объект</th>
                 <th scope="col">Адрес</th>
@@ -57,7 +57,7 @@
                     {{ card.status }}
                   </td>
                   <td>
-                    {{ card.device }}
+                    {{ card.object_key }}
                   </td>
                   <td>
                     {% if card.legal %}
