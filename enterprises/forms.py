@@ -1,9 +1,65 @@
+import datetime as dt
+import re
 from dataclasses import fields
 
+import django_filters
+from dal import autocomplete
 from django import forms
 
-from .models import Enterprise, Position, Worker
+from Project_A.settings import WEAPONMIN
 
+from .models import (Enterprise, PersonalCard, Position, Security, Weapon,
+                     WeaponsPermit, Worker)
+
+
+class SecurityForm(forms.ModelForm):
+    class Meta:
+        model = Security
+        exclude = ()
+        fields = (
+            'security', 'photo', 'epp', 'medical', 'category',
+            'id_number', 'status', 'issue', 'prolonged', 'note'
+        )
+        widgets = {
+            'security': autocomplete.ModelSelect2(url='worker-autocomplete', attrs={'style':'width:400px'}),
+            'epp': forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
+            'medical': forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
+            'id_number': forms.TextInput(attrs={'placeholder': 'А 123456', 'style':'width:70px'}),
+            'issue': forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
+            'prolonged': forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
+            'note': forms.Textarea(attrs={'rows': 2,'cols': 65})
+            }
+
+class PersonalCardForm(forms.ModelForm):
+    class Meta:
+        model = PersonalCard
+        exclude = ()
+        fields = ('series', 'number', 'security', 'enterprise', 'type', 'issue')
+        widgets = {
+            'series': forms.TextInput(attrs={'placeholder': '78', 'style':'width:50px'}),
+            'number': forms.TextInput(attrs={'placeholder': '123456Б123456 ', 'style':'width:100px'}),
+            'issue': forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
+            }
+
+class WeaponForm(forms.ModelForm):
+    class Meta:
+        model = Weapon
+        exclude = ()
+        fields = ('model', 'caliber', 'series', 'number', 'release')
+        widgets = {
+            'number': forms.TextInput(attrs={'placeholder': '1234', 'style':'width:70px'}),
+            'release': forms.NumberInput(attrs={'style':'width:70px'})
+            }
+
+class WeaponsPermitForm(forms.ModelForm):
+    class Meta:
+        model = WeaponsPermit
+        exclude = ()
+        fields = ('series', 'number', 'security', 'enterprise', 'weapon', 'issue')
+        widgets = {
+            'number': forms.TextInput(attrs={'placeholder': '1234567', 'style':'width:100px'}),
+            'issue': forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
+            }
 
 class AddEnterpriseForm(forms.ModelForm):
     class Meta:

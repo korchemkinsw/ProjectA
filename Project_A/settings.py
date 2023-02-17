@@ -168,3 +168,22 @@ SIMPLE_HISTORY_HISTORY_CHANGE_REASON_USE_TEXT_FIELD=True
 SIMPLE_HISTORY_FILEFIELD_TO_CHARFIELD = True
 
 MYCOMPANY = 'Double Yat'
+
+# Enterprise variable
+
+## Weapons
+IZH71 = 'ИЖ-71'
+NINE = '9 мм'
+VET = 'ВЕТ'
+WEAPONMIN = 1990
+
+## Secutity
+SECURITY = 'Охранник'
+FIRST = '1 разряд'
+SECOND = '2 разряд'
+THIRD = '3 разряд'
+FOURTH = '4 разряд'
+FIFTH = '5 разряд'
+SIXTH = '6 разряд'
+CURRENT = 'действующий'
+EXPIRED = 'просрочен'

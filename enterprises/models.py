@@ -1,9 +1,14 @@
+import datetime as dt
 import os
 import re
 
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.text import slugify
+
+from Project_A.settings import (CURRENT, EXPIRED, FIFTH, FOURTH, IZH71, NINE,
+                                SIXTH, VET, WEAPONMIN)
 
 
 class Position(models.Model):
@@ -22,20 +27,12 @@ class Position(models.Model):
         return self.post
 
 class Weapon(models.Model):
-    IZH71 = 'ИЖ-71'
-
     MODEL = (
         (IZH71, 'ИЖ-71'),
     )
-
-    NINE = '9 мм'
-
     CALIBER = (
         (NINE, '9 мм'),
     )
-
-    VET = 'ВЕТ'
-
     SERIES = (
         (VET, 'ВЕТ'),
         #(),
@@ -63,6 +60,15 @@ class Weapon(models.Model):
     number = models.CharField(
         verbose_name='Номер',
         max_length=4,
+    )
+    release = models.IntegerField(
+        verbose_name='Год выпуска',
+        max_length=4,
+        default=WEAPONMIN,
+        validators=[
+            MinValueValidator(WEAPONMIN),
+            MaxValueValidator(int(dt.datetime.today().year))
+            ],
     )
 
     class Meta:
@@ -111,16 +117,6 @@ class Worker(models.Model):
         return super().save(*args, **kwargs)
 
 class Security(models.Model):
-    FIRST = '1 разряд'
-    SECOND = '2 разряд'
-    THIRD = '3 разряд'
-    FOURTH = '4 разряд'
-    FIFTH = '5 разряд'
-    SIXTH = '6 разряд'
-
-    CURRENT = 'действующий'
-    EXPIRED = 'просрочен'
-
     CATEGORY = (
         #(FIRST, '1 разряд'),
         #(SECOND, '2 разряд'),
@@ -142,10 +138,12 @@ class Security(models.Model):
     )
     epp = models.DateField(
         verbose_name='ЕПП',
+        null=True,
         blank=True,
     )
     medical = models.DateField(
         verbose_name='Медицина',
+        null=True,
         blank=True,
     )
     category = models.CharField(
@@ -163,6 +161,7 @@ class Security(models.Model):
     )
     prolonged = models.DateField(
         verbose_name='Дата продления',
+        null=True,
         blank=True,
     )
     status = models.CharField(

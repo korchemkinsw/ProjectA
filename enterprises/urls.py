@@ -1,7 +1,10 @@
 from django.urls import path
+from django.urls import re_path as url
+
 from . import views
 
 urlpatterns = [
+    url(r'^worker-autocomplete/$', views.WorkerAutocomplete.as_view(), name='worker-autocomplete'),
     path('', views.enterprises, name='enterprises'),
     path('positions/', views.positions, name='positions'),
     path('positions/new/', views.new_position, name='new_position'),

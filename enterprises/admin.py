@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from .forms import (PersonalCardForm, SecurityForm, WeaponForm,
+                    WeaponsPermitForm)
 from .models import (Enterprise, PersonalCard, Position, Responseteam,
                      Security, Weapon, WeaponsPermit, Worker)
 
@@ -57,16 +59,19 @@ class WorkerAdmin(admin.ModelAdmin):
 
 class WeaponsPermitInline(admin.TabularInline):
     model = WeaponsPermit
+    form = WeaponsPermitForm
     min_num = 0
     extra = 0
 
 class PersonalCardInline(admin.TabularInline):
     model = PersonalCard
+    form = PersonalCardForm
     min_num = 0
     extra = 0
 
 @admin.register(Security)
 class SecurityAdmin(admin.ModelAdmin):
+    form = SecurityForm
     list_display = (
         'security', 'photo', 'epp', 'medical', 'category',
         'id_number', 'status', 'issue', 'prolonged', 'note'
@@ -79,15 +84,18 @@ class SecurityAdmin(admin.ModelAdmin):
 
 @admin.register(Weapon)
 class WeaponAdmin(admin.ModelAdmin):
-    list_display = ('model', 'caliber', 'series', 'number')
-    fields = ['model', 'caliber', 'series', 'number']
+    form = WeaponForm
+    list_display = ('model', 'caliber', 'series', 'number', 'release')
+    fields = ['model', 'caliber', 'series', 'number', 'release']
 
 @admin.register(WeaponsPermit)
 class WeaponPermitAdmin(admin.ModelAdmin):
+    form = WeaponsPermitForm
     list_display = ('series', 'number', 'security', 'enterprise', 'weapon', 'issue')
     fields = ['series', 'number', 'security', 'enterprise', 'weapon', 'issue']
 
 @admin.register(PersonalCard)
 class PersonalCardAdmin(admin.ModelAdmin):
+    form = PersonalCardForm
     list_display = ('series', 'number', 'security', 'enterprise', 'type', 'issue')
     fields = ['series', 'number', 'security', 'enterprise', 'type', 'issue']

@@ -1,3 +1,5 @@
+from dal import autocomplete
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
@@ -5,8 +7,18 @@ from django.views.generic import CreateView
 from Project_A import settings
 
 from .forms import AddEnterpriseForm, AddPositionForm, AddStafferForm
-from .models import Enterprise, Position, Worker
+from .models import Enterprise, Position, Security, Worker
 
+
+class WorkerAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        post = get_object_or_404(Position,post=settings.SECURITY)
+        if not self.request.user.is_authenticated:
+            return Worker.objects.filter(post=post)
+        qs = Worker.objects.filter(post=post)
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+        return qs
 
 def enterprises(request):
     latest = Enterprise.objects.all()
