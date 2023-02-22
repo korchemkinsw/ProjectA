@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Контакты{% endblock %}
+{% block content %}
+{% load user_filters %}
+<div class="card">
+  <div class="card-header">
+    <h5>Охранники</h5>
+  </div>
+  <div class="card-body" style="text-align: left; font-size: 12px">
+    
+    <div style="text-align: left; font-size: 12px" class="table-responsive">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th scope="col">Фамилия Имя Отчество</th>
+            <th scope="col">ЕПП</th>
+            <th scope="col">Медицина</th>
+            <th scope="col">Разряд</th>
+            <th scope="col">Номер удостоверения</th>
+            <th scope="col">Выдано</th>
+            <th scope="col">Продлено</th>
+            <th scope="col">Примечание</th>
+          </tr>
+          <form method="get">
+            <tr>
+              <th>{{ filter.form.security }}</th>
+              <th></th>
+              <th></th>
+              <th>{{ filter.form.category }}</th>
+              <th>{{ filter.form.id_number }}</th>
+              <th>{{ filter.form.status }}</th>
+              <th></th>
+              <th>&nbsp;<input type="submit" value="Найти" /></th>
+            </tr>
+        </form>
+        </thead>
+        <tbody>
+          {% for worker in security %}
+            <tr>
+              <td><a href="{% url 'det_security' worker.pk %}">{{ worker.security.name }}</a></td>
+              <td>{{ worker.epp|date:"d.m.Y" }}</td>
+              <td>{{ worker.medical|date:"d.m.Y" }}</td>
+              <td>{{ worker.category }}</td>
+              <td>{{ worker.id_number }}</td>
+              <td>{{ worker.issue|date:"d.m.Y" }}</td>
+              <td>{{ worker.prolonged|date:"d.m.Y" }}</td>
+              <td>{{ worker.note }}</td>
+            <tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% include "includes/paginator.html" %}
+      <br>
+    </div>
+    <div>
+      {% if user.role == 'admin'  %}
+      <p>
+        <a class="btn btn-outline-primary btn-sm" href="#" role="button">Добавить охранника</a>
+      </p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Оружие{% endblock %}
+{% block content %}
+{% load user_filters %}
+<div class="card">
+  <div class="card-header">
+    <h5>Оружие</h5>
+  </div>
+  <div class="card-body" style="text-align: left; font-size: 12px">
+    
+    <div style="text-align: left; font-size: 12px" class="table-responsive">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th scope="col">Модель</th>
+            <th scope="col">Калибр</th>
+            <th scope="col">Серия Номер</th>
+            <th scope="col">Год выпуска</th>
+            <th scope="col">Разрешения</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for weapon in weapons %}
+            <tr>
+              <td>{{ weapon.model }}</td>
+              <td>{{ weapon.caliber }}</td>
+              <td>{{ weapon.series }} №{{ weapon.number }}</td>
+              <td>{{ weapon.release }} г.в.</td>
+              <td>
+                <table class="table table-sm">
+                  <tbody>
+                    {% for permit in weapon.weaponpermits.all %}
+                      <tr>
+                        <td>{{ permit }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </td>
+            <tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <br>
+    </div>
+    <div>
+      {% if user.role == 'admin'  %}
+      <p>
+        <a class="btn btn-outline-primary btn-sm" href="#" role="button">Добавить</a>
+      </p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

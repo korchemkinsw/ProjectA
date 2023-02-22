@@ -2,17 +2,20 @@ from dal import autocomplete
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  UpdateView)
+from django_filters.views import FilterView
 
-from Project_A import settings
+from Project_A.settings import MYCOMPANY, PAGES, SECURITY
 
-from .forms import AddEnterpriseForm, AddPositionForm, AddStafferForm
-from .models import Enterprise, Position, Security, Worker
+from .forms import (AddEnterpriseForm, AddPositionForm, AddStafferForm,
+                    SecurityFilter)
+from .models import Enterprise, Position, Security, Weapon, Worker
 
 
 class WorkerAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        post = get_object_or_404(Position,post=settings.SECURITY)
+        post = get_object_or_404(Position,post=SECURITY)
         if not self.request.user.is_authenticated:
             return Worker.objects.filter(post=post)
         qs = Worker.objects.filter(post=post)
@@ -20,10 +23,26 @@ class WorkerAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(name__icontains=self.q)
         return qs
 
+class ListWeapons(ListView):
+    model = Weapon
+    context_object_name = 'weapons'
+    template_name = 'enterprises/weapons.html'
+
+class FilterSecurity(FilterView):
+    model = Security
+    context_object_name = 'security'
+    template_name = 'enterprises/security_filter.html'
+    filterset_class = SecurityFilter
+    paginate_by = PAGES
+
+class DetailSecurity(DetailView):
+    model = Security
+    template_name = 'enterprises/security.html'
+
 def enterprises(request):
     latest = Enterprise.objects.all()
     context={
-        'my_company': settings.MYCOMPANY,
+        'my_company': MYCOMPANY,
         'enterprises': latest,
         'url': 'enterprises',
         }
@@ -32,7 +51,7 @@ def enterprises(request):
 def enterprise(request, abbreviatedname):
     enterprise = get_object_or_404(Enterprise,abbreviatedname=abbreviatedname)
     context={
-        'my_company': settings.MYCOMPANY,
+        'my_company': MYCOMPANY,
         'company': enterprise,
         'url': 'card_enterpise',
     }
@@ -94,7 +113,7 @@ def del_enterprise(request, abbreviatedname):
 def positions(request):
     latest = Position.objects.all()
     context={
-        'my_company': settings.MYCOMPANY,
+        'my_company': MYCOMPANY,
         'positions': latest,
         'url': 'positions',
         }
@@ -153,7 +172,7 @@ def del_position(request, id):
 def staffers(request):
     latest = Worker.objects.all()
     context={
-        'my_company': settings.MYCOMPANY,
+        'my_company': MYCOMPANY,
         'staffers': latest,
         'url': 'staffers',
         }

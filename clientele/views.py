@@ -9,6 +9,7 @@ from django.views.generic import CreateView, DetailView, UpdateView
 from django_filters.views import FilterView
 
 from enterprises.models import Enterprise
+from Project_A.settings import PAGES
 
 from .forms import (ContactFilter, ContactForm, ContractFilter, ContractForm,
                     ContractFormset, IndividualFilter, IndividualForm,
@@ -30,7 +31,7 @@ class FilterContact(FilterView):
     context_object_name = 'filter'
     template_name = 'clientele/contacts_filter.html'
     filterset_class = ContactFilter
-    paginate_by = 10
+    paginate_by = PAGES
 
 class CreateContact(UserPassesTestMixin, CreateView):
     model = Contact

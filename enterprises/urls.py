@@ -4,7 +4,10 @@ from django.urls import re_path as url
 from . import views
 
 urlpatterns = [
-    url(r'^worker-autocomplete/$', views.WorkerAutocomplete.as_view(), name='worker-autocomplete'),
+    url(r'^worker-autocomplete/$', views.WorkerAutocomplete.as_view(create_field='name',), name='worker-autocomplete'),
+    path('weapons/', views.ListWeapons.as_view() , name='weapons'),
+    path('security/', views.FilterSecurity.as_view() , name='security'),
+    path('security/<int:pk>/', views.DetailSecurity.as_view() , name='det_security'),
     path('', views.enterprises, name='enterprises'),
     path('positions/', views.positions, name='positions'),
     path('positions/new/', views.new_position, name='new_position'),

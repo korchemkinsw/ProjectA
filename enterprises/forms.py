@@ -6,11 +6,24 @@ import django_filters
 from dal import autocomplete
 from django import forms
 
-from Project_A.settings import WEAPONMIN
+from Project_A.settings import SECURITY_CATEGORY, SECURITY_STATUS, WEAPONMIN
 
 from .models import (Enterprise, PersonalCard, Position, Security, Weapon,
                      WeaponsPermit, Worker)
 
+
+class SecurityFilter(django_filters.FilterSet):
+    security = django_filters.CharFilter(field_name='security__name', lookup_expr='contains')
+    category = django_filters.ChoiceFilter(choices=SECURITY_CATEGORY)
+    id_number = django_filters.CharFilter(field_name='id_number', lookup_expr='contains')
+    status = django_filters.ChoiceFilter(choices=SECURITY_STATUS)
+    
+    class Meta:
+        model = Security
+        fields = [
+            'security', 'epp', 'medical', 'category', 'id_number',
+            'status', 'issue', 'prolonged', 'note'
+        ]
 
 class SecurityForm(forms.ModelForm):
     class Meta:

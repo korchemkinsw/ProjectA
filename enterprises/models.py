@@ -7,8 +7,9 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.text import slugify
 
-from Project_A.settings import (CURRENT, EXPIRED, FIFTH, FOURTH, IZH71, NINE,
-                                SIXTH, VET, WEAPONMIN)
+from Project_A.settings import (CALIBER, MODEL, PERMIT_SERIES,
+                                SECURITY_CATEGORY, SECURITY_STATUS, SERIES,
+                                TYPES, WEAPONMIN)
 
 
 class Position(models.Model):
@@ -27,19 +28,6 @@ class Position(models.Model):
         return self.post
 
 class Weapon(models.Model):
-    MODEL = (
-        (IZH71, 'ИЖ-71'),
-    )
-    CALIBER = (
-        (NINE, '9 мм'),
-    )
-    SERIES = (
-        (VET, 'ВЕТ'),
-        #(),
-        #(),
-        #(),
-    )
-
     model = models.CharField(
         max_length=11,
         choices=MODEL,
@@ -117,24 +105,11 @@ class Worker(models.Model):
         return super().save(*args, **kwargs)
 
 class Security(models.Model):
-    CATEGORY = (
-        #(FIRST, '1 разряд'),
-        #(SECOND, '2 разряд'),
-        #(THIRD, '3 разряд'),
-        (FOURTH, '4 разряд'),
-        (FIFTH, '5 разряд'),
-        (SIXTH, '6 разряд')
-    )
-
-    STATUS = (
-        (CURRENT, 'действующий'),
-        (EXPIRED, 'просрочен')
-    )
-
     security = models.ForeignKey(
         Worker,
         verbose_name='Охранник',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='worker',
     )
     epp = models.DateField(
         verbose_name='ЕПП',
@@ -148,7 +123,7 @@ class Security(models.Model):
     )
     category = models.CharField(
         max_length=8,
-        choices=CATEGORY,
+        choices=SECURITY_CATEGORY,
         verbose_name='разряд',
     )
     id_number = models.CharField(
@@ -166,7 +141,7 @@ class Security(models.Model):
     )
     status = models.CharField(
         max_length=11,
-        choices=STATUS,
+        choices=SECURITY_STATUS,
         verbose_name='Статус удостоверения',
         default='действующий',
     )
@@ -188,37 +163,6 @@ class Security(models.Model):
     def __str__(self):
         return f'{self.security.name} {self.category} {self.status}'
 
-'''
-class Staffer(models.Model):
-    last_name = models.CharField(
-        verbose_name='фамилия',
-        max_length=150,
-        blank=True
-    )
-    first_name = models.CharField(
-        verbose_name='имя',
-        max_length=150,
-        blank=True
-    )
-    fathers_name = models.CharField(
-        verbose_name='отчество',
-        max_length=150,
-        blank=True
-    )
-    post = models.ForeignKey(
-        Position,
-        verbose_name="Должность",
-        help_text="Должность",
-        on_delete=models.CASCADE
-    )
-
-    class Meta:
-        verbose_name = 'Сотрудник'
-        verbose_name_plural = 'Сотрудники'
-    
-    def __str__(self):
-        return f'{self.last_name} {self.first_name} {self.fathers_name}'
-'''
 class Enterprise (models.Model):
     fullname = models.CharField(
         max_length=300,
@@ -310,15 +254,10 @@ class Enterprise (models.Model):
         return self.abbreviatedname
 
 class WeaponsPermit(models.Model):
-    RSLA = 'РСЛа'
-
-    SERIES = (
-        (RSLA, 'РСЛа'),
-    )
     series = models.CharField(
         max_length=4,
         verbose_name='Серия',
-        choices=SERIES,
+        choices=PERMIT_SERIES,
         default='РСЛа'
     )
     number = models.CharField(
@@ -328,7 +267,8 @@ class WeaponsPermit(models.Model):
     security = models.ForeignKey(
         Security,
         verbose_name='Охранник',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='permits',
     )
     enterprise = models.ForeignKey(
         Enterprise,
@@ -338,7 +278,8 @@ class WeaponsPermit(models.Model):
     weapon = models.ForeignKey(
         Weapon,
         verbose_name='Оружие',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='weapons',
     )
     issue = models.DateField(
         verbose_name='Дата выдачи',
@@ -362,14 +303,6 @@ class WeaponsPermit(models.Model):
         return super().save(*args, **kwargs)
 
 class PersonalCard(models.Model):
-    MAIN = 'основной'
-    MOONLIGHTER = 'совместитель'
-
-    TYPES = (
-        (MAIN, 'основное'),
-        (MOONLIGHTER, 'совместитель')
-    )
-
     series = models.CharField(
         max_length=2,
         verbose_name='Серия',
@@ -382,7 +315,8 @@ class PersonalCard(models.Model):
     security = models.ForeignKey(
         Security,
         verbose_name='Охранник',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='cards',
     )
     enterprise = models.ForeignKey(
         Enterprise,

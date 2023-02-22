@@ -168,6 +168,7 @@ SIMPLE_HISTORY_HISTORY_CHANGE_REASON_USE_TEXT_FIELD=True
 SIMPLE_HISTORY_FILEFIELD_TO_CHARFIELD = True
 
 MYCOMPANY = 'Double Yat'
+PAGES = 15
 
 # Enterprise variable
 
@@ -177,13 +178,56 @@ NINE = '9 мм'
 VET = 'ВЕТ'
 WEAPONMIN = 1990
 
+MODEL = (
+    (IZH71, 'ИЖ-71'),
+    )
+CALIBER = (
+    (NINE, '9 мм'),
+    )
+SERIES = (
+    (VET, 'ВЕТ'),
+    #(),
+    #(),
+    #(),
+    )
+
+## WeaponPermit
+RSLA = 'РСЛа'
+
+PERMIT_SERIES = (
+    (RSLA, 'РСЛа'),
+    )
+
 ## Secutity
 SECURITY = 'Охранник'
+
 FIRST = '1 разряд'
 SECOND = '2 разряд'
 THIRD = '3 разряд'
 FOURTH = '4 разряд'
 FIFTH = '5 разряд'
 SIXTH = '6 разряд'
-CURRENT = 'действующий'
-EXPIRED = 'просрочен'
+CURRENT = 'действующее'
+EXPIRED = 'просрочено'
+
+SECURITY_CATEGORY = (
+    #(FIRST, '1 разряд'),
+    #(SECOND, '2 разряд'),
+    #(THIRD, '3 разряд'),
+    (FOURTH, '4 разряд'),
+    (FIFTH, '5 разряд'),
+    (SIXTH, '6 разряд')
+    )
+SECURITY_STATUS = (
+    (CURRENT, 'действующее'),
+    (EXPIRED, 'просрочено')
+    )
+
+##PersonalCard
+MAIN = 'основной'
+MOONLIGHTER = 'совместитель'
+
+TYPES = (
+    (MAIN, 'основное'),
+    (MOONLIGHTER, 'совместитель')
+    )

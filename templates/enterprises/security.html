@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Охранник {{ security.security.name }}{% endblock %}
+{% load static %}
+{% block content %}
+<div style="text-align: left; font-size: 12px" class="row justify-content-center">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5>
+          {{ security.security.name }}
+          {% if user.role == 'admin' and user.is_authenticated %}
+            <a class="btn btn-outline-info btn-sm" href="#" role="button">Изменить</a>
+          {% endif %}
+        </h5>
+      </div>
+      <div class="card-body">
+        <div style="text-align: left; font-size: 12px">
+          <div class="media">
+            <img src="{{ security.photo.url }}" class="align-self-start mr-3" alt="" width="90" height="120">
+            <div class="media-body">
+              <h6 class="mt-0">Удостоверение: {{ security.id_number }} ({{ security.status }}) </h6>
+              <p></p>
+              <p>Выдано:&nbsp;&nbsp;&nbsp;   {{ security.issue|date:"d.m.Y" }}</p>
+              <p>Продлено:&nbsp; {{ security.prolonged|date:"d.m.Y" }}</p>
+              <p>ЕПП: {{ security.epp|date:"d.m.Y" }}&nbsp;&nbsp; Медицина: {{ security.medical|date:"d.m.Y" }}</p>
+            </div>
+          </div>
+          <div class="card-header">
+            <h6>
+              Личные карточки:
+              {% if user.role == 'admin' %}
+                <a class="btn btn-outline-primary btn-sm" href="#" role="button">Добавить</a>
+              {% endif %}
+            </h6>
+          </div>
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col-sm-2">Серия номер</th>
+                <!--th scope="col-sm-2">Номер</th-->
+                <th scope="col-sm-3">Предприятие</th>
+                <th scope="col-sm-3">Тип</th>
+                <th scope="col-sm-2">Дата выдычи</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for card in security.cards.all %}
+                <tr>
+                  <td>{{ card.series }} №{{ card.number }}</td>
+                  <!--td>{{ card.number }}</td-->
+                  <td>{{ card.enterprise }}</td>
+                  <td>{{ card.type }}</td>
+                  <td>{{ card.issue|date:"d.m.Y" }}</d>
+                  <td>
+                    {% if user.role == 'admin' %}
+                      <a class="badge badge-danger" href="#" role="button">Удалить</a>
+                      <a class="badge badge-info" href="#" role="button">Изменить</a>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <div class="card-header">
+            <h6>
+              Разрешения на хранение и ношение оружия:
+              {% if user.role == 'admin' %}
+                <a class="btn btn-outline-primary btn-sm" href="#" role="button">Добавить</a>
+              {% endif %}
+            </h6>
+          </div>
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col-sm-2">Серия номер</th>
+                <!--th scope="col-sm-2"></th-->
+                <th scope="col-sm-3">Предприятие</th>
+                <th scope="col-sm-3">Оружие</th>
+                <th scope="col-sm-2">Дата выдычи</th>
+                <th>
+                  
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for permit in security.permits.all %}
+                <tr>
+                  <td>{{ permit.series }} №{{ permit.number }}</td>
+                  <!--td>{{ permit.number }}</td-->
+                  <td>{{ permit.enterprise }}</td>
+                  <td>{{ permit.weapon }}</td>
+                  <td>{{ permit.issue|date:"d.m.Y" }}</td>
+                  <td>
+                    {% if user.role == 'admin' %}
+                      <a class="badge badge-danger" href="#" role="button">Удалить</a>
+                      <a class="badge badge-info" href="#" role="button">Изменить</a>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <p><a class="btn btn-outline-primary btn-sm" href="{% url 'security' %}" role="button">Охранники</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
