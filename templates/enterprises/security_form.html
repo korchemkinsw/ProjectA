@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+  {% if action == 'create' %}
+    Добавить данные охранника
+  {% endif %}
+  {% if action == 'update' %}
+    Изменить данные охранника
+  {% endif %}
+{% endblock %}
+{% block content %}
+{% load user_filters %}
+<div style="text-align: left; font-size: 12px" class="row justify-content-center">
+  <div class="col-sm-12">
+    <div class="card">
+      <form method="post" enctype="multipart/form-data" action="">
+        {% csrf_token %}
+        <div class="card-header">
+					<p></p>
+          <h6>{{ form.security.label }}: {{ form.security }}{{ form.security.errors.as_ul }} {{ form.category.label }}: {{ form.category }}{{ form.category.errors.as_ul }}</h6>
+					
+        </div>
+        <div class="card-body">
+          <div style="text-align: left; font-size: 12px">
+						<div class="media">
+							{% if form.instance.photo %}
+							  <img src="{{ form.instance.photo.url }}" class="align-self-start mr-3" alt="" width="90" height="120">
+							{% else %}
+							  <img src="#" class="align-self-start mr-3" alt="" width="90" height="120">
+							{% endif %}
+							<div class="media-body">
+								<p class="mt-0">Удостоверение: {{ form.id_number }}{{ form.id_number.errors.as_ul }}&nbsp;&nbsp;</p>
+								<p></p>
+								<p>Выдано:&nbsp;&nbsp;&nbsp;   {{ form.issue }}{{ form.issue.errors.as_ul }}</p>
+								<p>Продлено:&nbsp; {{ form.prolonged }}</p>
+								<p>ЕПП: {{ form.epp }}&nbsp;&nbsp; Медицина: {{ form.medical }}</p>
+							</div>
+						</div>
+						{{ form.photo.errors.as_ul }}{{ form.photo }}
+					</div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <th class="col-sm-2">Примечание: </th>
+								<th>{{ form.note.errors.as_ul }}{{ form.note }}</th>
+              </tr>
+            </tbody>
+          </table>
+          <button type="submit" class="btn btn-outline-success btn-sm">Сохранить</button>
+          <a class="btn btn-outline-primary btn-sm" href="{% url 'security' %}" role="button">Список охранников</a>
+        
+        </div>
+			</form>
+    </div>
+  </div>
+</div>
+{% endblock %}

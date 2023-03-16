@@ -7,22 +7,70 @@
     <div class="card">
       <div class="card-header">
         <h5>
-          {{ security.security.name }}
+          {{ security.security.name }}&nbsp;&nbsp;{{ security.category }}
           {% if user.role == 'admin' and user.is_authenticated %}
-            <a class="btn btn-outline-info btn-sm" href="#" role="button">Изменить</a>
+            <a class="btn btn-outline-info btn-sm" href="{% url 'upd_security' security.pk %}" role="button">Изменить</a>
           {% endif %}
         </h5>
       </div>
       <div class="card-body">
         <div style="text-align: left; font-size: 12px">
           <div class="media">
-            <img src="{{ security.photo.url }}" class="align-self-start mr-3" alt="" width="90" height="120">
+            {% if security.photo %}
+              <img src="{{ security.photo.url }}" class="align-self-start mr-3" alt="" width="90" height="120">
+            {% else %}
+              <img src="#" class="align-self-start mr-3" alt="" width="90" height="120">
+            {% endif %}
             <div class="media-body">
-              <h6 class="mt-0">Удостоверение: {{ security.id_number }} ({{ security.status }}) </h6>
+              <h6 class="mt-0">
+                Удостоверение: {{ security.id_number }} ( {{ security.status }}
+                {% if security.prolonged %}
+                  {% if security.prolonged|timeuntil:warning == expired|timeuntil:expired %}
+                    {% if security.prolonged|timeuntil:expired != expired|timeuntil:expired %}
+                      - осталось: {{ security.prolonged|timeuntil:expired }}
+                    {% endif %}
+                  {% endif %}
+                {% else %}
+                  {% if security.issue|timeuntil:warning == expired|timeuntil:expired %}
+                    {% if security.issue|timeuntil:expired != expired|timeuntil:expired %}
+                      - осталось: {{ security.issue|timeuntil:expired }}
+                    {% endif %}
+                  {% endif %}
+                {% endif %}
+                )
+              </h6>
               <p></p>
               <p>Выдано:&nbsp;&nbsp;&nbsp;   {{ security.issue|date:"d.m.Y" }}</p>
               <p>Продлено:&nbsp; {{ security.prolonged|date:"d.m.Y" }}</p>
-              <p>ЕПП: {{ security.epp|date:"d.m.Y" }}&nbsp;&nbsp; Медицина: {{ security.medical|date:"d.m.Y" }}</p>
+              <p>
+                ЕПП: {{ security.epp|date:"d.m.Y" }}
+                {% if security.epp %}
+                  {% if security.epp|timeuntil:warning == expired|timeuntil:expired %}
+                    {% if security.epp|timeuntil:expired != expired|timeuntil:expired %}
+                      - осталось: {{ security.epp|timeuntil:expired }}
+                    {% else %}
+                      - просрочено!
+                    {% endif %}
+                  {% endif %}
+                {% endif %}
+                &nbsp;&nbsp; 
+                Медицина: {{ security.medical|date:"d.m.Y" }}
+                {% if security.epp %}
+                  {% if security.medical|timeuntil:warning == expired|timeuntil:expired %}
+                    {% if security.medical|timeuntil:expired != expired|timeuntil:expired %}
+                      - осталось: {{ security.medical|timeuntil:expired }}
+                    {% else %}
+                      - просрочено!
+                    {% endif %}
+                  {% endif %}
+                {% endif %}
+              </p>
+              {% if security.note %}
+                <p>
+                  <h6>Примечание:</h6>
+                  {{ security.note }}
+                </p>
+              {% endif %}
             </div>
           </div>
           <div class="card-header">

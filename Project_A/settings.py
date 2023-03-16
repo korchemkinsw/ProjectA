@@ -172,6 +172,9 @@ PAGES = 15
 
 # Enterprise variable
 
+EXPIRATION = 3
+WARNING = 90
+
 ## Weapons
 IZH71 = 'ИЖ-71'
 NINE = '9 мм'

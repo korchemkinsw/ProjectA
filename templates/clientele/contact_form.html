@@ -1,7 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Добавить контакт{% endblock %}
+{% block title %}
+  {% if action == 'create' %}
+    Добавить контакт
+  {% endif %}
+  {% if action == 'update' %}
+    Изменить контакт
+  {% endif %}
+{% endblock %}
 {% block content %}
 {% load user_filters %}
 <div style="text-align: left; font-size: 12px" class="row justify-content-center">

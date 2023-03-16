@@ -1,15 +1,20 @@
+import datetime
+
 from dal import autocomplete
+from dateutil.relativedelta import relativedelta
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 from django_filters.views import FilterView
 
-from Project_A.settings import MYCOMPANY, PAGES, SECURITY
+from Project_A.settings import (CURRENT, EXPIRATION, EXPIRED, MYCOMPANY, PAGES,
+                                SECURITY, WARNING)
 
 from .forms import (AddEnterpriseForm, AddPositionForm, AddStafferForm,
-                    SecurityFilter)
+                    SecurityFilter, SecurityForm)
 from .models import Enterprise, Position, Security, Weapon, Worker
 
 
@@ -35,9 +40,86 @@ class FilterSecurity(FilterView):
     filterset_class = SecurityFilter
     paginate_by = PAGES
 
+    def get_context_data(self, **kwargs):
+        data = super(FilterSecurity, self).get_context_data(**kwargs)
+        data['expired'] = datetime.datetime.now().date()-relativedelta(years=EXPIRATION, days=1)
+        data['warning'] = data['expired']+relativedelta(days=WARNING)
+        return data
+
 class DetailSecurity(DetailView):
     model = Security
     template_name = 'enterprises/security.html'
+
+    def get_context_data(self, **kwargs):
+        data = super(DetailSecurity, self).get_context_data(**kwargs)
+        if self.object.prolonged:
+            if self.object.prolonged+relativedelta(years=EXPIRATION) < datetime.datetime.now().date():
+                self.object.status = EXPIRED
+            else:
+                self.object.status = CURRENT
+        else:
+            if self.object.issue+relativedelta(years=EXPIRATION) < datetime.datetime.now().date():
+                self.object.status = EXPIRED
+            else:
+                self.object.status = CURRENT
+        self.object.save()
+        data['expired'] = datetime.datetime.now().date()-relativedelta(years=EXPIRATION, days=1)
+        data['warning'] = data['expired']+relativedelta(days=WARNING)
+        return data
+
+class CreateSecurity(CreateView):
+    model = Security
+    form_class = SecurityForm
+    success_url = reverse_lazy('security')
+
+    def get_context_data(self, **kwargs):
+        data = super(CreateSecurity, self).get_context_data(**kwargs)
+        data['action'] = 'create'
+        return data
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            if (self.object.issue or self.object.prolonged) < datetime.datetime.now().date()-relativedelta(years=EXPIRATION):
+                self.object.status = EXPIRED
+            else:
+                self.object.status = CURRENT
+            self.object = form.save()
+            self.success_url = reverse('det_security', args=[str(self.object.id)])
+        return super(CreateSecurity, self).form_valid(form)
+
+class UpdateSecurity(UpdateView):
+    model = Security
+    form_class = SecurityForm
+    
+    def get_success_url(self):
+       pk = self.kwargs['pk']
+       return reverse('det_security', kwargs={'pk': pk})
+
+    def get_context_data(self, **kwargs):
+        data = super(UpdateSecurity, self).get_context_data(**kwargs)
+        data['action'] = 'update'
+        return data
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            if self.object.prolonged:
+                if self.object.prolonged+relativedelta(years=3) < datetime.datetime.now().date():
+                    self.object.status = EXPIRED
+                else:
+                    self.object.status = CURRENT
+            else:
+                if self.object.issue+relativedelta(years=3) < datetime.datetime.now().date():
+                    self.object.status = EXPIRED
+                else:
+                    self.object.status = CURRENT
+            self.object = form.save()
+        return super(UpdateSecurity, self).form_valid(form)
+
+
+
+
 
 def enterprises(request):
     latest = Enterprise.objects.all()

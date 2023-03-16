@@ -5,11 +5,12 @@ import re
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
 
-from Project_A.settings import (CALIBER, MODEL, PERMIT_SERIES,
-                                SECURITY_CATEGORY, SECURITY_STATUS, SERIES,
-                                TYPES, WEAPONMIN)
+from Project_A.settings import (CALIBER, CURRENT, MODEL, PERMIT_SERIES,
+                                SECURITY, SECURITY_CATEGORY, SECURITY_STATUS,
+                                SERIES, TYPES, WEAPONMIN)
 
 
 class Position(models.Model):
@@ -83,6 +84,7 @@ class Worker(models.Model):
     )
     post = models.ForeignKey(
         Position,
+        default=get_object_or_404(Position,post=SECURITY),
         verbose_name='Должность',
         on_delete=models.CASCADE
     )
@@ -143,7 +145,8 @@ class Security(models.Model):
         max_length=11,
         choices=SECURITY_STATUS,
         verbose_name='Статус удостоверения',
-        default='действующий',
+        blank=True,
+        #default=CURRENT,
     )
     note = models.CharField(
         max_length=200,
