@@ -8,7 +8,7 @@ from django.db import models
 from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
 
-from Project_A.settings import (CALIBER, CURRENT, MODEL, PERMIT_SERIES,
+from Project_A.settings import (CALIBER, CURRENT, MAIN, MODEL, PERMIT_SERIES,
                                 SECURITY, SECURITY_CATEGORY, SECURITY_STATUS,
                                 SERIES, TYPES, WEAPONMIN)
 
@@ -300,6 +300,11 @@ class WeaponsPermit(models.Model):
             raise ValidationError(
                 {'number': 'Семь цифр номера'}
             )
+        if WeaponsPermit.objects.filter(series=self.series).filter(number=self.number).exclude():#(security=self.security):
+            raise ValidationError(
+                {'number': 'Такие серия и номер существуют'}
+            )
+
 
     def save(self, *args, **kwargs):
         self.full_clean()
@@ -351,6 +356,10 @@ class PersonalCard(models.Model):
         if not re.fullmatch(r'^\d{6}[А-Я]\d{6}', str(self.number)):
             raise ValidationError(
                 {'number': 'Шесть цифр буква шесть цифр'}
+            )
+        if PersonalCard.objects.filter(series=self.series).filter(number=self.number).exclude(security=self.security):
+            raise ValidationError(
+                {'number': 'Такие серия и номер существуют'}
             )
 
     def save(self, *args, **kwargs):

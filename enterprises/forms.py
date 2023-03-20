@@ -6,7 +6,8 @@ import django_filters
 from dal import autocomplete
 from django import forms
 
-from Project_A.settings import SECURITY_CATEGORY, SECURITY_STATUS, WEAPONMIN
+from Project_A.settings import (MAIN, SECURITY_CATEGORY, SECURITY_STATUS,
+                                WEAPONMIN)
 
 from .models import (Enterprise, PersonalCard, Position, Security, Weapon,
                      WeaponsPermit, Worker)

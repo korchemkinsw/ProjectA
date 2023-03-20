@@ -3,6 +3,7 @@ import datetime
 from dal import autocomplete
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
@@ -14,8 +15,10 @@ from Project_A.settings import (CURRENT, EXPIRATION, EXPIRED, MYCOMPANY, PAGES,
                                 SECURITY, WARNING)
 
 from .forms import (AddEnterpriseForm, AddPositionForm, AddStafferForm,
-                    SecurityFilter, SecurityForm)
-from .models import Enterprise, Position, Security, Weapon, Worker
+                    PersonalCardForm, SecurityFilter, SecurityForm,
+                    WeaponsPermitForm)
+from .models import (Enterprise, PersonalCard, Position, Security, Weapon,
+                     WeaponsPermit, Worker)
 
 
 class WorkerAutocomplete(autocomplete.Select2QuerySetView):
@@ -117,9 +120,162 @@ class UpdateSecurity(UpdateView):
             self.object = form.save()
         return super(UpdateSecurity, self).form_valid(form)
 
+class CreatePersonalCard(CreateView):
+    model = PersonalCard
+    form_class = PersonalCardForm
+    template_name = 'enterprises/security.html'
 
+    def get_success_url(self):
+       pk = self.kwargs['pk']
+       return reverse('det_security', kwargs={'pk': pk})
 
+    def post(self, request, **kwargs):
+        request.POST = request.POST.copy()
+        request.POST['security'] = self.kwargs['pk']
+        return super(CreatePersonalCard, self).post(request, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        data = super(CreatePersonalCard, self).get_context_data(**kwargs)
+        data['title'] = 'Персональная карточка '
+        data['security'] = get_object_or_404(Security, id=self.kwargs['pk'])
+        data['expired'] = datetime.datetime.now().date()-relativedelta(years=EXPIRATION, days=1)
+        data['warning'] = data['expired']+relativedelta(days=WARNING)
+        data['action'] = 'add_personalcard'
+        return data
+
+    def form_valid(self, form):
+        form.instance.security_id = self.kwargs['pk']
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object.security = get_object_or_404(Security, id=self.kwargs['pk'])
+            self.object = form.save()
+        return super(CreatePersonalCard, self).form_valid(form)
+    
+class UpdatePersonalCard(UpdateView):
+    model = PersonalCard
+    form_class = PersonalCardForm
+    template_name = 'enterprises/security.html'
+
+    def get_success_url(self):
+       personalcard = get_object_or_404(PersonalCard, id=self.kwargs['pk'])
+       pk = personalcard.security.pk
+       return reverse('det_security', kwargs={'pk': pk})
+
+    def post(self, request, **kwargs):
+        personalcard = get_object_or_404(PersonalCard, id=self.kwargs['pk'])
+        request.POST = request.POST.copy()
+        request.POST['security'] = personalcard.security.id
+        return super(UpdatePersonalCard, self).post(request, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        data = super(UpdatePersonalCard, self).get_context_data(**kwargs)
+        personalcard = get_object_or_404(PersonalCard, id=self.kwargs['pk'])
+        data['title'] = 'Персональная карточка '
+        data['security'] = personalcard.security
+        data['expired'] = datetime.datetime.now().date()-relativedelta(years=EXPIRATION, days=1)
+        data['warning'] = data['expired']+relativedelta(days=WARNING)
+        data['action'] = 'upd_personalcard'
+        data['id'] = personalcard.pk
+        return data
+
+    def form_valid(self, form):
+        personalcard = get_object_or_404(PersonalCard, id=self.kwargs['pk'])
+        form.instance.security_id = personalcard.security.id
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object.security = personalcard.security
+            self.object = form.save()
+        return super(UpdatePersonalCard, self).form_valid(form)
+    
+class DeletePersonalCard(DeleteView):
+    model = PersonalCard
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        personalcard = get_object_or_404(PersonalCard, id=self.kwargs['pk'],)
+        pk = personalcard.security.pk
+        return reverse('det_security', kwargs={'pk': pk})
+
+class CreateWeaponsPermit(CreateView):
+    model = WeaponsPermit
+    form_class = WeaponsPermitForm
+    template_name = 'enterprises/security.html'
+
+    def get_success_url(self):
+       pk = self.kwargs['pk']
+       return reverse('det_security', kwargs={'pk': pk})
+    
+    def post(self, request, **kwargs):
+        request.POST = request.POST.copy()
+        request.POST['security'] = self.kwargs['pk']
+        return super(CreateWeaponsPermit, self).post(request, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        data = super(CreateWeaponsPermit, self).get_context_data(**kwargs)
+        data['title'] = 'Разрешение на оружие '
+        data['security'] = get_object_or_404(Security, id=self.kwargs['pk'])
+        data['expired'] = datetime.datetime.now().date()-relativedelta(years=EXPIRATION, days=1)
+        data['warning'] = data['expired']+relativedelta(days=WARNING)
+        data['action'] = 'add_weaponspermit'
+        return data
+    
+    def form_valid(self, form):
+        form.instance.security_id = self.kwargs['pk']
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object.security = get_object_or_404(Security, id=self.kwargs['pk'])
+            self.object = form.save()
+        return super(CreateWeaponsPermit, self).form_valid(form)
+
+class UpdateWeaponsPermit(UpdateView):
+    model = WeaponsPermit
+    form_class = WeaponsPermitForm
+    template_name = 'enterprises/security.html'
+
+    def get_success_url(self):
+       weaponspermit = get_object_or_404(WeaponsPermit, id=self.kwargs['pk'])
+       pk = weaponspermit.security.pk
+       return reverse('det_security', kwargs={'pk': pk})
+
+    def post(self, request, **kwargs):
+        weaponspermit = get_object_or_404(WeaponsPermit, id=self.kwargs['pk'])
+        request.POST = request.POST.copy()
+        request.POST['security'] = weaponspermit.security.id
+        return super(UpdateWeaponsPermit, self).post(request, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        data = super(UpdateWeaponsPermit, self).get_context_data(**kwargs)
+        weaponspermit = get_object_or_404(WeaponsPermit, id=self.kwargs['pk'])
+        data['title'] = 'Разрешение на оружие '
+        data['security'] = weaponspermit.security
+        data['expired'] = datetime.datetime.now().date()-relativedelta(years=EXPIRATION, days=1)
+        data['warning'] = data['expired']+relativedelta(days=WARNING)
+        data['action'] = 'upd_weaponspermit'
+        data['id'] = weaponspermit.pk
+        return data
+
+    def form_valid(self, form):
+        weaponspermit = get_object_or_404(WeaponsPermit, id=self.kwargs['pk'])
+        form.instance.security_id = weaponspermit.security.id
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object.security = weaponspermit.security
+            self.object = form.save()
+        return super(UpdateWeaponsPermit, self).form_valid(form)
+    
+class DeleteWeaponsPermit(DeleteView):
+    model = WeaponsPermit
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        weaponspermit = get_object_or_404(WeaponsPermit, id=self.kwargs['pk'],)
+        pk = weaponspermit.security.pk
+        return reverse('det_security', kwargs={'pk': pk})
+    
 
 def enterprises(request):
     latest = Enterprise.objects.all()
