@@ -291,20 +291,18 @@ class WeaponsPermit(models.Model):
     class Meta:
         verbose_name = 'Разрешение на хранение и ношение оружия'
         verbose_name_plural = 'Разрешения на хранение и ношение оружия'
+        constraints = [
+            models.UniqueConstraint(fields=['series', 'number'], name='series_number_unicue')
+        ]
 
     def __str__(self):
         return f'{self.series}№{self.number} {self.security.security.name} {self.enterprise.abbreviatedname}'
-
+    
     def clean(self):
         if not re.fullmatch(r'^\d{7}', str(self.number)):
             raise ValidationError(
                 {'number': 'Семь цифр номера'}
             )
-        if WeaponsPermit.objects.filter(series=self.series).filter(number=self.number).exclude():#(security=self.security):
-            raise ValidationError(
-                {'number': 'Такие серия и номер существуют'}
-            )
-
 
     def save(self, *args, **kwargs):
         self.full_clean()
