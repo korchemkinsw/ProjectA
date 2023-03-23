@@ -7,6 +7,9 @@
     <h5>Оружие</h5>
   </div>
   <div class="card-body" style="text-align: left; font-size: 12px">
+
+    
+    
     
     <div style="text-align: left; font-size: 12px" class="table-responsive">
       <table class="table table-sm">
@@ -16,6 +19,7 @@
             <th scope="col">Калибр</th>
             <th scope="col">Серия Номер</th>
             <th scope="col">Год выпуска</th>
+            <th></th>
             <th scope="col">Разрешения</th>
             <th></th>
           </tr>
@@ -28,11 +32,54 @@
               <td>{{ weapon.series }} №{{ weapon.number }}</td>
               <td>{{ weapon.release }} г.в.</td>
               <td>
+                {% if user.role == 'admin' %}
+                  <button type="button" class="badge badge-danger" data-toggle="modal" data-target="#deleteModal">
+                    Удалить
+                  </button>
+                  <div class="modal fade" id="deleteModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-body">
+                          <h6>Удалить оружие {{ weapon }} со всеми разрешениями?</h6>
+                          <table class="table table-sm">
+                            <tbody>
+                              {% for permit in weapon.weapons.all %}
+                                <tr>
+                                  <td>{{ permit }}</td>
+                                </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Отменить</button>
+                          <a class="btn btn-danger btn-sm" href="{% url 'del_weapon' weapon.pk %}" role="button">Точно удалить</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" class="badge badge-info" data-toggle="modal" data-target="#updModal">
+                    Изменить
+                  </button>
+                  <div class="modal fade" id="updModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="updModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h6 class="modal-title" id="exampleModalLabel">Для внесения изменений в данные об оружии обратитесь к администратору базы данных</h6>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                {% endif %}
+              </td>
+              <td>
                 <table class="table table-sm">
                   <tbody>
-                    {% for permit in weapon.weaponpermits.all %}
+                    {% for permit in weapon.weapons.all %}
                       <tr>
-                        <td>{{ permit }}</td>
+                        <td><a href="{% url 'det_security' permit.security.pk %}">{{ permit }}</a></td>
                       </tr>
                     {% endfor %}
                   </tbody>
@@ -44,12 +91,53 @@
       </table>
       <br>
     </div>
-    <div>
       {% if user.role == 'admin'  %}
       <p>
-        <a class="btn btn-outline-primary btn-sm" href="#" role="button">Добавить</a>
+        <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#exampleModal">
+          Добавить
+        </button>
       </p>
-      {% endif %}
-    </div>
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <form method="post" enctype="multipart/form-data" action="">
+            {% csrf_token %}
+            <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel">Добавить оружие</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                {% for field in form %}
+                  <div class="form-group row" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+                    <label for="{{ field.id_for_label }}" class="col-sm-4 col-form-label text-sm-left">
+                      {{ field.label }}
+                      {% if field.field.required %}
+                        <span class="required" style="color:red">*</span>
+                      {% endif %}
+                    </label>
+                    <div class="col-sm-6">
+                      {{ devicecardformset.management_form }}
+                      {# подключаем фильтр и указываем класс #}
+                      {{ field.errors.as_ul }}
+                      {{ field }}
+                      {% if field.help_text %}
+                        <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+                      {% endif %}
+                    </div>                
+                  </div>
+                {% endfor %}
+              </div>
+              <div class="modal-footer">
+                <!--button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Отменить</button-->
+                <button type="submit" class="btn btn-outline-success btn-sm">Сохранить</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    {% endif %}
   </div>
+</div>
 {% endblock %}

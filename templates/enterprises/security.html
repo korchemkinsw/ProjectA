@@ -23,17 +23,22 @@
             {% endif %}
             <div class="media-body">
               <h6 class="mt-0">
-                Удостоверение: {{ security.id_number }} ( {{ security.status }}
+                Удостоверение: {{ security.id_number }} ( 
+                {% if security.status == 'просрочено' %}
+                  <span style="color:red">{{ security.status }}</span>
+                {% else %}
+                  {{ security.status }}
+                {% endif %}
                 {% if security.prolonged %}
                   {% if security.prolonged|timeuntil:warning == expired|timeuntil:expired %}
                     {% if security.prolonged|timeuntil:expired != expired|timeuntil:expired %}
-                      - осталось: {{ security.prolonged|timeuntil:expired }}
+                    <span style="color:red">- осталось: {{ security.prolonged|timeuntil:expired }}</span>
                     {% endif %}
                   {% endif %}
                 {% else %}
                   {% if security.issue|timeuntil:warning == expired|timeuntil:expired %}
                     {% if security.issue|timeuntil:expired != expired|timeuntil:expired %}
-                      - осталось: {{ security.issue|timeuntil:expired }}
+                    <span style="color:red">- осталось: {{ security.issue|timeuntil:expired }}</span>
                     {% endif %}
                   {% endif %}
                 {% endif %}
@@ -47,9 +52,9 @@
                 {% if security.epp %}
                   {% if security.epp|timeuntil:warning == expired|timeuntil:expired %}
                     {% if security.epp|timeuntil:expired != expired|timeuntil:expired %}
-                      - осталось: {{ security.epp|timeuntil:expired }}
+                    <span style="color:red">- осталось: {{ security.epp|timeuntil:expired }}</span>
                     {% else %}
-                      - просрочено!
+                    <span style="color:red">- просрочено!</span>
                     {% endif %}
                   {% endif %}
                 {% endif %}
@@ -58,9 +63,9 @@
                 {% if security.epp %}
                   {% if security.medical|timeuntil:warning == expired|timeuntil:expired %}
                     {% if security.medical|timeuntil:expired != expired|timeuntil:expired %}
-                      - осталось: {{ security.medical|timeuntil:expired }}
+                    <span style="color:red">- осталось: {{ security.medical|timeuntil:expired }}</span>
                     {% else %}
-                      - просрочено!
+                    <span style="color:red">- просрочено!</span>
                     {% endif %}
                   {% endif %}
                 {% endif %}
@@ -97,10 +102,10 @@
                   <form method="post" enctype="multipart/form-data" action="">
                     {% csrf_token %}
                     <tr>
-                      <td>{{ form.series }}{{ form.series.errors.as_ul }}{{ form.number }}{{ form.number.errors.as_ul }}</td>
-                      <td>{{ form.enterprise }}{{ form.enterprise.errors.as_ul }}</td>
-                      <td>{{ form.type }}{{ form.type.errors.as_ul }}</td>
-                      <td>{{ form.issue }}{{ form.issue.errors.as_ul }}</td>
+                      <td>{{ form.series }}<span style="color:red">{{ form.series.errors.as_ul }}{{ form.number }}{{ form.number.errors.as_ul }}</span></td>
+                      <td>{{ form.enterprise }}<span style="color:red">{{ form.enterprise.errors.as_ul }}</span></td>
+                      <td>{{ form.type }}<span style="color:red">{{ form.type.errors.as_ul }}</span></td>
+                      <td>{{ form.issue }}<span style="color:red">{{ form.issue.errors.as_ul }}</span></td>
                       <td>
                        <button type="submit" class="badge badge-success">Сохранить</button>
                         <a class="badge badge-secondary" href="{% url 'det_security' security.pk %}" role="button">Отменить</a>
@@ -126,10 +131,10 @@
                 <form method="post" enctype="multipart/form-data" action="">
                   {% csrf_token %}
                   <tr>
-                    <td>{{ form.series }}{{ form.series.errors.as_ul }}{{ form.number }}{{ form.number.errors.as_ul }}</td>
-                    <td>{{ form.enterprise }}{{ form.enterprise.errors.as_ul }}</td>
-                    <td>{{ form.type }}{{ form.type.errors.as_ul }}</td>
-                    <td>{{ form.issue }}{{ form.issue.errors.as_ul }}</td>
+                    <td>{{ form.series }}<span style="color:red">{{ form.series.errors.as_ul }}{{ form.number }}{{ form.number.errors.as_ul }}</span></td>
+                    <td>{{ form.enterprise }}<span style="color:red">{{ form.enterprise.errors.as_ul }}</span></td>
+                    <td>{{ form.type }}<span style="color:red">{{ form.type.errors.as_ul }}</span></td>
+                    <td>{{ form.issue }}<span style="color:red">{{ form.issue.errors.as_ul }}</span></td>
                     <td>
                       <button type="submit" class="badge badge-success">Сохранить</button>
                       <a class="badge badge-secondary" href="{% url 'det_security' security.pk %}" role="button">Отменить</a>
@@ -165,10 +170,10 @@
                   <form method="post" enctype="multipart/form-data" action="">
                   {% csrf_token %}
                     <tr>
-                      <td>{{ form.series }}{{ form.series.errors.as_ul }}{{ form.number }}{{ form.number.errors.as_ul }}</td>
-                      <td>{{ form.enterprise }}{{ form.enterprise.errors.as_ul }}</td>
-                      <td>{{ form.weapon }}{{ form.weapon.errors.as_ul }}</td>
-                      <td>{{ form.issue }}{{ form.issue.errors.as_ul }}</td>
+                      <td>{{ form.series }}<span style="color:red">{{ form.series.errors.as_ul }}{{ form.number }}{{ form.number.errors.as_ul }}</span></td>
+                      <td>{{ form.enterprise }}<span style="color:red">{{ form.enterprise.errors.as_ul }}</span></td>
+                      <td>{{ form.weapon }}<span style="color:red">{{ form.weapon.errors.as_ul }}</span></td>
+                      <td>{{ form.issue }}<span style="color:red">{{ form.issue.errors.as_ul }}</span></td>
                       <td>
                         <button type="submit" class="badge badge-success">Сохранить</button>
                         <a class="badge badge-secondary" href="{% url 'det_security' security.pk %}" role="button">Отменить</a>
@@ -199,10 +204,10 @@
                 <form method="post" enctype="multipart/form-data" action="">
                   {% csrf_token %}
                   <tr>
-                    <td>{{ form.series }}{{ form.series.errors.as_ul }}{{ form.number }}{{ form.number.errors.as_ul }}</td>
-                    <td>{{ form.enterprise }}{{ form.enterprise.errors.as_ul }}</td>
-                    <td>{{ form.weapon }}{{ form.weapon.errors.as_ul }}</td>
-                    <td>{{ form.issue }}{{ form.issue.errors.as_ul }}</td>
+                    <td>{{ form.series }}<span style="color:red">{{ form.series.errors.as_ul }}{{ form.number }}{{ form.number.errors.as_ul }}</span></td>
+                    <td>{{ form.enterprise }}<span style="color:red">{{ form.enterprise.errors.as_ul }}</span></td>
+                    <td>{{ form.weapon }}<span style="color:red">{{ form.weapon.errors.as_ul }}</span></td>
+                    <td>{{ form.issue }}<span style="color:red">{{ form.issue.errors.as_ul }}</span></td>
                     <td>
                       <button type="submit" class="badge badge-success">Сохранить</button>
                       <a class="badge badge-secondary" href="{% url 'det_security' security.pk %}" role="button">Отменить</a>

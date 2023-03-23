@@ -15,7 +15,7 @@ from Project_A.settings import (CURRENT, EXPIRATION, EXPIRED, MYCOMPANY, PAGES,
                                 SECURITY, WARNING)
 
 from .forms import (AddEnterpriseForm, AddPositionForm, AddStafferForm,
-                    PersonalCardForm, SecurityFilter, SecurityForm,
+                    PersonalCardForm, SecurityFilter, SecurityForm, WeaponForm,
                     WeaponsPermitForm)
 from .models import (Enterprise, PersonalCard, Position, Security, Weapon,
                      WeaponsPermit, Worker)
@@ -33,8 +33,26 @@ class WorkerAutocomplete(autocomplete.Select2QuerySetView):
 
 class ListWeapons(ListView):
     model = Weapon
-    context_object_name = 'weapons'
+    context_object_name = 'weapon'
     template_name = 'enterprises/weapons.html'
+
+class CreateWeapon(CreateView):
+    model = Weapon
+    form_class = WeaponForm
+    success_url = reverse_lazy('weapons')
+    template_name = 'enterprises/weapons.html'
+
+    def get_context_data(self, **kwargs):
+        data = super(CreateWeapon, self).get_context_data(**kwargs)
+        data['weapons'] = Weapon.objects.all().order_by('release')
+        return data
+    
+class DeleteWeapon(DeleteView):
+    model = Weapon
+    success_url = reverse_lazy('weapons')
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
 
 class FilterSecurity(FilterView):
     model = Security

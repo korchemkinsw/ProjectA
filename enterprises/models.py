@@ -291,9 +291,6 @@ class WeaponsPermit(models.Model):
     class Meta:
         verbose_name = 'Разрешение на хранение и ношение оружия'
         verbose_name_plural = 'Разрешения на хранение и ношение оружия'
-        constraints = [
-            models.UniqueConstraint(fields=['series', 'number'], name='series_number_unicue')
-        ]
 
     def __str__(self):
         return f'{self.series}№{self.number} {self.security.security.name} {self.enterprise.abbreviatedname}'
@@ -302,6 +299,14 @@ class WeaponsPermit(models.Model):
         if not re.fullmatch(r'^\d{7}', str(self.number)):
             raise ValidationError(
                 {'number': 'Семь цифр номера'}
+            )
+        if  WeaponsPermit.objects.filter(series=self.series).filter(number=self.number).exclude(id=self.id):
+            raise ValidationError(
+                {'number': 'Такие серия и номер существуют'}
+            )
+        if not PersonalCard.objects.filter(enterprise=self.enterprise).exclude():
+            raise ValidationError(
+                {'enterprise': 'В этом предприятии отсутствует личная карточка'}
             )
 
     def save(self, *args, **kwargs):
@@ -333,7 +338,7 @@ class PersonalCard(models.Model):
         max_length=12,
         verbose_name='Тип',
         choices=TYPES,
-        default='основное'
+        #default=MAIN
     )
     issue = models.DateField(
         verbose_name='Дата выдачи',
@@ -359,6 +364,15 @@ class PersonalCard(models.Model):
             raise ValidationError(
                 {'number': 'Такие серия и номер существуют'}
             )
+        if PersonalCard.objects.filter(security=self.security).filter(enterprise=self.enterprise).exclude(id=self.id):
+            raise ValidationError(
+                {'enterprise': 'Уже есть карточка в этом предприятии'}
+            )
+        if PersonalCard.objects.filter(security=self.security).filter(type=MAIN).exclude(id=self.id):
+            if self.type==MAIN:
+                raise ValidationError(
+                    {'type': 'Уже есть основное предприятие'}
+                )
 
     def save(self, *args, **kwargs):
         self.full_clean()

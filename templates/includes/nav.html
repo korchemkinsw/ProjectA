@@ -9,11 +9,14 @@
   <ul class="nav">
     {% if user.is_authenticated %}
       {% if user.role == 'admin'  %}
+        <a class="nav-link text-dark" href="{% url 'weapons' %}">Оружие</a>
         <div class="nav-item dropdown">
+          
           <a class="nav-link text-dark" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Личный состав</a>
           <div class="dropdown-menu" style="background-color: #c4671c;" >
-            <a class="dropdown-item" href="{% url 'weapons' %}">Оружие</a>
             <a class="dropdown-item" href="{% url 'security' %}">Охранники</a>
+            <a class="dropdown-item" href="{% url 'security' %}">Личные карточки</a>
+            <a class="dropdown-item" href="{% url 'security' %}">Разрешения</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="#">Может и пошлю...</a>
           </div>

@@ -5,7 +5,8 @@ from . import views
 
 urlpatterns = [
     url(r'^worker-autocomplete/$', views.WorkerAutocomplete.as_view(create_field='name',), name='worker-autocomplete'),
-    path('weapons/', views.ListWeapons.as_view() , name='weapons'),
+    path('weapons/', views.CreateWeapon.as_view() , name='weapons'),
+    path('del_weapon/<int:pk>/', views.DeleteWeapon.as_view() , name='del_weapon'),
     path('security/', views.FilterSecurity.as_view() , name='security'),
     path('security/<int:pk>/', views.DetailSecurity.as_view() , name='det_security'),
     path('add_security/', views.CreateSecurity.as_view() , name='add_security'),

@@ -17,7 +17,7 @@
         {% csrf_token %}
         <div class="card-header">
 					<p></p>
-          <h6>{{ form.security.label }}: {{ form.security }}{{ form.security.errors.as_ul }} {{ form.category.label }}: {{ form.category }}{{ form.category.errors.as_ul }}</h6>
+          <h6>{{ form.security.label }}: {{ form.security }}<span style="color:red">{{ form.security.errors.as_ul }}</span> {{ form.category.label }}: {{ form.category }}<span style="color:red">{{ form.category.errors.as_ul }}</span></h6>
 					
         </div>
         <div class="card-body">
@@ -29,20 +29,20 @@
 							  <img src="#" class="align-self-start mr-3" alt="" width="90" height="120">
 							{% endif %}
 							<div class="media-body">
-								<p class="mt-0">Удостоверение: {{ form.id_number }}{{ form.id_number.errors.as_ul }}&nbsp;&nbsp;</p>
+								<p class="mt-0">Удостоверение: {{ form.id_number }}<span style="color:red">{{ form.id_number.errors.as_ul }}</span>&nbsp;&nbsp;</p>
 								<p></p>
-								<p>Выдано:&nbsp;&nbsp;&nbsp;   {{ form.issue }}{{ form.issue.errors.as_ul }}</p>
+								<p>Выдано:&nbsp;&nbsp;&nbsp;   {{ form.issue }}<span style="color:red">{{ form.issue.errors.as_ul }}</span></p>
 								<p>Продлено:&nbsp; {{ form.prolonged }}</p>
 								<p>ЕПП: {{ form.epp }}&nbsp;&nbsp; Медицина: {{ form.medical }}</p>
 							</div>
 						</div>
-						{{ form.photo.errors.as_ul }}{{ form.photo }}
+						<span style="color:red">{{ form.photo.errors.as_ul }}</span>{{ form.photo }}
 					</div>
           <table class="table">
             <tbody>
               <tr>
                 <th class="col-sm-2">Примечание: </th>
-								<th>{{ form.note.errors.as_ul }}{{ form.note }}</th>
+								<th><span style="color:red">{{ form.note.errors.as_ul }}</span>{{ form.note }}</th>
               </tr>
             </tbody>
           </table>

@@ -227,7 +227,7 @@ SECURITY_STATUS = (
     )
 
 ##PersonalCard
-MAIN = 'основной'
+MAIN = 'основноe'
 MOONLIGHTER = 'совместитель'
 
 TYPES = (
