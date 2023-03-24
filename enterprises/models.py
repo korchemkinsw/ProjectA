@@ -72,6 +72,10 @@ class Weapon(models.Model):
             raise ValidationError(
                 {'number': 'Четыре цифры номера'}
             )
+        if  Weapon.objects.filter(series=self.series).filter(number=self.number).exclude(id=self.id):
+            raise ValidationError(
+                {'number': 'Такие серия и номер существуют'}
+            )
 
     def save(self, *args, **kwargs):
         self.full_clean()

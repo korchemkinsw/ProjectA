@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Оружие{% endblock %}
 {% block content %}
 {% load user_filters %}
@@ -29,32 +30,6 @@
               <td>{{ weapon.release }} г.в.</td>
               <td>
                 {% if user.role == 'admin' %}
-                  <a class="badge badge-danger" data-toggle="modal" data-target="#deleteModal" role="button">
-                    Удалить
-                  </a>
-                  <div class="modal fade" id="deleteModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-body">
-                          <h6>Удалить оружие {{ weapon }} со всеми разрешениями?</h6>
-                          <table class="table table-sm">
-                            <tbody>
-                              {% for permit in weapon.weapons.all %}
-                                <tr>
-                                  <td>{{ permit }}</td>
-                                </tr>
-                              {% endfor %}
-                            </tbody>
-                          </table>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Отменить</button>
-                          <a class="btn btn-danger btn-sm" href="{% url 'del_weapon' weapon.pk %}" role="button">Точно удалить</a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <a class="badge badge-info" href="{% url 'upd_weapon' weapon.pk %}" role="button">Изменить</a>
                 {% endif %}
               </td>
               <td>
@@ -74,10 +49,10 @@
       </table>
       <br>
     </div>
-      {% if user.role == 'admin'  %}
+
       <script type="text/javascript">
         $(document).ready(function(){
-          $("#updateWeaponModal").show();
+          $("#createWeaponModal").show(); 
         });
       </script>
       <p>
@@ -85,20 +60,16 @@
           Добавить
         </button>
       </p>
-      <div class="modal" id="{{ modal }}" tabindex="-1" aria-labelledby="{{ modal }}" aria-hidden="true">
+      <div class="modal" id="createWeaponModal" tabindex="-1" aria-labelledby="createWeaponModal" aria-hidden="true">
         <div class="modal-dialog">
           <form method="post" enctype="multipart/form-data" action="">
             {% csrf_token %}
             <div class="modal-content">
               <div class="modal-header">
-                {% if modal == 'updateWeaponModal' %}
-                  <h6 class="modal-title" id="createWeaponModal">Изменить {{ weapon }}</h6>
-                {% else %}
-                  <h6 class="modal-title" id="createWeaponModal">Добавить оружие</h6>
-                {% endif %}
-                <!--button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <h6 class="modal-title" id="createWeaponModal">Добавить оружие</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
-                </button-->
+                </button>
               </div>
               <div class="modal-body">
                 {% for field in form %}
@@ -110,16 +81,10 @@
                       {% endif %}
                     </label>
                     <div class="col-sm-6">
+                      {{ devicecardformset.management_form }}
                       {# подключаем фильтр и указываем класс #}
+                      {{ field.errors.as_ul }}
                       {{ field }}
-                      {% if field.errors %}
-                        <script type="text/javascript">
-                          $(document).ready(function(){
-                            $("#createWeaponModal").show();
-                          });
-                        </script>
-                      {% endif %}
-                      <span class="required" style="color:red">{{ field.errors.as_ul }}</span>
                       {% if field.help_text %}
                         <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
                       {% endif %}
@@ -128,14 +93,14 @@
                 {% endfor %}
               </div>
               <div class="modal-footer">
-                <a class="btn btn-outline-secondary btn-sm" href="{% url 'weapons' %}" role="button">Отменить</a>
+                <!--button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Отменить</button-->
                 <button type="submit" class="btn btn-outline-success btn-sm">Сохранить</button>
               </div>
             </div>
           </form>
         </div>
       </div>
-    {% endif %}
+
   </div>
 </div>
 

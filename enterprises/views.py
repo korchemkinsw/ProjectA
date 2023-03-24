@@ -45,6 +45,19 @@ class CreateWeapon(CreateView):
     def get_context_data(self, **kwargs):
         data = super(CreateWeapon, self).get_context_data(**kwargs)
         data['weapons'] = Weapon.objects.all().order_by('release')
+        data['modal'] = 'createWeaponModal'
+        return data
+    
+class UpdateWeapon(UpdateView):
+    model = Weapon
+    form_class = WeaponForm
+    success_url = reverse_lazy('weapons')
+    template_name = 'enterprises/weapons.html'
+
+    def get_context_data(self, **kwargs):
+        data = super(UpdateWeapon, self).get_context_data(**kwargs)
+        data['weapons'] = Weapon.objects.all().order_by('release')
+        data['modal'] = 'updateWeaponModal'
         return data
     
 class DeleteWeapon(DeleteView):
@@ -137,6 +150,12 @@ class UpdateSecurity(UpdateView):
                     self.object.status = CURRENT
             self.object = form.save()
         return super(UpdateSecurity, self).form_valid(form)
+    
+class FilterPersonalCard(FilterView):
+    model = PersonalCard
+
+class FilterWeaponsPermit(FilterView):
+    model = WeaponsPermit
 
 class CreatePersonalCard(CreateView):
     model = PersonalCard
