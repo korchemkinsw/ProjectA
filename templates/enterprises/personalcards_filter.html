@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Личные карточки{% endblock %}
+{% block content %}
+{% load user_filters %}
+<div class="card">
+  <div class="card-header">
+    <h5>Личные карточки</h5>
+  </div>
+  <div class="card-body" style="text-align: left; font-size: 12px">
+    
+    <div style="text-align: left; font-size: 12px" class="table-responsive">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th scope="col-1">серия</th>
+            <th scope="col-2">Номер</th>
+            <th scope="col-3">Фамилия Имя Отчество</th>
+            <th scope="col-2">Предприятие</th>
+            <th scope="col-2">Тип</th>
+            <th scope="col-2">Дата выдачи</th>
+          </tr>
+          <form method="get">
+            <tr>
+              <th>{{ filter.form.series }}</th>
+              <th>{{ filter.form.number }}</th>
+              <th>{{ filter.form.security }}</th>
+              <th>{{ filter.form.enterprise }}</th>
+              <th></th>
+              <th>&nbsp;<input type="submit" value="Найти" /></th>
+            </tr>
+        </form>
+        </thead>
+        <tbody>
+          {% for personalcard in personalcards %}
+            <tr>
+              <td>{{ personalcard.series }}</td>
+              <td>{{ personalcard.number }}</td>
+              <td><a href="{% url 'det_security' personalcard.security.pk %}">{{ personalcard.security.security.name }}</a></td>
+              <td>{{ personalcard.enterprise }}</td>
+              <td>{{ personalcard.type }}</td>
+              <td>
+                {{ personalcard.issue|date:"d.m.Y" }}
+                {% if personalcard.issue|timeuntil:warning == expired|timeuntil:expired %}
+                  <br>
+                  {% if personalcard.issue|timeuntil:expired != expired|timeuntil:expired %}
+                    <span style="color:red">осталось: {{ personalcard.issue|timeuntil:expired }}</span>
+                  {% else %}
+                    <span style="color:red">просрочено!</span>
+                  {% endif %}
+                {% endif %}
+              </td>
+            <tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <br>
+    </div>
+  </div>
+{% endblock %}

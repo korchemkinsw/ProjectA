@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Разрешения на хранение и ношение оружия{% endblock %}
+{% block content %}
+{% load user_filters %}
+<div class="card">
+  <div class="card-header">
+    <h5>Разрешения на хранение и ношение оружия</h5>
+  </div>
+  <div class="card-body" style="text-align: left; font-size: 12px">
+    
+    <div style="text-align: left; font-size: 12px" class="table-responsive">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th scope="col-1">Серия</th>
+            <th scope="col-2">Номер</th>
+            <th scope="col-3">Фамилия Имя Отчество</th>
+            <th scope="col-2">Предприятие</th>
+            <th scope="col-1">Модель</th>
+            <th scope="col-1">Серия</th>
+            <th scope="col-1">Номер</th>
+            <th scope="col-2">Дата выдачи</th>
+            <th></th>
+          </tr>
+          <form method="get">
+            <tr>
+              <th>{{ filter.form.series }}</th>
+              <th>{{ filter.form.number }}</th>
+              <th>{{ filter.form.security }}</th>
+              <th>{{ filter.form.enterprise }}</th>
+              <th></th>
+              <th>{{ filter.form.weapon_series }}</th>
+              <th>{{ filter.form.weapon_number }}</th>
+              <th>&nbsp;<input type="submit" value="Найти" /></th>
+            </tr>
+        </form>
+        </thead>
+        <tbody>
+          {% for weaponspermit in weaponspermits %}
+            <tr>
+              <td>{{ weaponspermit.series }}</td>
+              <td>{{ weaponspermit.number }}</td>
+              <td><a href="{% url 'det_security' weaponspermit.security.pk %}">{{ weaponspermit.security.security.name }}</a></td>
+              <td>{{ weaponspermit.enterprise }}</td>
+              <td>{{ weaponspermit.weapon.model }}</td>
+              <td>{{ weaponspermit.weapon.series }}</td>
+              <td>{{ weaponspermit.weapon.number }}</td>
+              <td>
+                {{ weaponspermit.issue|date:"d.m.Y" }}
+                {% if weaponspermit.issue|timeuntil:warning == expired|timeuntil:expired %}
+                  <br>
+                  {% if weaponspermit.issue|timeuntil:expired != expired|timeuntil:expired %}
+                    <span style="color:red">осталось: {{ weaponspermit.issue|timeuntil:expired }}</span>
+                  {% else %}
+                    <span style="color:red">просрочено!</span>
+                  {% endif %}
+                {% endif %}
+              </td>
+            <tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <br>
+    </div>
+  </div>
+{% endblock %}

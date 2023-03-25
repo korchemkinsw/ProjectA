@@ -179,6 +179,7 @@ WARNING = 90
 IZH71 = 'ИЖ-71'
 NINE = '9 мм'
 VET = 'ВЕТ'
+TEV ='ТЕВ'
 WEAPONMIN = 1990
 
 MODEL = (
@@ -189,7 +190,7 @@ CALIBER = (
     )
 SERIES = (
     (VET, 'ВЕТ'),
-    #(),
+    (TEV, 'ТЕВ'),
     #(),
     #(),
     )

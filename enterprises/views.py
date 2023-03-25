@@ -16,7 +16,7 @@ from Project_A.settings import (CURRENT, EXPIRATION, EXPIRED, MYCOMPANY, PAGES,
 
 from .forms import (AddEnterpriseForm, AddPositionForm, AddStafferForm,
                     PersonalCardForm, SecurityFilter, SecurityForm, WeaponForm,
-                    WeaponsPermitForm)
+                    WeaponsPermitForm, PersonalCardsFilter, WeaponsPermitsFilter)
 from .models import (Enterprise, PersonalCard, Position, Security, Weapon,
                      WeaponsPermit, Worker)
 
@@ -72,7 +72,7 @@ class FilterSecurity(FilterView):
     context_object_name = 'security'
     template_name = 'enterprises/security_filter.html'
     filterset_class = SecurityFilter
-    paginate_by = PAGES
+    #paginate_by = PAGES
 
     def get_context_data(self, **kwargs):
         data = super(FilterSecurity, self).get_context_data(**kwargs)
@@ -151,11 +151,17 @@ class UpdateSecurity(UpdateView):
             self.object = form.save()
         return super(UpdateSecurity, self).form_valid(form)
     
-class FilterPersonalCard(FilterView):
+class FilterPersonalCards(FilterSecurity):
     model = PersonalCard
+    context_object_name = 'personalcards'
+    template_name = 'enterprises/personalcards_filter.html'
+    filterset_class = PersonalCardsFilter
 
-class FilterWeaponsPermit(FilterView):
+class FilterWeaponsPermits(FilterSecurity):
     model = WeaponsPermit
+    context_object_name = 'weaponspermits'
+    template_name = 'enterprises/weaponspermits_filter.html'
+    filterset_class = WeaponsPermitsFilter
 
 class CreatePersonalCard(CreateView):
     model = PersonalCard

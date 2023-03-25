@@ -7,7 +7,7 @@ from dal import autocomplete
 from django import forms
 
 from Project_A.settings import (MAIN, SECURITY_CATEGORY, SECURITY_STATUS,
-                                WEAPONMIN)
+                                WEAPONMIN, PERMIT_SERIES, SERIES)
 
 from .models import (Enterprise, PersonalCard, Position, Security, Weapon,
                      WeaponsPermit, Worker)
@@ -25,6 +25,26 @@ class SecurityFilter(django_filters.FilterSet):
             'security', 'epp', 'medical', 'category', 'id_number',
             'status', 'issue', 'prolonged', 'note'
         ]
+
+class PersonalCardsFilter(django_filters.FilterSet):
+    series = django_filters.CharFilter(field_name='series', lookup_expr='contains')
+    number = django_filters.CharFilter(field_name='number', lookup_expr='contains')
+    security = django_filters.CharFilter(field_name='security__security__name', lookup_expr='contains')
+    enterprise = django_filters.ModelChoiceFilter(queryset=Enterprise.objects.all())
+    class Meta:
+        model = PersonalCard
+        fields = ('series', 'number', 'security', 'enterprise', 'type', 'issue')
+
+class WeaponsPermitsFilter(django_filters.FilterSet):
+    series = django_filters.ChoiceFilter(choices=PERMIT_SERIES)
+    number = django_filters.CharFilter(field_name='number', lookup_expr='contains')
+    security = django_filters.CharFilter(field_name='security__name', lookup_expr='contains')
+    enterprise = django_filters.ModelChoiceFilter(queryset=Enterprise.objects.all())
+    weapon_series = django_filters.ChoiceFilter(field_name='weapon__series', choices=SERIES)
+    weapon_number = django_filters.CharFilter(field_name='weapon__number', lookup_expr='contains')
+    class Meta:
+        model = WeaponsPermit
+        fields = ('series', 'number', 'security', 'enterprise', 'weapon', 'issue')
 
 class SecurityForm(forms.ModelForm):
     class Meta:
