@@ -1,11 +1,14 @@
+import csv
 import datetime
+import re
+import urllib
 
 from dal import autocomplete
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
@@ -15,8 +18,9 @@ from Project_A.settings import (CURRENT, EXPIRATION, EXPIRED, MYCOMPANY, PAGES,
                                 SECURITY, WARNING)
 
 from .forms import (AddEnterpriseForm, AddPositionForm, AddStafferForm,
-                    PersonalCardForm, SecurityFilter, SecurityForm, WeaponForm,
-                    WeaponsPermitForm, PersonalCardsFilter, WeaponsPermitsFilter)
+                    PersonalCardForm, PersonalCardsFilter, SecurityFilter,
+                    SecurityForm, WeaponForm, WeaponsPermitForm,
+                    WeaponsPermitsFilter)
 from .models import (Enterprise, PersonalCard, Position, Security, Weapon,
                      WeaponsPermit, Worker)
 
@@ -78,7 +82,37 @@ class FilterSecurity(FilterView):
         data = super(FilterSecurity, self).get_context_data(**kwargs)
         data['expired'] = datetime.datetime.now().date()-relativedelta(years=EXPIRATION, days=1)
         data['warning'] = data['expired']+relativedelta(days=WARNING)
+        data['selection'] =  urllib.parse.unquote(str(self.request.GET.urlencode())) or ''
         return data
+    
+def getfile(request, selection):
+    response = HttpResponse(content_type='text/csv') 
+    response['Content-Disposition'] = 'attachment; filename="file.csv"'
+    employees = Security.objects.all()
+    if selection:
+        security =  str(re.search(r'(?<=security=)[а-яА-Я+]*', selection).group(0))
+        category = str(re.search(r'(?<=category)[а-яА-Я0-9+]*', selection).group(0))
+        id_number = str(re.search(r'(?<=id_number=)[а-яА-Я0-9+]*', selection).group(0))
+        status =  str(re.search(r'(?<=status=)[а-яА-Я+]*', selection).group(0))
+        security=security.replace('+', ' ')
+        category=category.replace('+', ' ')
+        id_number=id_number.replace('+', ' ')
+        if security:
+            employees=employees.filter(security__name__contains=security)
+        if category:
+            employees=employees.filter(category=category)
+        if id_number:
+            employees=employees.filter(id_number__contains=id_number)
+        if status:
+            employees=employees.filter(status=status)
+    writer = csv.writer(response) 
+    writer.writerow(['Список охранников'])
+    writer.writerow(['Фамилия Имя Отчество','Разряд','Номер удостоверения','Статус','Выдано','Продлено'])
+    for employee in employees:
+        writer.writerow(
+            [employee.security.name, employee.category, employee.id_number, employee.status, employee.issue, employee.prolonged]
+            ) 
+    return response
 
 class DetailSecurity(DetailView):
     model = Security

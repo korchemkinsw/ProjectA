@@ -8,7 +8,9 @@ urlpatterns = [
     path('weapons/', views.CreateWeapon.as_view() , name='weapons'),
     path('upd_weapon/<int:pk>/', views.UpdateWeapon.as_view() , name='upd_weapon'),
     path('del_weapon/<int:pk>/', views.DeleteWeapon.as_view() , name='del_weapon'),
+    
     path('security/', views.FilterSecurity.as_view() , name='security'),
+    url(r'security/csv/(?P<selection>[^/]*)',views.getfile, name='upload_security'),
     path('personalcards/', views.FilterPersonalCards.as_view() , name='personalcards'),
     path('weaponspermits/', views.FilterWeaponsPermits.as_view() , name='weaponspermits'),
     path('security/<int:pk>/', views.DetailSecurity.as_view() , name='det_security'),
