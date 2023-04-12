@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+  {% if action == 'create' %}
+    Добавить сотрудника
+  {% endif %}
+  {% if action == 'update' %}
+    Редактировать сотрудника
+  {% endif %}
+{% endblock %}
+{% block content %}
+{% load user_filters %}
+<div style="text-align: left; font-size: 12px" class="row justify-content-center">
+  <div class="col-sm-12">
+    <div class="card">
+      <form method="post" enctype="multipart/form-data" action="">
+        {% csrf_token %}
+        <div class="card-header">
+          <h6>
+            {% if action == 'create' %}
+              Добавить сотрудника
+            {% endif %}
+            {% if action == 'update' %}
+              Редактировать сотрудника
+            {% endif %}
+          </h6>
+					
+        </div>
+        <div class="card-body">
+          <div class="card-body" style="text-align: left; font-size: 12px">
+            <div style="text-align: left; font-size: 12px" class="table-responsive">
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th scope="col-3">Фамилия Имя Отчество</th>
+                    <th scope="col-1">Должность</th>
+                    <th scope="col-2"></th>
+                    <th scope="col-2"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {% if not duplicate %}
+                      <th>{{ form.name }}<span style="color:red">{{ form.name.errors.as_ul }}</span></th>
+                    {% else %}
+                      <th>{{ form.name }}</th>
+                    {% endif %}
+                    <th>{{ form.post }}<span style="color:red">{{ form.post.errors.as_ul }}</span></th>
+                    <td>
+                      {{ form.force.label }} {{ form.force }}
+                    </td>
+                    <td>
+                      {% if duplicate %}
+                        <button type="submit" class="badge badge-success">Сохранить</button>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% if duplicate %}
+                    <tr>
+                      <th>
+                        <span style="color:red">Существуют сотрудники с такими ФИО:</span>
+                      </th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                    {% for worker in duplicate %}
+                      <tr>
+                        <td>{{ worker.name }}</td>
+                        <td>{{ worker.post }}</td>
+                        <td>
+                          {% if worker.post.post == post_security %}
+                            {% for security in worker.worker.all %}
+                              удостоверение: {{ security.id_number }}
+                            {% endfor %}
+                          {% endif %}
+                          {% if worker.post.post == post_bigboss %}
+                            {% for enterprise in worker.bigboss.all %}
+                              {{ enterprise.abbreviatedname }}
+                            {% endfor %}
+                          {% endif %}
+                        </td>
+                        <td><a class="badge badge-info" href="{% url 'upd_worker' worker.pk %}" role="button">Изменить</a></td>
+                      </tr>
+                    {% endfor %}
+                  {% endif %}
+                </tbody>
+              </table>
+              {% if not duplicate %}
+                <button type="submit" class="btn btn-outline-success btn-sm">Сохранить</button>
+              {% else %}
+                <a class="btn btn-outline-info btn-sm" href="{% url 'add_worker' %}" role="button">Очистить форму</a>
+              {% endif %}
+              <a class="btn btn-outline-primary btn-sm" href="{% url 'workers' %}" role="button">Список сотрудников</a>
+            </div>
+          </div>
+        </div>
+			</form>
+    </div>
+  </div>
+</div>
+{% endblock %}

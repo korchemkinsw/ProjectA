@@ -5,13 +5,47 @@ from dataclasses import fields
 import django_filters
 from dal import autocomplete
 from django import forms
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.messages import constants as messages
 
-from Project_A.settings import (MAIN, SECURITY_CATEGORY, SECURITY_STATUS,
-                                WEAPONMIN, PERMIT_SERIES, SERIES)
+from Project_A.settings import (MAIN, PERMIT_SERIES, SECURITY_CATEGORY,
+                                SECURITY_STATUS, SERIES, WEAPONMIN)
 
 from .models import (Enterprise, PersonalCard, Position, Security, Weapon,
                      WeaponsPermit, Worker)
 
+
+class WorkersFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(field_name='name', lookup_expr='contains')
+    post = django_filters.ModelChoiceFilter(queryset=Position.objects.all())
+    class Meta:
+        model = Worker
+        fields = ('name','post')
+
+class BaseConfirmModelForm(forms.ModelForm):
+    force = forms.BooleanField(required=True, label='создать новый:')
+    name = forms.Textarea()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs.update({'readonly': True})
+
+class WorkerForm(forms.ModelForm):
+    def clean_name(self):
+        data = self.cleaned_data['name']
+        if not re.fullmatch(r'^[А-ЯЁ][а-яё]+[\S]+[\s][А-ЯЁ][а-яё]+[\s][А-ЯЁ][\D]+', str(data)):
+            raise forms.ValidationError('Фамилия Имя Отчество')
+        return data
+    
+    class Meta:
+        model = Worker
+        fields = ('name','post',)
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'Фамилия Имя Отчество', 'style':'width:300px'}),
+            }
+        
+class ConfirmWorkerForm(WorkerForm, BaseConfirmModelForm):
+    pass
 
 class SecurityFilter(django_filters.FilterSet):
     security = django_filters.CharFilter(field_name='security__name', lookup_expr='contains')

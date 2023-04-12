@@ -238,10 +238,12 @@ class UpdateCardLegal(UserPassesTestMixin, UpdateView):
         context['action'] = 'upd_legal'
         context['cards']='active'
         context['legal'] = self.object.legal.pk
-        context['account'] = self.object.device.account
+        if self.object.device:
+            context['account'] = self.object.device.account
         context['transmission'] = self.object.transmission
-        context['enterprise'] = self.object.contract.enterprise
-        context['contract'] = self.object.contract
+        if self.object.contract:
+            context['enterprise'] = self.object.contract.enterprise
+            context['contract'] = self.object.contract
         return context
 
     def form_valid(self, form):

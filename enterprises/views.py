@@ -6,21 +6,23 @@ import urllib
 from dal import autocomplete
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.messages import constants as messages
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView)
+from django.views.generic import (CreateView, DeleteView, DetailView, FormView,
+                                  ListView, UpdateView)
 from django_filters.views import FilterView
 
-from Project_A.settings import (CURRENT, EXPIRATION, EXPIRED, MYCOMPANY, PAGES,
-                                SECURITY, WARNING)
+from Project_A.settings import (BIGBOSS, CURRENT, EXPIRATION, EXPIRED,
+                                MYCOMPANY, PAGES, SECURITY, WARNING)
 
 from .forms import (AddEnterpriseForm, AddPositionForm, AddStafferForm,
-                    PersonalCardForm, PersonalCardsFilter, SecurityFilter,
-                    SecurityForm, WeaponForm, WeaponsPermitForm,
-                    WeaponsPermitsFilter)
+                    ConfirmWorkerForm, PersonalCardForm, PersonalCardsFilter,
+                    SecurityFilter, SecurityForm, WeaponForm,
+                    WeaponsPermitForm, WeaponsPermitsFilter, WorkerForm,
+                    WorkersFilter)
 from .models import (Enterprise, PersonalCard, Position, Security, Weapon,
                      WeaponsPermit, Worker)
 
@@ -34,6 +36,60 @@ class WorkerAutocomplete(autocomplete.Select2QuerySetView):
         if self.q:
             qs = qs.filter(name__icontains=self.q)
         return qs
+
+class FilterWorkers(FilterView):
+    model = Worker
+    context_object_name = 'workers'
+    template_name = 'enterprises/workers_filter.html'
+    filterset_class = WorkersFilter
+
+class EditWorkerView(FormView):
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            if Worker.objects.filter(name__exact = request.POST['name']):      
+                self.duplicate = True
+            else:
+                self.duplicate = False
+        except KeyError:
+            self.duplicate = False
+        return super(EditWorkerView, self).dispatch(request, *args, **kwargs)
+    
+    def get_form_class(self):
+        return ConfirmWorkerForm if self.duplicate else WorkerForm
+
+class CreateWorker(CreateView, EditWorkerView):
+    model = Worker
+    success_url = reverse_lazy('workers')
+    template_name = 'enterprises/worker_form.html'
+    
+    def get_context_data(self, **kwargs):
+        data = super(CreateWorker, self).get_context_data(**kwargs)
+        data['action'] = 'create'
+        if self.request.POST:
+            data['duplicate'] = Worker.objects.filter(name__exact = self.request.POST['name'])
+        data['post_security'] = SECURITY
+        data['post_bigboss'] = BIGBOSS
+        return data
+    
+class UpdateWorker(UpdateView):
+    model = Worker
+    form_class = WorkerForm
+    template_name = 'enterprises/worker_form.html'
+    
+    def get_context_data(self, **kwargs):
+        data = super(UpdateWorker, self).get_context_data(**kwargs)
+        data['action'] = 'update'
+        data['post_security'] = SECURITY
+        data['post_bigboss'] = BIGBOSS
+        return data
+
+    
+class DeleteWorker(DeleteView):
+    model = Worker
+    success_url = reverse_lazy('workers')
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
 
 class ListWeapons(ListView):
     model = Weapon

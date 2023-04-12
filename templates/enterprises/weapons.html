@@ -29,10 +29,10 @@
               <td>{{ weapon.release }} г.в.</td>
               <td>
                 {% if user.role == 'admin' %}
-                  <a class="badge badge-danger" data-toggle="modal" data-target="#deleteModal" role="button">
+                  <a class="badge badge-danger" data-toggle="modal" data-target="#deleteModal-{{weapon.pk}}" role="button">
                     Удалить
                   </a>
-                  <div class="modal fade" id="deleteModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                  <div class="modal fade" id="deleteModal-{{weapon.pk}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-body">
@@ -54,6 +54,7 @@
                       </div>
                     </div>
                   </div>
+                  <!--a class="badge badge-danger" href="{% url 'del_weapon' weapon.pk %}" role="button">Удалить</a-->
                   <a class="badge badge-info" href="{% url 'upd_weapon' weapon.pk %}" role="button">Изменить</a>
                 {% endif %}
               </td>

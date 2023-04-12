@@ -16,17 +16,21 @@
       <div class="col-sm-12">
         <div class="card text-center">
           <div class="row">
+
             {% for photo in card.card_photo.all %}
               <div class="col-sm-4">
                 <div class="card text-left" style="width: 10rem;">
-                  <img src="{{ photo.image.url }}" class="card-img-top" alt="...">
-                  <div class="card-body">
-                    <a href="{{ photo.image.url }}">{{ photo.title }}</a>
-                  </div>
+                  {% if photo.image %}
+                    <img src="{{ photo.image.url }}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <a href="{{ photo.image.url }}">{{ photo.title }}</a>
+                    </div>
+                  {% endif %}
                 </div>
               </div>
               <div class="w-40"></div>
             {% endfor %}
+            
           </div>
           <div style="text-align: left; font-size: 12px" class="col-sm-12">
             <p>

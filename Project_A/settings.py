@@ -205,6 +205,7 @@ PERMIT_SERIES = (
     )
 
 ## Secutity
+BIGBOSS = 'Генеральный директор'
 SECURITY = 'Охранник'
 
 FIRST = '1 разряд'
