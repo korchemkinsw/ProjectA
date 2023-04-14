@@ -17,7 +17,7 @@
         {% csrf_token %}
         <div class="card-header">
 					<p></p>
-          <h6>{{ form.security.label }}: {{ form.security }}<span style="color:red">{{ form.security.errors.as_ul }}</span> {{ form.category.label }}: {{ form.category }}<span style="color:red">{{ form.category.errors.as_ul }}</span></h6>
+          <h6>{{ worker.name }}{{ form.security.label }}: {{ form.security }}<span style="color:red">{{ form.security.errors.as_ul }}</span> {{ form.category.label }}: {{ form.category }}<span style="color:red">{{ form.category.errors.as_ul }}</span></h6>
 					
         </div>
         <div class="card-body">

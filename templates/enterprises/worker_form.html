@@ -17,6 +17,7 @@
         {% csrf_token %}
         <div class="card-header">
           <h6>
+            
             {% if action == 'create' %}
               Добавить сотрудника
             {% endif %}
@@ -47,7 +48,21 @@
                     {% endif %}
                     <th>{{ form.post }}<span style="color:red">{{ form.post.errors.as_ul }}</span></th>
                     <td>
-                      {{ form.force.label }} {{ form.force }}
+                      {% if action == 'create' %}
+                        {{ form.force.label }} {{ form.force }}
+                      {% else %}
+                        {% if worker.bigboss.all %}
+                          {% for enterprise in worker.bigboss.all %}
+                            {{ enterprise.abbreviatedname }}
+                          {% endfor %}
+                        {% endif %}
+                        {% if worker.worker.all %}
+                          {% for security in worker.worker.all %}
+                            удостоверение: {{ security.id_number }}
+                            <a class="badge badge-info" href="{% url 'upd_security' security.pk %}" role="button">Изменить</a>
+                          {% endfor %}
+                        {% endif %}
+                      {% endif %}
                     </td>
                     <td>
                       {% if duplicate %}
@@ -64,23 +79,23 @@
                       <th></th>
                       <th></th>
                     </tr>
-                    {% for worker in duplicate %}
+                    {% for duplicat in duplicate %}
                       <tr>
-                        <td>{{ worker.name }}</td>
-                        <td>{{ worker.post }}</td>
+                        <td>{{ duplicat.name }}</td>
+                        <td>{{ duplicat.post }}</td>
                         <td>
-                          {% if worker.post.post == post_security %}
-                            {% for security in worker.worker.all %}
+                          {% if duplicat.post.post == post_security %}
+                            {% for security in duplicat.worker.all %}
                               удостоверение: {{ security.id_number }}
                             {% endfor %}
                           {% endif %}
-                          {% if worker.post.post == post_bigboss %}
-                            {% for enterprise in worker.bigboss.all %}
+                          {% if duplicat.post.post == post_bigboss %}
+                            {% for enterprise in duplicat.bigboss.all %}
                               {{ enterprise.abbreviatedname }}
                             {% endfor %}
                           {% endif %}
                         </td>
-                        <td><a class="badge badge-info" href="{% url 'upd_worker' worker.pk %}" role="button">Изменить</a></td>
+                        <td><a class="badge badge-info" href="{% url 'upd_worker' duplicat.pk %}" role="button">Изменить</a></td>
                       </tr>
                     {% endfor %}
                   {% endif %}

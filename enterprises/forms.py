@@ -7,6 +7,7 @@ from dal import autocomplete
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages import constants as messages
+from django.forms.models import inlineformset_factory
 
 from Project_A.settings import (MAIN, PERMIT_SERIES, SECURITY_CATEGORY,
                                 SECURITY_STATUS, SERIES, WEAPONMIN)
@@ -83,13 +84,13 @@ class WeaponsPermitsFilter(django_filters.FilterSet):
 class SecurityForm(forms.ModelForm):
     class Meta:
         model = Security
-        exclude = ()
         fields = (
-            'security', 'photo', 'epp', 'medical', 'category',
+            #'security', 
+            'photo', 'epp', 'medical', 'category',
             'id_number', 'status', 'issue', 'prolonged', 'note'
         )
         widgets = {
-            'security': autocomplete.ModelSelect2(url='worker-autocomplete', attrs={'style':'width:400px'}),
+            #'security': autocomplete.ModelSelect2(url='worker-autocomplete', attrs={'style':'width:400px'}),
             'epp': forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
             'medical': forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
             'id_number': forms.TextInput(attrs={'placeholder': 'А 123456', 'style':'width:70px'}),
@@ -97,6 +98,13 @@ class SecurityForm(forms.ModelForm):
             'prolonged': forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
             'note': forms.Textarea(attrs={'rows': 2,'cols': 65})
             }
+        
+class SecurityCreateForm(SecurityForm):
+    security = forms.ModelChoiceField(
+        label = 'Охранник',
+        queryset=Worker.objects.all(),
+        widget=autocomplete.ModelSelect2(url='worker-autocomplete', attrs={'style':'width:400px'})
+        )
 
 class PersonalCardForm(forms.ModelForm):
     class Meta:
@@ -128,6 +136,8 @@ class WeaponsPermitForm(forms.ModelForm):
             'number': forms.TextInput(attrs={'placeholder': '1234567', 'style':'width:100px'}),
             'issue': forms.TextInput(attrs={'class': 'vDateField', 'type': 'date'}),
             }
+        
+SecurityFormset = inlineformset_factory(Worker, Security, form=SecurityForm)
 
 class AddEnterpriseForm(forms.ModelForm):
     class Meta:

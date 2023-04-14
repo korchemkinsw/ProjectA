@@ -20,9 +20,9 @@ from Project_A.settings import (BIGBOSS, CURRENT, EXPIRATION, EXPIRED,
 
 from .forms import (AddEnterpriseForm, AddPositionForm, AddStafferForm,
                     ConfirmWorkerForm, PersonalCardForm, PersonalCardsFilter,
-                    SecurityFilter, SecurityForm, WeaponForm,
-                    WeaponsPermitForm, WeaponsPermitsFilter, WorkerForm,
-                    WorkersFilter)
+                    SecurityCreateForm, SecurityFilter, SecurityForm,
+                    WeaponForm, WeaponsPermitForm, WeaponsPermitsFilter,
+                    WorkerForm, WorkersFilter)
 from .models import (Enterprise, PersonalCard, Position, Security, Weapon,
                      WeaponsPermit, Worker)
 
@@ -30,9 +30,14 @@ from .models import (Enterprise, PersonalCard, Position, Security, Weapon,
 class WorkerAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         post = get_object_or_404(Position,post=SECURITY)
+        workers = Worker.objects.filter(post=post)
         if not self.request.user.is_authenticated:
-            return Worker.objects.filter(post=post)
-        qs = Worker.objects.filter(post=post)
+            for security in Security.objects.all():
+                workers = workers.exclude(id=security.security.id)
+            return workers
+        for security in Security.objects.all():
+                workers = workers.exclude(id=security.security.id)
+        qs = workers
         if self.q:
             qs = qs.filter(name__icontains=self.q)
         return qs
@@ -71,16 +76,25 @@ class CreateWorker(CreateView, EditWorkerView):
         data['post_bigboss'] = BIGBOSS
         return data
     
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            self.object = form.save()
+            if self.object.post.post == SECURITY:
+                self.success_url = reverse('add_security', args=[str(self.object.id)])
+        return super(CreateWorker, self).form_valid(form)
+    
 class UpdateWorker(UpdateView):
     model = Worker
     form_class = WorkerForm
     template_name = 'enterprises/worker_form.html'
-    
+
     def get_context_data(self, **kwargs):
         data = super(UpdateWorker, self).get_context_data(**kwargs)
         data['action'] = 'update'
         data['post_security'] = SECURITY
         data['post_bigboss'] = BIGBOSS
+        data['worker'] = get_object_or_404(Worker, id=self.kwargs['pk'])
         return data
 
     
@@ -196,14 +210,35 @@ class CreateSecurity(CreateView):
     form_class = SecurityForm
     success_url = reverse_lazy('security')
 
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            if self.kwargs['pk']:      
+                self.worker = True
+            else:
+                self.worker = False
+        except KeyError:
+            self.worker = False
+        return super(CreateSecurity, self).dispatch(request, *args, **kwargs)
+    
+    def get_form_class(self):
+        return SecurityForm if self.worker else SecurityCreateForm
+
     def get_context_data(self, **kwargs):
         data = super(CreateSecurity, self).get_context_data(**kwargs)
         data['action'] = 'create'
+        if self.kwargs['pk']:
+            #data['form'].fields['security'].initial = get_object_or_404(Worker, id=self.kwargs['pk'])
+            data['worker'] = get_object_or_404(Worker, id=self.kwargs['pk'])
         return data
 
     def form_valid(self, form):
+        form.instance.security_id = self.kwargs['pk']
         with transaction.atomic():
             self.object = form.save(commit=False)
+            if self.kwargs['pk']:
+                self.object.security = get_object_or_404(Worker, id=self.kwargs['pk'])
+            else:
+                self.object.security = form.cleaned_data['security']
             if (self.object.issue or self.object.prolonged) < datetime.datetime.now().date()-relativedelta(years=EXPIRATION):
                 self.object.status = EXPIRED
             else:
@@ -223,6 +258,9 @@ class UpdateSecurity(UpdateView):
     def get_context_data(self, **kwargs):
         data = super(UpdateSecurity, self).get_context_data(**kwargs)
         data['action'] = 'update'
+        if self.kwargs['pk']:
+            #data['form'].fields['security'].initial = get_object_or_404(Worker, id=self.kwargs['pk'])
+            data['worker'] = get_object_or_404(Security, id=self.kwargs['pk']).security
         return data
 
     def form_valid(self, form):

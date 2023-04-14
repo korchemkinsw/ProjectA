@@ -4,7 +4,7 @@ from django.urls import re_path as url
 from . import views
 
 urlpatterns = [
-    url(r'^worker-autocomplete/$', views.WorkerAutocomplete.as_view(create_field='name',), name='worker-autocomplete'),
+    url(r'^worker-autocomplete/$', views.WorkerAutocomplete.as_view(), name='worker-autocomplete'),
     path('workers/', views.FilterWorkers.as_view(), name='workers'),
     path('add_worker/', views.CreateWorker.as_view(), name='add_worker'),
     path('del_worker/<int:pk>/', views.DeleteWorker.as_view(), name='del_worker'),
@@ -17,7 +17,7 @@ urlpatterns = [
     path('personalcards/', views.FilterPersonalCards.as_view(), name='personalcards'),
     path('weaponspermits/', views.FilterWeaponsPermits.as_view(), name='weaponspermits'),
     path('security/<int:pk>/', views.DetailSecurity.as_view(), name='det_security'),
-    path('add_security/', views.CreateSecurity.as_view(), name='add_security'),
+    url(r'add_security/(?P<pk>[0-9]+)*', views.CreateSecurity.as_view(), name='add_security'),
     path('upd_security/<int:pk>/', views.UpdateSecurity.as_view(), name='upd_security'),
     path('add_personalcard/<int:pk>/', views.CreatePersonalCard.as_view(), name='add_personalcard'),
     path('upd_personalcard/<int:pk>/', views.UpdatePersonalCard.as_view(), name='upd_personalcard'),
