@@ -20,11 +20,12 @@ from Project_A.settings import (BIGBOSS, CURRENT, EXPIRATION, EXPIRED,
 
 from .forms import (AddEnterpriseForm, AddPositionForm, AddStafferForm,
                     ConfirmWorkerForm, PersonalCardForm, PersonalCardsFilter,
-                    SecurityCreateForm, SecurityFilter, SecurityForm,
-                    WeaponForm, WeaponsPermitForm, WeaponsPermitsFilter,
-                    WorkerForm, WorkersFilter)
-from .models import (Enterprise, PersonalCard, Position, Security, Weapon,
-                     WeaponsPermit, Worker)
+                    ResponseteamFilter, ResponseteamForm, SecurityCreateForm,
+                    SecurityFilter, SecurityForm, WeaponForm,
+                    WeaponsPermitForm, WeaponsPermitsFilter, WorkerForm,
+                    WorkersFilter)
+from .models import (Enterprise, PersonalCard, Position, Responseteam,
+                     Security, Weapon, WeaponsPermit, Worker)
 
 
 class WorkerAutocomplete(autocomplete.Select2QuerySetView):
@@ -41,6 +42,62 @@ class WorkerAutocomplete(autocomplete.Select2QuerySetView):
         if self.q:
             qs = qs.filter(name__icontains=self.q)
         return qs
+
+class FilterResponseteams(FilterView):
+    model = Responseteam
+    context_object_name = 'responseteams'
+    template_name = 'enterprises/responseteams_filter.html'
+    filterset_class = ResponseteamFilter
+
+class CreateResponseteam(CreateView):
+    model = Responseteam
+    form_class = ResponseteamForm
+    success_url = reverse_lazy('responseteams')
+    template_name = 'enterprises/responseteams_filter.html'
+
+    def get_context_data(self, **kwargs):
+        data = super(CreateResponseteam, self).get_context_data(**kwargs)
+        data['modal'] = 'createResponseteamModal'
+        data['responseteams'] = Responseteam.objects.all()
+        return data
+    
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            if form.clean_force() == False:
+                self.object.enterprise = None
+                self.object = form.save()
+        return super(CreateResponseteam, self).form_valid(form)
+    
+class UpdateResponseteam(UpdateView):
+    model = Responseteam
+    form_class = ResponseteamForm
+    success_url = reverse_lazy('responseteams')
+    template_name = 'enterprises/responseteams_filter.html'
+
+    def get_context_data(self, **kwargs):
+        qteam = get_object_or_404(Responseteam, id=self.kwargs['pk'])
+        data = super(UpdateResponseteam, self).get_context_data(**kwargs)
+        data['modal'] = 'updateResponseteamModal'
+        data['responseteams'] = Responseteam.objects.all()
+        if qteam.enterprise:
+            data['form'].fields['force'].initial = True
+        return data
+    
+    def form_valid(self, form):
+        with transaction.atomic():
+            self.object = form.save(commit=False)
+            if form.clean_force() == False:
+                self.object.enterprise = None
+                self.object = form.save()
+        return super(UpdateResponseteam, self).form_valid(form)
+    
+class DeleteResponseteam(DeleteView):
+    model = Responseteam
+    success_url = reverse_lazy('responseteams')
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
 
 class FilterWorkers(FilterView):
     model = Worker
@@ -227,7 +284,6 @@ class CreateSecurity(CreateView):
         data = super(CreateSecurity, self).get_context_data(**kwargs)
         data['action'] = 'create'
         if self.kwargs['pk']:
-            #data['form'].fields['security'].initial = get_object_or_404(Worker, id=self.kwargs['pk'])
             data['worker'] = get_object_or_404(Worker, id=self.kwargs['pk'])
         return data
 
@@ -259,7 +315,6 @@ class UpdateSecurity(UpdateView):
         data = super(UpdateSecurity, self).get_context_data(**kwargs)
         data['action'] = 'update'
         if self.kwargs['pk']:
-            #data['form'].fields['security'].initial = get_object_or_404(Worker, id=self.kwargs['pk'])
             data['worker'] = get_object_or_404(Security, id=self.kwargs['pk']).security
         return data
 

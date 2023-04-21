@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Группы реагирования{% endblock %}
+{% block content %}
+{% load user_filters %}
+<div class="card">
+  <div class="card-header">
+    <h5>Группы реагирования</h5>
+  </div>
+  <div class="card-body" style="text-align: left; font-size: 12px">
+    
+    <div style="text-align: left; font-size: 12px" class="table-responsive">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th scope="col-3">Название</th>
+            <th scope="col-1">Телефоны</th>
+            <th scope="col-2">Предприятие</th>
+            <th></th>
+          </tr>
+          {% if not modal %}
+            <form method="get">
+              <tr>
+                <th>{{ filter.form.name }}</th>
+                <th>{{ filter.form.phone }}</th>
+                <th>{{ filter.form.enterprise }}</th>
+                <th>&nbsp;<input type="submit" value="Найти" /></th>
+              </tr>
+            </form>
+          {% endif %}
+        </thead>
+        <tbody>
+          {% for responseteam in responseteams %}
+            <tr>
+              <td>{{ responseteam.name }}</td>
+              <td>{{ responseteam.phone }}</td>
+              <td>
+                {% if responseteam.enterprise %}
+                  {{ responseteam.enterprise }}
+                {% endif %}
+                </td>
+              <td>
+                <a class="badge badge-danger" data-toggle="modal" data-target="#deleteModal-{{responseteam.pk}}" role="button">
+                  Удалить
+                </a>
+                <div class="modal fade" id="deleteModal-{{responseteam.pk}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-body">
+                        <h6>Удалить группу {{ responseteam.name }}</h6>
+                        <table class="table table-sm">
+                          <tbody>
+                            {% if responseteam.enterprise %}
+                              <tr>
+                                <th>Предприятие: {{ responseteam.enterprise }}</th>
+                              </tr>
+                            {% endif %}  
+                            <tr>
+                              <td>телефоны: {{responseteam.phone }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Отменить</button>
+                        <a class="btn btn-danger btn-sm" href="{% url 'del_responseteam' responseteam.pk %}" role="button">Точно удалить</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <a class="badge badge-info" href="{% url 'upd_responseteam' responseteam.pk %}" role="button">Изменить</a>
+              </td>
+            <tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+      <br>
+    </div>
+    <div>
+      {% if user.role == 'admin'  %}
+      <p>
+        <a class="btn btn-outline-primary btn-sm" href="{% url 'add_responseteam' %}" role="button">Добавить группу реагирования</a>
+      </p>
+      {% endif %}
+    </div>
+  </div>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $("#updateResponseteamModal").show();
+      $("#createResponseteamModal").show();
+    });
+  </script>
+  <div class="modal" id="{{ modal }}" tabindex="-1" aria-labelledby="{{ modal }}" aria-hidden="true">
+    <div class="modal-dialog">
+      <form method="post" enctype="multipart/form-data" action="">
+        {% csrf_token %}
+        <div class="modal-content">
+          <div class="modal-header">
+            {% if modal == 'updateResponseteamModal' %}
+              <h6 class="modal-title" id="updateResponseteamModal">Изменить {{ responseteam }}</h6>
+            {% else %}
+              <h6 class="modal-title" id="createResponseteamModal">Добавить группу реагирования</h6>
+            {% endif %}
+          </div>
+          <div class="modal-body">
+            {% for field in form %}
+              <div class="form-group row" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+                <label for="{{ field.id_for_label }}" class="col-sm-4 col-form-label text-sm-left">
+                  {{ field.label }}
+                  {% if field.field.required %}
+                    <span class="required" style="color:red">*</span>
+                  {% endif %}
+                </label>
+                <div class="col-sm-6">
+                  {# подключаем фильтр и указываем класс #}
+                  {{ field }}
+                  {% if field.errors %}
+                    
+                  {% endif %}
+                  <span class="required" style="color:red">{{ field.errors.as_ul }}</span>
+                  {% if field.help_text %}
+                    <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+                  {% endif %}
+                </div>                
+              </div>
+            {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-outline-secondary btn-sm" href="{% url 'responseteams' %}" role="button">Отменить</a>
+            <button type="submit" class="btn btn-outline-success btn-sm">Сохранить</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+{% endblock %}

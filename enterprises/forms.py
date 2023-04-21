@@ -12,13 +12,41 @@ from django.forms.models import inlineformset_factory
 from Project_A.settings import (MAIN, PERMIT_SERIES, SECURITY_CATEGORY,
                                 SECURITY_STATUS, SERIES, WEAPONMIN)
 
-from .models import (Enterprise, PersonalCard, Position, Security, Weapon,
-                     WeaponsPermit, Worker)
+from .models import (Enterprise, PersonalCard, Position, Responseteam,
+                     Security, Weapon, WeaponsPermit, Worker)
 
+
+class ResponseteamFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(field_name='name', lookup_expr='contains')
+    phone = django_filters.CharFilter(field_name='phone', lookup_expr='contains')
+    enterprise = django_filters.ModelChoiceFilter(queryset=Enterprise.objects.all())
+
+    class Meta:
+        model = Responseteam
+        fields = ('name', 'phone', 'enterprise')
+
+class ResponseteamForm(forms.ModelForm):
+    force = forms.BooleanField(required=False, label='собственная:')
+
+    def clean_force(self):
+        return self.cleaned_data['force']
+    
+    def clean_enterprise(self):
+        return self.cleaned_data['enterprise']
+    
+    class Meta:
+        model = Responseteam
+        exclude = ()
+        fields = ('name', 'phone', 'force', 'enterprise',)
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'название', 'style':'width:250px'}),
+            'phone': forms.TextInput(attrs={'placeholder': '7ХХХХХХХХХХ 7ХХХХХХХХХХ ...', 'style':'width:250px'}),
+            }
 
 class WorkersFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(field_name='name', lookup_expr='contains')
     post = django_filters.ModelChoiceFilter(queryset=Position.objects.all())
+
     class Meta:
         model = Worker
         fields = ('name','post')
@@ -66,6 +94,7 @@ class PersonalCardsFilter(django_filters.FilterSet):
     number = django_filters.CharFilter(field_name='number', lookup_expr='contains')
     security = django_filters.CharFilter(field_name='security__security__name', lookup_expr='contains')
     enterprise = django_filters.ModelChoiceFilter(queryset=Enterprise.objects.all())
+
     class Meta:
         model = PersonalCard
         fields = ('series', 'number', 'security', 'enterprise', 'type', 'issue')
@@ -77,6 +106,7 @@ class WeaponsPermitsFilter(django_filters.FilterSet):
     enterprise = django_filters.ModelChoiceFilter(queryset=Enterprise.objects.all())
     weapon_series = django_filters.ChoiceFilter(field_name='weapon__series', choices=SERIES)
     weapon_number = django_filters.CharFilter(field_name='weapon__number', lookup_expr='contains')
+    
     class Meta:
         model = WeaponsPermit
         fields = ('series', 'number', 'security', 'enterprise', 'weapon', 'issue')

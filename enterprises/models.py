@@ -52,7 +52,6 @@ class Weapon(models.Model):
     )
     release = models.IntegerField(
         verbose_name='Год выпуска',
-        max_length=4,
         default=WEAPONMIN,
         validators=[
             MinValueValidator(WEAPONMIN),
@@ -88,7 +87,7 @@ class Worker(models.Model):
     )
     post = models.ForeignKey(
         Position,
-        default=get_object_or_404(Position,post=SECURITY),
+        #default=get_object_or_404(Position,post=SECURITY),
         verbose_name='Должность',
         on_delete=models.CASCADE
     )
@@ -394,6 +393,13 @@ class Responseteam(models.Model):
         max_length=50,
         verbose_name='Телефон ГБР',
         help_text='Телефон ГБР',
+    )
+    enterprise = models.ForeignKey(
+        Enterprise,
+        verbose_name='Предприятие',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
     )
 
     class Meta:

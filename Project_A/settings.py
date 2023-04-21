@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'orders',
     'clientele',
     'object_card',
+    'security_post',
     'dal',
     'dal_select2',
     'django.contrib.admin',
@@ -238,3 +239,17 @@ TYPES = (
     (MAIN, 'основное'),
     (MOONLIGHTER, 'совместитель')
     )
+
+
+#Security_post variable
+DAY = 'день'
+NIGHT = 'ночь'
+ALL = 'сутки'
+WATCH = 'вахта'
+
+SHIFTS =(
+    (DAY, 'день'),
+    (NIGHT, 'ночь'),
+    (ALL, 'сутки'),
+    (WATCH, 'вахта'),
+)

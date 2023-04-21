@@ -49,8 +49,8 @@ class StafferAdmin(admin.ModelAdmin):
 '''
 @admin.register(Responseteam)
 class ResponseteamAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone')
-    fields = ['name', 'phone']
+    list_display = ('name', 'phone', 'enterprise')
+    fields = ['name', 'phone', 'enterprise']
 
 @admin.register(Worker)
 class WorkerAdmin(admin.ModelAdmin):
