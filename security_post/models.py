@@ -33,10 +33,11 @@ class GuardObject(models.Model):
         verbose_name_plural = 'Объекты охраны'
 
     def __str__(self):
-        if self.contract.legal:
-            return f'{self.contract.legal}, постов: {self.number}: {self.contract.enterprise}'
-        if self.contract.individual:
-            return f'{self.contract.individual}, постов: {self.number}: {self.contract.enterprise}'
+        if self.contract:
+            if self.contract.legal:
+                return f'{self.contract.legal}, постов: {self.number}: {self.contract.enterprise}'
+            if self.contract.individual:
+                return f'{self.contract.individual}, постов: {self.number}: {self.contract.enterprise}'
         if self.qteam:
             return f'{self.qteam.name}: {self.qteam.enterprise}'
 
@@ -46,11 +47,12 @@ class GuardPost(models.Model):
         verbose_name='Объект охраны',
         help_text='Объект охраны',
         on_delete=models.CASCADE,
-        related_name='guard_objects',
+        related_name='guard_posts',
     )
     number = models.PositiveIntegerField(
         verbose_name='количество сотрудников',
         help_text='количество сотрудников',
+        blank=True
     )
     personnel = models.ManyToManyField(
         Security,

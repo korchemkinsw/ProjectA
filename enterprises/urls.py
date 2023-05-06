@@ -13,6 +13,7 @@ urlpatterns = [
     path('add_responseteam/', views.CreateResponseteam.as_view(), name = 'add_responseteam'),
     path('upd_responseteam/<int:pk>/', views.UpdateResponseteam.as_view(), name='upd_responseteam'),
     path('del_responseteam/<int:pk>/', views.DeleteResponseteam.as_view(), name='del_responseteam'),
+    path('ownresponse/', views.OwnResponse.as_view(), name = 'ownresponse'),
     path('weapons/', views.CreateWeapon.as_view(), name='weapons'),
     path('upd_weapon/<int:pk>/', views.UpdateWeapon.as_view(), name='upd_weapon'),
     path('del_weapon/<int:pk>/', views.DeleteWeapon.as_view(), name='del_weapon'),

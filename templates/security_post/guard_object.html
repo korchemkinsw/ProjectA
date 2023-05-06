@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}
+  Посты:&nbsp;
+  {% if guardobject.qteam %}
+    {{ guardobject.qteam.name }}
+  {% else %}
+    {% if guardobject.contract.legal %}
+      {{ guardobject.contract.legal }}
+    {% endif %}
+    {% if guardobject.contract.individual %}
+      {{ guardobject.contract.individual }}
+    {% endif %}
+  {% endif %}
+{% endblock %}
+{% load static %}
+{% block content %}
+<div style="text-align: left; font-size: 12px" class="row justify-content-center">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5>
+          {% if guardobject.qteam %}
+            {{ guardobject.qteam.name }}&nbsp;&nbsp;{{ guardobject.qteam.enterprise }}
+          {% else %}
+            {% if guardobject.contract.legal %}
+              {{ guardobject.contract.legal }}&nbsp;&nbsp;{{ guardobject.contract.enterprise }}
+            {% endif %}
+            {% if guardobject.contract.individual %}
+              {{ guardobject.contract.individual }}&nbsp;&nbsp;{{ guardobject.contract.enterprise }}
+            {% endif %}
+          {% endif %}
+          {{ guardobject.number }}
+          {% if guardobject.number == 1 %}
+            пост
+          {% endif %}
+          {% if guardobject.number == 2 or guardobject.number == 3 or guardobject.number == 4 %}
+            поста
+          {% endif %}
+          {% if guardobject.number > 4 %}
+            постов
+          {% endif %}
+        </h5>
+      </div>
+      <div class="card-body" style="text-align: left; font-size: 12px">
+        {% for post in guardobject.guard_posts.all %}
+          <h6>пост {{ forloop.counter }} из {{ guardobject.number }}</h6>
+          <p>{{ post.note }}</p>
+          <div style="text-align: left; font-size: 12px" class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <th>Сотрудники</th>
+              </thead>
+            </table>
+          </div>
+        {% endfor %} 
+      </div>
+      {% if action == 'create_post' %}
+        <form method="post" enctype="multipart/form-data" action="">
+          {% csrf_token %}
+          {% for field in form %}
+            <div class="form-group row" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+              <label for="{{ field.id_for_label }}" class="col-sm-2 col-form-label text-sm-left">
+                {{ field.label }}
+                {% if field.field.required %}
+                  <span class="required">*</span>
+                {% endif %}
+              </label>
+              <div class="col-sm-6">
+                {{ devicecardformset.management_form }}
+                {# подключаем фильтр и указываем класс #}
+                {{ field }}
+              </div>                
+            </div>
+          {% endfor %}
+        <br>
+        <button type="submit" class="btn btn-outline-success btn-sm">Сохранить</button>
+      </form>
+      {% endif %}
+      <div>
+        {% if user.role == 'admin' and action != 'create_post' and guardobject.number > guardobject.guard_posts.count %}
+        <p>
+          <a class="btn btn-outline-primary btn-sm" href="{% url 'add_guard_post' guardobject.pk %}" role="button">Добавить пост</a>
+        </p>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -15,6 +15,9 @@
             <th scope="col-3">Название</th>
             <th scope="col-1">Телефоны</th>
             <th scope="col-2">Предприятие</th>
+            {% if action == 'own' %}
+              <th scope="col-2">Закреплено сотрудников</th>
+            {% endif %}
             <th></th>
           </tr>
           {% if not modal %}
@@ -23,6 +26,9 @@
                 <th>{{ filter.form.name }}</th>
                 <th>{{ filter.form.phone }}</th>
                 <th>{{ filter.form.enterprise }}</th>
+                {% if action == 'own' %}
+                  <th></th>
+                {% endif %}
                 <th>&nbsp;<input type="submit" value="Найти" /></th>
               </tr>
             </form>
@@ -38,46 +44,52 @@
                   {{ responseteam.enterprise }}
                 {% endif %}
                 </td>
-              <td>
-                <a class="badge badge-danger" data-toggle="modal" data-target="#deleteModal-{{responseteam.pk}}" role="button">
-                  Удалить
-                </a>
-                <div class="modal fade" id="deleteModal-{{responseteam.pk}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-body">
-                        <h6>Удалить группу {{ responseteam.name }}</h6>
-                        <table class="table table-sm">
-                          <tbody>
-                            {% if responseteam.enterprise %}
+              {% if action != 'own' %}
+                <td>
+                  <a class="badge badge-danger" data-toggle="modal" data-target="#deleteModal-{{responseteam.pk}}" role="button">
+                    Удалить
+                  </a>
+                  <div class="modal fade" id="deleteModal-{{responseteam.pk}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-body">
+                          <h6>Удалить группу {{ responseteam.name }}</h6>
+                          <table class="table table-sm">
+                            <tbody>
+                              {% if responseteam.enterprise %}
+                                <tr>
+                                  <th>Предприятие: {{ responseteam.enterprise }}</th>
+                                </tr>
+                              {% endif %}  
                               <tr>
-                                <th>Предприятие: {{ responseteam.enterprise }}</th>
+                                <td>телефоны: {{responseteam.phone }}</td>
                               </tr>
-                            {% endif %}  
-                            <tr>
-                              <td>телефоны: {{responseteam.phone }}</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Отменить</button>
-                        <a class="btn btn-danger btn-sm" href="{% url 'del_responseteam' responseteam.pk %}" role="button">Точно удалить</a>
+                            </tbody>
+                          </table>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Отменить</button>
+                          <a class="btn btn-danger btn-sm" href="{% url 'del_responseteam' responseteam.pk guard %}" role="button">Точно удалить</a>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <a class="badge badge-info" href="{% url 'upd_responseteam' responseteam.pk %}" role="button">Изменить</a>
-              </td>
+                </td>
+              {% else %}
+                <td>
+                  {% if not responseteam.team_post.all %}
+                    <a class="badge badge-primary" href="{% url 'add_guardobject' responseteam.pk guard %}" role="button">Создать экипаж</a>
+                  {% endif %}
+                </td>
+              {% endif %}
             <tr>
           {% endfor %}
         </tbody>
       </table>
-      
       <br>
     </div>
     <div>
-      {% if user.role == 'admin'  %}
+      {% if user.role == 'admin' and action != 'own'  %}
       <p>
         <a class="btn btn-outline-primary btn-sm" href="{% url 'add_responseteam' %}" role="button">Добавить группу реагирования</a>
       </p>

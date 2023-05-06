@@ -21,6 +21,7 @@ urlpatterns = [
     path('guide/', views.guide, name='guide'),
     path('clientele/', include('clientele.urls')),
     path('object_card/', include('object_card.urls')),
+    path('security_post/', include('security_post.urls')),
 ]
 
 if settings.DEBUG:

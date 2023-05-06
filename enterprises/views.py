@@ -501,7 +501,17 @@ class DeleteWeaponsPermit(DeleteView):
         weaponspermit = get_object_or_404(WeaponsPermit, id=self.kwargs['pk'],)
         pk = weaponspermit.security.pk
         return reverse('det_security', kwargs={'pk': pk})
+
+class OwnResponse(FilterResponseteams):
+    def get_queryset(self):
+        return Responseteam.objects.all().exclude(enterprise=None)
     
+    def get_context_data(self, **kwargs):
+        data = super(OwnResponse, self).get_context_data(**kwargs)
+        data['action'] = 'own'
+        data['guard'] = 'qteam'
+        return data
+
 
 def enterprises(request):
     latest = Enterprise.objects.all()

@@ -16,7 +16,7 @@ class WorkingShiftInline(admin.TabularInline):
 
 @admin.register(GuardObject)
 class GuardObjectAdmin(admin.ModelAdmin):
-    list_display = ('contract', 'qteam', 'number')
+    list_display = ('pk', 'contract', 'qteam', 'number')
     fields = ['contract', 'qteam', 'number']
     sreash_fields = ('contract', 'qteam')
     empty_value_display = '-пусто-'
