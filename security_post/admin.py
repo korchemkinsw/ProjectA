@@ -30,8 +30,15 @@ class GuardPostAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 @admin.register(WorkingShift)
-class WorkingShift(admin.ModelAdmin):
+class WorkingShiftAdmin(admin.ModelAdmin):
     list_display = ('security', 'shift', 'begin', 'end')
     fields = ['security', 'shift', 'begin', 'end']
     sreash_fields = ('security', 'shift', 'begin', 'end')
+    empty_value_display = '-пусто-'
+
+@admin.register(GuardsOnDuty)
+class GuardsOnDutyAdmin(admin.ModelAdmin):
+    list_display = ('post', 'security')
+    fields = ['post', 'security']
+    sreash_fields = ('post', 'security')
     empty_value_display = '-пусто-'

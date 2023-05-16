@@ -111,7 +111,7 @@ class GuardsOnDuty(models.Model):
     post = models.ForeignKey(
         GuardPost,
         on_delete=models.CASCADE,
-        verbose_name='Смена',
+        verbose_name='Пост',
         related_name='posts_security'
     )
 
@@ -120,4 +120,4 @@ class GuardsOnDuty(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return f'Пост {self.security} на {self.shift}'
+        return f'Пост {self.security} на {self.post}'

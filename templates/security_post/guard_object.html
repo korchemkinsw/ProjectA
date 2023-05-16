@@ -39,6 +39,7 @@
           {% if guardobject.number > 4 %}
             постов
           {% endif %}
+          {{ test }}
         </h5>
       </div>
       <div class="card-body" style="text-align: left; font-size: 12px">
@@ -50,9 +51,108 @@
               <thead>
                 <th>Сотрудники</th>
               </thead>
+              <tbody>
+                <tr>
+                  
+                </tr>
+              </tbody>
             </table>
           </div>
-        {% endfor %} 
+          {% if action == 'add_employees' %}
+            <div style="text-align: left; font-size: 12px" class="table-responsive">
+              <table class="table table-sm">
+                <thead>
+                  <tr><h6>Выбрать:</h6></tr>
+                  <tr>
+                    <th scope="col-3">Фамилия Имя Отчество</th>
+                    <th scope="col-1">ЕПП</th>
+                    <th scope="col-1">Медицина</th>
+                    <th scope="col-1">Разряд</th>
+                    <th scope="col-2">Номер удостоверения</th>
+                    <th scope="col-1">Выдано</th>
+                    <th scope="col-1">Продлено</th>
+                    <th scope="col-2">Примечание</th>
+                    <th></th>
+                  </tr>
+                  <form method="get">
+                    <tr>
+                      <th>{{ filter.form.security }}</th>
+                      <th></th>
+                      <th></th>
+                      <th>{{ filter.form.category }}</th>
+                      <th>{{ filter.form.id_number }}</th>
+                      <th>{{ filter.form.status }}</th>
+                      <th></th>
+                      <th></th>
+                      <th>&nbsp;<input type="submit" value="Найти" /></th>
+                    </tr>
+                  </form>
+                </thead>
+                <tbody>
+                  {% for worker in security %}
+                    <tr>
+                      <td><a href="{% url 'det_security' worker.pk %}">{{ worker.security.name }}</a></td>
+                      <td>
+                        {{ worker.epp|date:"d.m.Y" }}
+                        {% if worker.epp %}
+                          {% if worker.epp|timeuntil:warning == expired|timeuntil:expired %}
+                            <br>
+                            {% if worker.epp|timeuntil:expired != expired|timeuntil:expired %}
+                              <span style="color:red">осталось: {{ worker.epp|timeuntil:expired }}</span>
+                            {% else %}
+                              <span style="color:red">просрочено!</span>
+                            {% endif %}
+                          {% endif %}
+                        {% endif %}
+                      </td>
+                      <td>
+                        {{ worker.medical|date:"d.m.Y" }}
+                        {% if worker.epp %}
+                          {% if worker.medical|timeuntil:warning == expired|timeuntil:expired %}
+                            <br>
+                            {% if worker.medical|timeuntil:expired != expired|timeuntil:expired %}
+                              <span style="color:red">осталось: {{ worker.medical|timeuntil:expired }}</span>
+                            {% else %}
+                              <span style="color:red">просрочено!</span>
+                            {% endif %}
+                          {% endif %}
+                        {% endif %}
+                      </td>
+                      <td>{{ worker.category }}</td>
+                      <td>
+                        {{ worker.id_number }}
+                        {% if worker.prolonged %}
+                          {% if worker.prolonged|timeuntil:warning == expired|timeuntil:expired %}
+                            <br>
+                            {% if worker.prolonged|timeuntil:expired != expired|timeuntil:expired %}
+                              <span style="color:red">осталось: {{ worker.prolonged|timeuntil:expired }}</span>
+                            {% else %}
+                              <span style="color:red">просрочено!</span>
+                            {% endif %}
+                          {% endif %}
+                        {% else %}
+                          {% if worker.issue|timeuntil:warning == expired|timeuntil:expired %}
+                            <br>
+                            {% if worker.issue|timeuntil:expired != expired|timeuntil:expired %}
+                              <span style="color:red">осталось: {{ worker.issue|timeuntil:expired }}</span>
+                            {% else %}
+                              <span style="color:red">просрочено!</span>
+                            {% endif %}
+                          {% endif %}
+                        {% endif %}
+                      </td>
+                      <td>{{ worker.issue|date:"d.m.Y" }}</td>
+                      <td>{{ worker.prolonged|date:"d.m.Y" }}</td>
+                      <td>{{ worker.note }}</td>
+                      <td><a class="badge badge-success" href="{% url 'add_employee_post' guardobject.pk worker.pk selection %}" role="button">Выбрать</a></td>
+                    <tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% endif %}
+        {% endfor %}
+        
       </div>
       {% if action == 'create_post' %}
         <form method="post" enctype="multipart/form-data" action="">

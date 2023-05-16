@@ -46,6 +46,7 @@
                 </td>
               {% if action != 'own' %}
                 <td>
+                  <a class="badge badge-info" href="{% url 'upd_responseteam' responseteam.pk %}" role="button">Изменить</a>
                   <a class="badge badge-danger" data-toggle="modal" data-target="#deleteModal-{{responseteam.pk}}" role="button">
                     Удалить
                   </a>
@@ -69,7 +70,7 @@
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Отменить</button>
-                          <a class="btn btn-danger btn-sm" href="{% url 'del_responseteam' responseteam.pk guard %}" role="button">Точно удалить</a>
+                          <a class="btn btn-danger btn-sm" href="{% url 'del_responseteam' responseteam.pk %}" role="button">Точно удалить</a>
                         </div>
                       </div>
                     </div>

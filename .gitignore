@@ -121,6 +121,7 @@ venv.bak/
 /site
 /media
 /static
+/migrations
 
 
 # mypy
@@ -134,4 +135,4 @@ dmypy.json
 .rar
 static/
 media/
-0* .py
+0*.py
