@@ -23,22 +23,22 @@ class GuardObjectAdmin(admin.ModelAdmin):
 
 @admin.register(GuardPost)
 class GuardPostAdmin(admin.ModelAdmin):
-    list_display = ('guard_object', 'number', 'note')
-    fields = ['guard_object', 'number', 'note']
+    list_display = ('pk', 'guard_object', 'number', 'note',)
+    fields = ['guard_object', 'number', 'note',]
     sreash_fields = ('guard_object', 'number', 'note')
     inlines = [GuardsOnDutyInline]
     empty_value_display = '-пусто-'
 
 @admin.register(WorkingShift)
 class WorkingShiftAdmin(admin.ModelAdmin):
-    list_display = ('security', 'shift', 'begin', 'end')
+    list_display = ('pk', 'security', 'shift', 'begin', 'end')
     fields = ['security', 'shift', 'begin', 'end']
     sreash_fields = ('security', 'shift', 'begin', 'end')
     empty_value_display = '-пусто-'
 
 @admin.register(GuardsOnDuty)
 class GuardsOnDutyAdmin(admin.ModelAdmin):
-    list_display = ('post', 'security')
+    list_display = ('pk', 'post', 'security')
     fields = ['post', 'security']
     sreash_fields = ('post', 'security')
     empty_value_display = '-пусто-'

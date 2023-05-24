@@ -218,7 +218,7 @@ def getfile(request, selection):
     employees = Security.objects.all()
     if selection:
         security =  str(re.search(r'(?<=security=)[а-яА-Я+]*', selection).group(0))
-        category = str(re.search(r'(?<=category)[а-яА-Я0-9+]*', selection).group(0))
+        category = str(re.search(r'(?<=category=)[а-яА-Я0-9+]*', selection).group(0))
         id_number = str(re.search(r'(?<=id_number=)[а-яА-Я0-9+]*', selection).group(0))
         status =  str(re.search(r'(?<=status=)[а-яА-Я+]*', selection).group(0))
         security=security.replace('+', ' ')

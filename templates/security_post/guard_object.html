@@ -49,12 +49,25 @@
           <div style="text-align: left; font-size: 12px" class="table-responsive">
             <table class="table table-sm">
               <thead>
-                <th>Сотрудники</th>
+                <th>
+                  Сотрудники
+                  {% if action != 'add_employees' %}
+                    <a class="badge badge-primary btn-sm" href="{% url 'add_employees_post' guardobject.pk post.pk selection %}" role="button">Добавить/Удалить</a>
+                  {% else %}
+                    <a class="badge badge-primary btn-sm" href="{% url 'guard_object' guardobject.pk %}" role="button">Назад</a>
+                  {% endif %}
+                </th>
+                <th></th>
               </thead>
               <tbody>
-                <tr>
-                  
-                </tr>
+                {% for employee_post in post.personnel.all %}
+                  <tr>
+                    <td>{{ employee_post }}</td>
+                    {% if action == 'add_employees' %}
+                      <td><a class="badge badge-danger" href="{% url 'del_employee_post' guardobject.pk post.pk employee_post.pk %}" role="button">Удалить</a></td>
+                    {% endif %}
+                  </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>
@@ -76,15 +89,31 @@
                   </tr>
                   <form method="get">
                     <tr>
-                      <th>{{ filter.form.security }}</th>
-                      <th></th>
-                      <th></th>
-                      <th>{{ filter.form.category }}</th>
-                      <th>{{ filter.form.id_number }}</th>
-                      <th>{{ filter.form.status }}</th>
-                      <th></th>
-                      <th></th>
-                      <th>&nbsp;<input type="submit" value="Найти" /></th>
+                      {% if selection %}
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>
+                          <a class="btn btn-outline-secondary btn-sm" href="{% url 'add_employees_post' guardobject.pk post.pk '' %}" role="button">Сбросить</a>
+                        </th>
+                      {% else %}
+                        <th>{{ filter.form.security }}</th>
+                        <th></th>
+                        <th></th>
+                        <th>{{ filter.form.category }}</th>
+                        <th>{{ filter.form.id_number }}</th>
+                        <th>{{ filter.form.status }}</th>
+                        <th></th>
+                        <th></th>
+                        <th>
+                          &nbsp;<input type="submit" value="Найти" />
+                        </th>
+                      {% endif %}
                     </tr>
                   </form>
                 </thead>
@@ -144,7 +173,7 @@
                       <td>{{ worker.issue|date:"d.m.Y" }}</td>
                       <td>{{ worker.prolonged|date:"d.m.Y" }}</td>
                       <td>{{ worker.note }}</td>
-                      <td><a class="badge badge-success" href="{% url 'add_employee_post' guardobject.pk worker.pk selection %}" role="button">Выбрать</a></td>
+                      <td><a class="badge badge-success" href="{% url 'add_employee_post' post.pk worker.pk selection %}" role="button">Выбрать</a></td>
                     <tr>
                   {% endfor %}
                 </tbody>

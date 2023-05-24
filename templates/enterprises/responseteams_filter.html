@@ -77,10 +77,13 @@
                   </div>
                 </td>
               {% else %}
-                <td>
-                  {% if not responseteam.team_post.all %}
-                    <a class="badge badge-primary" href="{% url 'add_guardobject' responseteam.pk guard %}" role="button">Создать экипаж</a>
-                  {% endif %}
+                {% if not responseteam.team_post.count %}
+                  <td></td>
+                  <td><a class="badge badge-primary" href="{% url 'add_guardobject' responseteam.pk guard %}" role="button">Создать экипаж</a></td>
+                {% else %}
+                  <td>{{ responseteam.team_post.first.guard_posts.first.personnel.count }}</td>
+                  <td><a class="badge badge-info" href="{% url 'guard_object' responseteam.team_post.first.pk %}" role="button">Открыть экипаж</a></td>
+                {% endif %}
                 </td>
               {% endif %}
             <tr>

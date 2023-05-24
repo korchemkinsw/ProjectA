@@ -73,7 +73,7 @@ class PersonalCardInline(admin.TabularInline):
 class SecurityAdmin(admin.ModelAdmin):
     form = SecurityForm
     list_display = (
-        'security', 'photo', 'epp', 'medical', 'category',
+        'pk', 'security', 'photo', 'epp', 'medical', 'category',
         'id_number', 'status', 'issue', 'prolonged', 'note'
         )
     fields = [

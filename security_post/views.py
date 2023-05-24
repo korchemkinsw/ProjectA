@@ -1,6 +1,8 @@
 import re
 import urllib
-from django.db import transaction
+from typing import Any, Optional
+
+from django.db import models, transaction
 from django.shortcuts import (HttpResponse, HttpResponseRedirect,
                               get_object_or_404, redirect, render)
 from django.urls import reverse, reverse_lazy
@@ -66,15 +68,19 @@ class AddEmployees(FilterSecurity):
         data = super(AddEmployees, self).get_context_data(**kwargs)
         data['action'] = 'add_employees'
         data['selection'] = urllib.parse.unquote(str(self.request.GET.urlencode())) or ''
-        data['guardobject'] = get_object_or_404(GuardObject, id=self.kwargs['pk'])
-        data['test'] = str(re.search(r'(?<=category)[а-яА-Я0-9+]*', self.kwargs['selection']).group(0))
+        data['guardobject'] = get_object_or_404(GuardObject, id=self.kwargs['pk_object'])
+        data['post'] = get_object_or_404(GuardPost, id=self.kwargs['pk_post'])
         return data
-    
+
     def get_queryset(self, **kwargs):
+        post = get_object_or_404(GuardPost, id=self.kwargs['pk_post'])
         employees = Security.objects.all()
+        for employee in post.personnel.all():
+            employees = employees.exclude(id=employee.id)
+
         if self.kwargs['selection']:
             security =  str(re.search(r'(?<=security=)[а-яА-Я+]*', self.kwargs['selection']).group(0))
-            category = str(re.search(r'(?<=category)[а-яА-Я0-9+]*', self.kwargs['selection']).group(0))
+            category = str(re.search(r'(?<=category=)[а-яА-Я0-9+]*', self.kwargs['selection']).group(0))
             id_number = str(re.search(r'(?<=id_number=)[а-яА-Я0-9+]*', self.kwargs['selection']).group(0))
             status =  str(re.search(r'(?<=status=)[а-яА-Я+]*', self.kwargs['selection']).group(0))
             security=security.replace('+', ' ')
@@ -98,5 +104,10 @@ class CreateGuardsOnDuty(CreateView):
         post=get_object_or_404(GuardPost, id=self.kwargs['pk_post'])
         security=get_object_or_404(Security, id=self.kwargs['pk_sec'])
         GuardsOnDuty(security=security, post = post).save()
-        return redirect('add_employees_post', self.kwargs['pk_post'])
+        return redirect('add_employees_post', post.guard_object.pk, self.kwargs['pk_post'], self.kwargs['selection'])
+    
+def dell_employee_post(reqest, pk_object, pk_post, pk_sec):
+    employee_post = get_object_or_404(GuardsOnDuty, security=get_object_or_404(Security, id=pk_sec), post=get_object_or_404(GuardPost, id=pk_post))
+    employee_post.delete()
+    return redirect('add_employees_post', pk_object, pk_post, '')
 
