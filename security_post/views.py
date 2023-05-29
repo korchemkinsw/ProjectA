@@ -8,12 +8,25 @@ from django.shortcuts import (HttpResponse, HttpResponseRedirect,
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, FormView,
                                   ListView, UpdateView)
+from django_filters.views import FilterView
 
+from clientele.models import Contract
 from enterprises.models import Responseteam, Security
 from enterprises.views import FilterSecurity
 
-from .forms import BaseGuardPostForm, GuardObjectForm
+from .forms import BaseGuardPostForm, GuardObjectFilter, GuardObjectForm
 from .models import GuardObject, GuardPost, GuardsOnDuty
+
+
+class FilterGuardObjects(FilterView):
+    model = GuardObject
+    context_object_name = 'guardobjects'
+    template_name = 'security_post/guard_objects_filter.html'
+    filterset_class = GuardObjectFilter
+
+    def get_queryset(self, **kwargs):
+        return GuardObject.objects.all().exclude(contract=None)
+
 
 
 class DetailGuardObject(DetailView):
@@ -28,19 +41,13 @@ class CreateGuardObject(CreateView):
     def get(self, request, *args, **kwargs):
         if self.kwargs['guard'] == 'qteam':
             qteam=get_object_or_404(Responseteam, id=self.kwargs['pk'])
-            GuardObject(qteam=qteam, number = 1).save()
+            GuardObject(qteam=qteam, number = 0).save()
             return redirect('guard_object', get_object_or_404(GuardObject, qteam=qteam).pk)
+        if self.kwargs['guard'] == 'contract':
+            contract=get_object_or_404(Contract, id=self.kwargs['pk'])
+            GuardObject(contract=contract, number = 0).save()
+            return redirect('guard_object', get_object_or_404(GuardObject, contract=contract).pk)
         return self.get(request, *args, **kwargs)
-
-    def form_valid(self, form):
-        with transaction.atomic():
-            self.object = form.save(commit=False)
-            if self.kwargs['guard'] == 'qteam':
-                self.object.qteam = get_object_or_404(Responseteam, id=self.kwargs['pk'])
-                self.object.number = 1
-                self.success_url = reverse_lazy('ownresponse')
-        self.object = form.save()
-        return super(CreateGuardObject, self).form_valid(form)
 
 class CreateGuardPost(CreateView):
     model = GuardPost
@@ -54,10 +61,13 @@ class CreateGuardPost(CreateView):
         return data
     
     def form_valid(self, form):
+        guard_object = get_object_or_404(GuardObject, id=self.kwargs['pk'])
         with transaction.atomic():
             self.object = form.save(commit=False)
-            self.object.guard_object = get_object_or_404(GuardObject, id=self.kwargs['pk'])
+            self.object.guard_object = guard_object
             self.object = form.save()
+            guard_object.number = guard_object.number + 1
+            guard_object.save()
             self.success_url = reverse('guard_object', args=[str(self.kwargs['pk'])])
         return super(CreateGuardPost, self).form_valid(form)
     
@@ -69,7 +79,7 @@ class AddEmployees(FilterSecurity):
         data['action'] = 'add_employees'
         data['selection'] = urllib.parse.unquote(str(self.request.GET.urlencode())) or ''
         data['guardobject'] = get_object_or_404(GuardObject, id=self.kwargs['pk_object'])
-        data['post'] = get_object_or_404(GuardPost, id=self.kwargs['pk_post'])
+        data['post_number'] = get_object_or_404(GuardPost, id=self.kwargs['pk_post'])
         return data
 
     def get_queryset(self, **kwargs):

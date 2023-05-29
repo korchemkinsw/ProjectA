@@ -31,6 +31,7 @@
             <a class="dropdown-item" href="#">Может и пошлю...</a>
           </div>
         </div>
+        <a class="nav-link text-dark" href="{% url 'guard_objects' %}">Посты</a>
       {% endif %}
       {% if user.role == 'manager' or user.role == 'director' or user.role == 'admin'  %}
         <a class="nav-link text-dark" href="{% url 'contactlist' %}">Контакты</a>

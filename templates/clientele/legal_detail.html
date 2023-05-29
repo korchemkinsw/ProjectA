@@ -87,6 +87,7 @@
                   <th>Номер</th>
                   <th>Дата</th>
                   <th>Статус</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -96,6 +97,7 @@
                     <td>{{contract.number}}</td>
                     <td>{{contract.date}}</td>
                     <td>{{contract.status}}</td>
+                    <td><a class="badge badge-primary btn-sm" href="{% url 'add_guardobject' contract.pk 'contract' %}" role="button">Создать пост</a></td>
                   </tr>
                 {% endfor %}
               </tbody>

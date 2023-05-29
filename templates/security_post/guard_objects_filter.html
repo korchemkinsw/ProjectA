@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Группы реагирования{% endblock %}
+{% block title %}Объекты с постами охраны{% endblock %}
 {% block content %}
 {% load user_filters %}
 <div class="card">
   <div class="card-header">
-    <h5>Группы реагирования</h5>
+    <h5>Объекты с постами охраны</h5>
   </div>
   <div class="card-body" style="text-align: left; font-size: 12px">
     
@@ -12,86 +12,102 @@
       <table class="table table-sm">
         <thead>
           <tr>
-            <th scope="col-3">Название</th>
-            <th scope="col-1">Телефоны</th>
             <th scope="col-2">Предприятие</th>
-            {% if action == 'own' %}
-              <th scope="col-2">Закреплено сотрудников</th>
-            {% endif %}
+            <th scope="col-1">Номер договора</th>
+            <th scope="col-2">Юр. лицо</th>
+            <th scope="col-2">Физ. лицо</th>
+            <th scope="col-2">Постов</th>
             <th></th>
           </tr>
           {% if not modal %}
             <form method="get">
               <tr>
-                <th>{{ filter.form.name }}</th>
-                <th>{{ filter.form.phone }}</th>
-                <th>{{ filter.form.enterprise }}</th>
-                {% if action == 'own' %}
-                  <th></th>
-                {% endif %}
+                <th>{{ filter.form.contract__enterprise }}</th>
+                <th>{{ filter.form.contracrt_number }}</th>
+                <th>{{ filter.form.contract_legal }}</th>
+                <th>{{ filter.form.contract_individual }}</th>
+                <th></th>
                 <th>&nbsp;<input type="submit" value="Найти" /></th>
               </tr>
             </form>
           {% endif %}
         </thead>
         <tbody>
-          {% for responseteam in responseteams %}
+          {% for guardobject in guardobjects %}
             <tr>
-              <td>{{ responseteam.name }}</td>
-              <td>{{ responseteam.phone }}</td>
+              <td>{{ guardobject.contract.enterprise }}</td>
+              <td>{{ guardobject.contract }}</td>
               <td>
-                {% if responseteam.enterprise %}
-                  {{ responseteam.enterprise }}
+                {% if guardobject.contract.legal %}
+                  {{ guardobject.contract.legal }}
                 {% endif %}
-                </td>
+              </td>
+              <td>
+                {% if guardobject.contract.individual  %}
+                  {{ guardobject.contract.individual }}
+                {% endif %}
+              </td>
+              <td>{{ guardobject.guard_posts.count }}</td>
+              <td><a class="badge badge-info btn-sm" href="{% url 'guard_object' guardobject.pk %}" role="button">Открыть</a></td>
+<!--
               {% if action != 'own' %}
                 <td>
-                  <a class="badge badge-info" href="{% url 'upd_responseteam' responseteam.pk %}" role="button">Изменить</a>
-                  <a class="badge badge-danger" data-toggle="modal" data-target="#deleteModal-{{responseteam.pk}}" role="button">
+                  <a class="badge badge-danger" data-toggle="modal" data-target="#deleteModal-{{guardobject.pk}}" role="button">
                     Удалить
                   </a>
-                  <div class="modal fade" id="deleteModal-{{responseteam.pk}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                  <div class="modal fade" id="deleteModal-{{guardobject.pk}}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-body">
-                          <h6>Удалить группу {{ responseteam.name }}</h6>
+                          <h6>Удалить объект по договору {{ guardobject.contract }}</h6>
+                          <p>
+                            {% if guardobject.contract.legal %}
+                              {{ guardobject.contract.legal }}
+                            {% endif %}
+                            {% if guardobject.contract.individual  %}
+                              {{ guardobject.contract.individual }}
+                            {% endif %}
+                          </p>
                           <table class="table table-sm">
                             <tbody>
-                              {% if responseteam.enterprise %}
+                              <tr>
+                                <th>Предприятие: {{guardobject.contract.enterprise }}</th>
+                              </tr>
+                              {% if guardobject.guard_posts.count %}
                                 <tr>
-                                  <th>Предприятие: {{ responseteam.enterprise }}</th>
+                                  <td>Количество постов: {{ guardobject.guard_posts.count }}</td>
                                 </tr>
                               {% endif %}  
-                              <tr>
-                                <td>телефоны: {{responseteam.phone }}</td>
-                              </tr>
+                              
                             </tbody>
                           </table>
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Отменить</button>
-                          <a class="btn btn-danger btn-sm" href="{% url 'del_responseteam' responseteam.pk %}" role="button">Точно удалить</a>
+                          <a class="btn btn-danger btn-sm" href="{% url 'del_responseteam' guardobject.pk %}" role="button">Точно удалить</a>
                         </div>
                       </div>
                     </div>
                   </div>
                 </td>
               {% else %}
-                {% if not responseteam.team_post.count %}
+                {% if not guardobject.team_post.count %}
                   <td></td>
-                  <td><a class="badge badge-primary" href="{% url 'add_guardobject' responseteam.pk guard %}" role="button">Создать экипаж</a></td>
+                  <td><a class="badge badge-primary" href="{% url 'add_guardobject' guardobject.pk guard %}" role="button">Создать экипаж</a></td>
                 {% else %}
-                  <td>{{ responseteam.team_post.first.guard_posts.first.personnel.count }}</td>
-                <td><a class="badge badge-info" href="{% url 'guard_object' responseteam.team_post.first.pk %}" role="button">Открыть экипаж</a></td>
+                  <td>{{ guardobject.team_post.first.guard_posts.first.personnel.count }}</td>
+                  <td><a class="badge badge-info" href="{% url 'guard_object' guardobject.team_post.first.pk %}" role="button">Открыть экипаж</a></td>
                 {% endif %}
                 </td>
               {% endif %}
+              -->
             <tr>
           {% endfor %}
         </tbody>
       </table>
       <br>
     </div>
+    <!--
     <div>
       {% if user.role == 'admin' and action != 'own'  %}
       <p>
@@ -99,7 +115,9 @@
       </p>
       {% endif %}
     </div>
+    -->
   </div>
+  <!--
   <script type="text/javascript">
     $(document).ready(function(){
       $("#updateResponseteamModal").show();
@@ -113,7 +131,7 @@
         <div class="modal-content">
           <div class="modal-header">
             {% if modal == 'updateResponseteamModal' %}
-              <h6 class="modal-title" id="updateResponseteamModal">Изменить {{ responseteam }}</h6>
+              <h6 class="modal-title" id="updateResponseteamModal">Изменить {{ guardobject }}</h6>
             {% else %}
               <h6 class="modal-title" id="createResponseteamModal">Добавить группу реагирования</h6>
             {% endif %}
@@ -148,6 +166,7 @@
         </div>
       </form>
     </div>
+    -->
   </div>
 
 
